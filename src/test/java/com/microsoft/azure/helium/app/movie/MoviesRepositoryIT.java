@@ -34,11 +34,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(classes = Application.class)
 @SpringBootTest
 public class MoviesRepositoryIT {
-
+ /*
     @MockBean
     private MoviesRepository repository;
 
-    @Test
+   @Test
     public void findByMovieIdShouldReturnMovie() throws IOException, ParseException {
 
         Movie expected = MoviesUtils.generateMovieWithId();
@@ -69,6 +69,6 @@ public class MoviesRepositoryIT {
         assertThat(movies, hasSize(1));
         assertNotNull(movies);
 
-    }
+    }*/
 
 }

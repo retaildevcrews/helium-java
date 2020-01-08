@@ -37,9 +37,13 @@ public class ActorsController {
     @ApiOperation(value = "Get all actors", notes = "Retrieve and return all actors")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "List of actor objects") })
     public ResponseEntity<List<Actor>> getAllActors(
-            @ApiParam(value = "The actor name to filter by", required = false) @RequestParam("q") final Optional<String> query) {
+            @ApiParam(value = "The actor name to filter by", required = false)
+            @RequestParam("q") final Optional<String> query,
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize
+    ) {
         final Sort sort = new Sort(Sort.Direction.ASC, "actorId");
-        List<Actor> actors = service.getAllActors(query,sort);
+        List<Actor> actors = service.getAllActors(query,pageNo, pageSize, sort);
         return new ResponseEntity<>(actors, HttpStatus.OK);
     }
 

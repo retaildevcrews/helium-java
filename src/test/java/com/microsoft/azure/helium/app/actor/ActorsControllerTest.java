@@ -46,7 +46,7 @@ public class ActorsControllerTest {
     public void getActorsEndpointShouldReturnAllActorsFromService() throws Exception {
 
         List<Actor> mockActors = generateActors();
-        when(service.getAllActors(any(), any())).thenReturn(mockActors);
+        when(service.getAllActors(any(), any(), any(), any())).thenReturn(mockActors);
         String expected = expectedActorResponse();
         MvcResult result = this.mockMvc
                 .perform(get("/api/actors"))

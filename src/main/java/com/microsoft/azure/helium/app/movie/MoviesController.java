@@ -39,10 +39,14 @@ public class MoviesController {
     @ApiOperation(value = "Get all movies", notes = "Retrieve and return all movies")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "List of movie objects") })
     public ResponseEntity<List<Movie>> getAllMovies(
-            @ApiParam(value = "The movie title to filter by", required = false) @RequestParam("q") final Optional<String> query) {
+            @ApiParam(value = "The movie title to filter by", required = false)
+            @RequestParam("q") final Optional<String> query,
+            @RequestParam(defaultValue = "0") Integer pageNo,
+            @RequestParam(defaultValue = "10") Integer pageSize
+            ) {
 
         final Sort sort = new Sort(Sort.Direction.ASC, "movieId");
-        List<Movie> movies = service.getAllMovies(query, sort);
+        List<Movie> movies = service.getAllMovies(query, pageNo, pageSize, sort);
         return new ResponseEntity<>(movies, HttpStatus.OK);
     }
 

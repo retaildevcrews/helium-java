@@ -29,7 +29,7 @@ public class Application implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
-		TelemetryConfiguration configuration = TelemetryConfiguration.getActive();
+		//TelemetryConfiguration configuration = TelemetryConfiguration.getActive();
 	}
 
 	public void run(String... varl) throws Exception {

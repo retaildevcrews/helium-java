@@ -1,11 +1,13 @@
 package com.microsoft.azure.helium.app.movie;
 
 import com.google.gson.Gson;
+import com.microsoft.azure.spring.data.cosmosdb.core.query.DocumentDbPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -22,13 +24,36 @@ public class MoviesService {
     private static Gson gson = new Gson();
 
 
-    public List<Movie> getAllMovies(Optional<String> query, Sort sort) {
+
+    public List<Movie> getAllMovies(Optional<String> query, Integer pageNo, Integer pageSize, Sort sort) {
+        final Pageable pageable = new DocumentDbPageRequest(pageNo, pageSize, null, sort);
+        List<Movie> content = null;
+        Page<Movie> page = null;
         if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
-            return repository.findByTextSearchContaining(query.get().toLowerCase());
+            page = repository.findByTextSearchContaining(query.get().toLowerCase(), page.getPageable());
         } else {
-            return (List<Movie>) repository.findAll(sort);
+            page = repository.findAll(pageable);
+        }
+
+        if (pageNo == 0) {
+            content = page.getContent();
+            for (Movie movie : content) System.out.println(movie.toString());
+            return content;
+        } else {
+            Page<Movie> nextPage = null;
+            for (int i = 1; i <= pageNo; i++) {
+                nextPage = this.repository.findAll(page.getPageable());
+                content = page.getContent();
+                /* reset page to nextpage like a linkedlist*/
+                page = nextPage;
+                content = nextPage.getContent();
+                for (Movie movie : content) System.out.println(movie.toString());
+            }
+
+            return content;
         }
     }
+
 
     /*This API uses QueryDocument with PartitionKey */
     public Optional<Movie> getMovie(String movieId) {

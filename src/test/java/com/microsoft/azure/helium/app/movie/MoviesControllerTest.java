@@ -39,18 +39,18 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @WebMvcTest(MoviesController.class)
 public class MoviesControllerTest {
     
-    @Autowired
+     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private MoviesService service;
 
 
-    @Test
+   @Test
     public void getMoviesEndpointShouldReturnAllMoviesFromService() throws Exception {
 
         List<Movie> mockMovies = generateMovies();
-        when(service.getAllMovies(any(), any())).thenReturn(mockMovies);
+        when(service.getAllMovies(any(), any(), any(), any())).thenReturn(mockMovies);
         String expected = expectedMovieResponse();
         MvcResult result = this.mockMvc
                 .perform(get("/api/movies"))
