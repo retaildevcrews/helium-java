@@ -321,7 +321,7 @@ az webapp restart -g $He_App_RG -n $He_Name
 # this will eventually work, but may take a minute or two
 # you may get a 403 error, if so, just run again
 curl https://${He_Name}.azurewebsites.net/healthz
-
+```
 
 ## Key concepts
 
