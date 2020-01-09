@@ -40,7 +40,7 @@ public class ActorsController {
             @ApiParam(value = "The actor name to filter by", required = false)
             @RequestParam("q") final Optional<String> query,
             @RequestParam(defaultValue = "0") Integer pageNo,
-            @RequestParam(defaultValue = "10") Integer pageSize
+            @RequestParam(defaultValue = "100") Integer pageSize
     ) {
         final Sort sort = new Sort(Sort.Direction.ASC, "actorId");
         List<Actor> actors = service.getAllActors(query,pageNo, pageSize, sort);

@@ -42,7 +42,7 @@ public class MoviesController {
             @ApiParam(value = "The movie title to filter by", required = false)
             @RequestParam("q") final Optional<String> query,
             @RequestParam(defaultValue = "0") Integer pageNo,
-            @RequestParam(defaultValue = "10") Integer pageSize
+            @RequestParam(defaultValue = "100") Integer pageSize
             ) {
 
         final Sort sort = new Sort(Sort.Direction.ASC, "movieId");
