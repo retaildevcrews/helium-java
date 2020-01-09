@@ -24,18 +24,13 @@ public class Application implements CommandLineRunner {
 	@Value("${azure.keyvault.uri}")
 	private String keyUri;
 
-	@Value("${azure.keyvault.client-key}")
-	private String key;
-
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
-		//TelemetryConfiguration configuration = TelemetryConfiguration.getActive();
+		TelemetryConfiguration configuration = TelemetryConfiguration.getActive();
 	}
 
 	public void run(String... varl) throws Exception {
 		logger.info("keyUri: " + keyUri);
-		logger.info("key: " + key);
-		logger.info("appinsights: " + environment.getProperty("APPINSIGHTS_INSTRUMENTATIONKEY"));
 
 	}
 
