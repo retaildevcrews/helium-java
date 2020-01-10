@@ -130,9 +130,9 @@ az cosmosdb database create -d $He_Cosmos_DB -g $He_Cosmos_RG -n $He_Name
 # 400 is the minimum RUs
 # /partitionKey is the partition key
 # partition key is the id mod 10
-az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c He_Cosmos_MoviesCol
-az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c He_Cosmos_ActorsCol
-az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c He_Cosmos_GenresCol
+az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c $He_Cosmos_MoviesCol
+az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c $He_Cosmos_ActorsCol
+az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c $He_Cosmos_GenresCol
 
 
 # get Cosmos readonly key (used by App Service)
@@ -142,7 +142,7 @@ export He_Cosmos_RO_Key=$(az cosmosdb keys list -n $He_Name -g $He_Cosmos_RG --q
 export He_Cosmos_RW_Key=$(az cosmosdb keys list -n $He_Name -g $He_Cosmos_RG --query primaryMasterKey -o tsv)
 
 # import data into movies, actors, genres collection
-docker run -it --rm fourco/imdb-import $Imdb_Name $Imdb_Key imdb actors genres movies
+docker run -it --rm fourco/imdb-import $He_Name $He_Cosmos_RW_Key imdb actors genres movies
 
 ```
 
@@ -321,7 +321,7 @@ az webapp restart -g $He_App_RG -n $He_Name
 # this will eventually work, but may take a minute or two
 # you may get a 403 error, if so, just run again
 curl https://${He_Name}.azurewebsites.net/healthz
-
+```
 
 ## Key concepts
 
