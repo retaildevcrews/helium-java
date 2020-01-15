@@ -13,8 +13,10 @@ import com.microsoft.azure.helium.Application;
 import net.minidev.json.parser.ParseException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -43,30 +45,14 @@ public class ActorsRepositoryIT {
         assertThat(actors, hasSize(1));
         assertNotNull(actors);
         assertEquals(expected.getActorId(), actors.get(0).getActorId());
-
-
-
     }
 
 
-  /*  @Test
-    public void findByTextSearchShouldQueryActorsTextField() throws IOException, ParseException {
-        // Arrange
-        //lauren bacall
-        //nm0000002
-        Actor expected = ActorsUtils.generateActorWithId();
-        String actorName = expected.getName();
-        repository.save(expected);
+    @Test
+    public void findByTextSearchShouldQueryActorsTextField(){
+        Page<Actor> pActors = Mockito.mock(Page.class);
+        Mockito.when(repository.findByTextSearchContainingOrderByActorId(anyString(), any())).thenReturn(pActors);
+        assertNotNull(pActors);
 
-        List<Actor> actors = new ArrayList<Actor>();
-        actors.add(expected);
-
-        // Act
-        when(repository.findByTextSearchContainingOrderByActorId(actorName.toLowerCase(), null, null)).thenReturn(actors);// lauren bacall
-        assertThat(actors, hasSize(1));
-        assertNotNull(actors);
-        assertEquals(expected.getName(), actors.get(0).getName());
-
-    }*/
-
+    }
 }

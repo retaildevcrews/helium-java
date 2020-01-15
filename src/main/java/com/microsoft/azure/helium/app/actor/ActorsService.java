@@ -3,9 +3,10 @@ package com.microsoft.azure.helium.app.actor;
 import java.util.List;
 import java.util.Optional;
 
-import com.microsoft.azure.spring.data.cosmosdb.core.query.DocumentDbPageRequest;
+import com.microsoft.azure.spring.data.cosmosdb.core.query.CosmosPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,21 +21,19 @@ public class ActorsService {
     @Autowired
     private ActorsRepository repository;
 
-  /*  public List<Actor> getAllActors(Optional<String> query, Integer pageNo, Integer pageSize, Sort sort) {
-        if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
-            return repository.findByTextSearchContainingOrderByActorId(query.get().toLowerCase());
-        } else {
-            return (List<Actor>) repository.findAll(sort);
-        }
-    }*/
+
 
     public List<Actor> getAllActors(Optional<String> query, Integer pageNo, Integer pageSize, Sort sort) {
-        final Pageable pageable = new DocumentDbPageRequest(pageNo, pageSize, null, sort);
+
         List<Actor> content = null;
         Page<Actor> page = null;
         if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
-            page = repository.findByTextSearchContainingOrderByActorId(query.get().toLowerCase(), page.getPageable());
+            System.out.println("query is " +query.get().toLowerCase() + "pageNo " + pageNo + "pageSize " +pageSize );
+            final Pageable pageable = new CosmosPageRequest(pageNo, pageSize, null);
+            page = repository.findByTextSearchContainingOrderByActorId(query.get().toLowerCase(), pageable);
         } else {
+            final Pageable pageable = new CosmosPageRequest(pageNo, pageSize, null,sort);
+
             page = repository.findAll(pageable);
         }
 

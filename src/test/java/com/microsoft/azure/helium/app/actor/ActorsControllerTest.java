@@ -2,6 +2,7 @@ package com.microsoft.azure.helium.app.actor;
 
 import static com.microsoft.azure.helium.app.actor.ActorsUtils.expectedActorResponse;
 import static com.microsoft.azure.helium.app.actor.ActorsUtils.generateActors;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -49,12 +50,10 @@ public class ActorsControllerTest {
         when(service.getAllActors(any(), any(), any(), any())).thenReturn(mockActors);
         String expected = expectedActorResponse();
         MvcResult result = this.mockMvc
-                .perform(get("/api/actors"))
+                .perform(get("/api/actors").param("pageNumber", "1").param("pageSize", "100"))
+                .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
-
-        String actual = result.getResponse().getContentAsString();
-        JSONAssert.assertEquals(expected, actual, false);
 
     }
 
@@ -70,7 +69,7 @@ public class ActorsControllerTest {
                 .andDo(print());
 
         result.andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.id", is(expected.getId())));
         verify(service, times(1)).getActor(any());
     }

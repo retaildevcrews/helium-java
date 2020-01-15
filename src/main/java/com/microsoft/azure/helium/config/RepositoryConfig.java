@@ -1,22 +1,22 @@
 package com.microsoft.azure.helium.config;
 
 
-import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
-import com.microsoft.azure.documentdb.*;
-import com.microsoft.azure.spring.data.cosmosdb.config.AbstractDocumentDbConfiguration;
-import com.microsoft.azure.spring.data.cosmosdb.config.DocumentDBConfig;
-import com.microsoft.azure.spring.data.cosmosdb.repository.config.EnableDocumentDbRepositories;
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import com.azure.data.cosmos.ConsistencyLevel;
+import com.azure.data.cosmos.internal.RequestOptions;
+import com.microsoft.azure.spring.data.cosmosdb.config.AbstractCosmosConfiguration;
+import com.microsoft.azure.spring.data.cosmosdb.config.CosmosDBConfig;
+import com.microsoft.azure.spring.data.cosmosdb.repository.config.EnableCosmosRepositories;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 /**
  * RepositoryConfig
  */
 @Configuration
-@EnableDocumentDbRepositories(basePackages = "com.microsoft.azure.helium.app.*")
-public class RepositoryConfig extends AbstractDocumentDbConfiguration {
+@EnableCosmosRepositories(basePackages = "com.microsoft.azure.helium.app.*")
+public class RepositoryConfig extends AbstractCosmosConfiguration {
 
     @Value("${azure.cosmosdb.uri}")
     private  String uri;
@@ -27,23 +27,16 @@ public class RepositoryConfig extends AbstractDocumentDbConfiguration {
     @Value("${azure.cosmosdb.database}")
     private  String dbName;
 
-    @Override
-    public DocumentDBConfig getConfig() {
-        RequestOptions options = getRequestOptions();
-        return DocumentDBConfig.builder(uri, key, dbName).requestOptions(options).build();
-    }
-
-
     private RequestOptions getRequestOptions() {
         final RequestOptions options = new RequestOptions();
-        options.setConsistencyLevel(ConsistencyLevel.ConsistentPrefix);
-        options.setDisableRUPerMinuteUsage(true);
+        options.setConsistencyLevel(ConsistencyLevel.CONSISTENT_PREFIX);
         options.setScriptLoggingEnabled(true);
-
         return options;
     }
 
-
-
-
+    @Bean
+    public CosmosDBConfig getConfig() {
+        RequestOptions options = getRequestOptions();
+        return CosmosDBConfig.builder(uri, key, dbName).requestOptions(options).build();
+    }
 }

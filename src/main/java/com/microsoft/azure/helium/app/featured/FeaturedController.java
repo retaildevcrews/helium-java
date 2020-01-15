@@ -1,4 +1,5 @@
 package com.microsoft.azure.helium.app.featured;
+import com.microsoft.azure.helium.app.movie.Movie;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -15,19 +16,19 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping(path = "/api/featured", produces = MediaType.APPLICATION_JSON_VALUE)
-@Api(tags = "Actors")
+@Api(tags = "Featured")
 public class FeaturedController {
 
     @Autowired
     private FeaturedService service;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    @ApiOperation(value = "Get list of featured movies", notes = "Get list of featured movies")
+    @RequestMapping(value = "/movie", method = RequestMethod.GET)
+    @ApiOperation(value = "Get featured movie", notes = "Get list of featured movies")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "list of featured movies") })
-    public ResponseEntity<List<Featured>> getAllFeaturedMovies(
+    public ResponseEntity<Movie> getFeaturedMovie(
     ) {
-        List<Featured> actors = service.getAllFeaturedMovies();
-        return new ResponseEntity<>(actors, HttpStatus.OK);
+        Movie movie = service.getFeaturedMovie();
+        return new ResponseEntity<>(movie, HttpStatus.OK);
     }
 
 }

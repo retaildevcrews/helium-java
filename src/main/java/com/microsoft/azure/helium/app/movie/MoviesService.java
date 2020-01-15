@@ -1,13 +1,14 @@
 package com.microsoft.azure.helium.app.movie;
 
+import com.azure.data.cosmos.*;
 import com.google.gson.Gson;
-import com.microsoft.azure.spring.data.cosmosdb.core.query.DocumentDbPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,37 +22,106 @@ public class MoviesService {
     @Autowired
     MoviesRepository repository;
 
+    @Autowired
+    ApplicationContext context;
+
     private static Gson gson = new Gson();
 
+    public List<Movie> getAllMovies(Optional<String> query,
+                                              Optional<String> genre,
+                                              Optional<Integer> year,
+                                              Optional<Double> rating,
+                                              Optional<Boolean> topRated,
+                                              Optional<String> actorId,
+                                              Integer pageSize,
+                                              Integer pageNumber) throws CosmosClientException {
 
+        CosmosClient client = context.getBean(CosmosClient.class);
+        //String databaselink = client.getDatabaseAccount().getDatabasesLink();
+        CosmosDatabase database = client.getDatabase("imdb");
+        System.out.println("databaselink " + database.id());
+        CosmosContainer container =  database.getContainer("movies");
 
-    public List<Movie> getAllMovies(Optional<String> query, Integer pageNo, Integer pageSize, Sort sort) {
-        final Pageable pageable = new DocumentDbPageRequest(pageNo, pageSize, null, sort);
-        List<Movie> content = null;
-        Page<Movie> page = null;
+        FeedOptions options = new FeedOptions();
+        options.enableCrossPartitionQuery(true);
+
+        String sql = buildCustomQuery(query, genre, year, rating, topRated, actorId, pageSize, pageNumber);
+        System.out.println("query to cosmos " + sql);
+
+        Flux<FeedResponse<CosmosItemProperties>> response =  container.queryItems(sql, options);
+        List<Movie> movies = new ArrayList<>();
+        response.toIterable()
+                .forEach(cosmosItemFeedResponse ->{
+                             for (CosmosItemProperties item : cosmosItemFeedResponse.results()) {
+                                 movies.add(gson.fromJson(item.toString(), Movie.class));
+                             }
+                         });
+        return movies;
+    }
+
+    public String buildCustomQuery(Optional<String> query,
+                                   Optional<String> genre,
+                                   Optional<Integer> year,
+                                   Optional<Double> rating,
+                                   Optional<Boolean> topRated,
+                                   Optional<String> actorId,
+                                   Integer pageSize,
+                                   Integer pageNumber) {
+
+        String sql = "select m.id, m.partitionKey, m.movieId, m.type, m.textSearch, m.title, m.year, m.runtime, m.rating, m.votes, m.totalScore, m.genres, m.roles from m where m.type = 'Movie' ";
+
+        String orderBy = " order by m.title";
+
+        int limit = pageSize;
+        int offset = (pageSize * pageNumber);
+
+        String offsetLimit = " offset " + offset + " limit " + limit;
+
         if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
-            page = repository.findByTextSearchContaining(query.get().toLowerCase(), page.getPageable());
-        } else {
-            page = repository.findAll(pageable);
+            //  select m.movieId, m.type, m.textSearch, m.title, m.year, m.rating, m.runtime, m.genres, m.roles from m where (m.type='Movie' and contains(m.textSearch, 'talk to her')
+            System.out.println("query is " + query.get().toLowerCase());
+            sql += " and contains(m.textSearch,'" + query.get().toLowerCase() + "')";
         }
 
-        if (pageNo == 0) {
-            content = page.getContent();
-            for (Movie movie : content) System.out.println(movie.toString());
-            return content;
-        } else {
-            Page<Movie> nextPage = null;
-            for (int i = 1; i <= pageNo; i++) {
-                nextPage = this.repository.findAll(page.getPageable());
-                content = page.getContent();
-                /* reset page to nextpage like a linkedlist*/
-                page = nextPage;
-                content = nextPage.getContent();
-                for (Movie movie : content) System.out.println(movie.toString());
-            }
-
-            return content;
+        if (year.isPresent() && year.get() > 0) {
+            System.out.println("year is " + year.get());
+            sql += " and m.year = " + year.get();
         }
+
+        if (rating.isPresent() && rating.get() > 0) {
+            System.out.println("rating is " + rating.get());
+            sql += " and m.rating >= " + rating.get();
+        }
+
+        if (topRated.isPresent() && topRated.get() == true) {
+            System.out.println("topRated is " + topRated.get());
+            sql = "select top 10 " + sql.substring(7);
+            orderBy = " order by m.rating desc";
+            offsetLimit = ""; //empty the offset as results are filtered by top 10
+        }
+
+        if (actorId.isPresent() && !StringUtils.isEmpty(actorId.get())) {
+            //select m.movieId, m.type, m.textSearch, m.title, m.year, m.runtime, m.genres, m.roles from m where array_contains(m.roles,{ actorId: 'nm0000704',true})
+            System.out.println("actorId is " + actorId.get());
+            // get movies for an actor
+            sql += " and array_contains(m.roles, { actorId: '";
+            sql += actorId.get();
+            sql += "' }, true) ";
+
+        }
+
+        if (genre.isPresent() && !StringUtils.isEmpty(genre.get())) {
+            System.out.println("genre is " + genre.get());
+            // get movies by genre
+            //select m.movieId, m.type, m.textSearch, m.title, m.year, m.runtime, m.genres, m.roles from m where array_contains(m.genres,'Romance')
+            String genreVal = StringUtils.capitalize(genre.get());
+            System.out.println("genreVal " + genreVal);
+            String genreQuery = " and array_contains(m.genres,'" + genreVal + "')";
+            sql += genreQuery;
+        }
+
+        sql += orderBy + offsetLimit;
+        return sql;
     }
 
 

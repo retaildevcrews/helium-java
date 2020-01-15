@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(classes = Application.class)
 @SpringBootTest
 public class MoviesRepositoryIT {
- /*
+
     @MockBean
     private MoviesRepository repository;
 
@@ -54,21 +54,5 @@ public class MoviesRepositoryIT {
         assertEquals(expected.getMovieId(), movies.get(0).getMovieId());
 
     }
-
-    @Test
-    public void findByTextSearchShouldQueryMoviesTextField() throws IOException, ParseException {
-        Movie expected = MoviesUtils.generateMovieWithId();
-        String movieName = expected.getTextSearch();
-        repository.save(expected);
-
-        List<Movie> movies = new ArrayList<Movie>();
-        movies.add(expected);
-
-        // Act
-        when(repository.findByTextSearchContaining(movieName.toLowerCase())).thenReturn(movies);// lauren bacall
-        assertThat(movies, hasSize(1));
-        assertNotNull(movies);
-
-    }*/
 
 }
