@@ -315,7 +315,7 @@ az webapp restart -g $He_App_RG -n $He_Name
 # curl the health check endpoint
 # this will eventually work, but may take a minute or two
 # you may get a 403 error, if so, just run again
-curl https://${He_Name}.azurewebsites.net/api/healthz
+curl https://${He_Name}.azurewebsites.net/healthz
 
 
 ## Key concepts
