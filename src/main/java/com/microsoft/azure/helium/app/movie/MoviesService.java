@@ -3,9 +3,13 @@ package com.microsoft.azure.helium.app.movie;
 import com.azure.data.cosmos.*;
 import com.google.gson.Gson;
 import com.microsoft.azure.helium.app.Constants;
+import com.microsoft.azure.helium.app.genre.Genre;
+import com.microsoft.azure.helium.app.genre.GenresRepository;
+import com.microsoft.azure.helium.app.genre.GenresService;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
@@ -23,6 +27,12 @@ public class MoviesService {
 
     @Autowired
     MoviesRepository repository;
+
+    @Autowired
+    GenresService genresService;
+
+    @Autowired
+    GenresRepository genresRepository;
 
     @Autowired
     ApplicationContext context;
@@ -134,11 +144,11 @@ public class MoviesService {
 
         if (genre.isPresent() && !StringUtils.isEmpty(genre.get())) {
             System.out.println("genre is " + genre.get());
+            Optional<Genre> genreResp = genresRepository.findById(genre.get());
+            System.out.println("Genre returned from repo is " + genreResp.get().getGenre());
             // get movies by genre
             //select m.movieId, m.type, m.textSearch, m.title, m.year, m.runtime, m.genres, m.roles from m where array_contains(m.genres,'Romance')
-            String genreVal = StringUtils.capitalize(genre.get());
-            System.out.println("genreVal " + genreVal);
-            String genreQuery = " and array_contains(m.genres,'" + genreVal + "')";
+            String genreQuery = " and array_contains(m.genres,'" + genreResp.get().getGenre() + "')";
             sql += genreQuery;
         }
 

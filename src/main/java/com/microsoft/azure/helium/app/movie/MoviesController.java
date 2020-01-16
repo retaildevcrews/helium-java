@@ -42,10 +42,10 @@ public class MoviesController {
             @ApiParam(value = "(optional) Movies of a genre (Action)", required = false ) @RequestParam final Optional<String> genre,
             @ApiParam(value = "(optional) Get movies by year (2005)", required = false , defaultValue = "0") @RequestParam final Optional<Integer> year,
             @ApiParam(value = "(optional) Get movies with a rating >= rating (8.5)", required = false , defaultValue = "0") @RequestParam final Optional<Double> rating,
-            @ApiParam(value = "(optional) Get top rated movies (true)", required = false , defaultValue = "0") @RequestParam final Optional<Boolean> topRated,
-            @ApiParam(value = "(optional) Get movies by Actor Id (nm0000704)", required = false) @RequestParam final Optional<String> actorId,
-            @ApiParam(value = "0 based page index", required = false , defaultValue = "0") @RequestParam Optional<Integer>  pageNumber,
-            @ApiParam(value = "page size (1000 max)", required = false , defaultValue = "100") @RequestParam Optional<Integer>  pageSize
+            @ApiParam(value = "(optional) Get top rated movies (true)", required = false , defaultValue = "0") @RequestParam final Optional<Boolean> toprated,
+            @ApiParam(value = "(optional) Get movies by Actor Id (nm0000704)", required = false) @RequestParam final Optional<String> actorid,
+            @ApiParam(value = "0 based page index", required = false , defaultValue = "0") @RequestParam Optional<Integer>  pagenumber,
+            @ApiParam(value = "page size (1000 max)", required = false , defaultValue = "100") @RequestParam Optional<Integer>  pagesize
     ) throws CosmosClientException {
 
         final Sort sort = Sort.by(Sort.Direction.ASC, "movieId");
@@ -62,13 +62,13 @@ public class MoviesController {
             System.out.println("rating is " + rating.get());
         }
 
-        if (topRated.isPresent() && topRated.get() == true) {
-            System.out.println("topRated is " + topRated.get());
+        if (toprated.isPresent() && toprated.get() == true) {
+            System.out.println("topRated is " + toprated.get());
 
         }
 
-        if (actorId.isPresent() && !StringUtils.isEmpty(actorId.get())) {
-            System.out.println("actorId is " + actorId.get());
+        if (actorid.isPresent() && !StringUtils.isEmpty(actorid.get())) {
+            System.out.println("actorId is " + actorid.get());
         }
 
         if (genre.isPresent() && !StringUtils.isEmpty(genre.get())) {
@@ -76,7 +76,7 @@ public class MoviesController {
 
         }
 
-        List<Movie> movies = service.getAllMovies(q, genre, year, rating, topRated, actorId, pageSize, pageNumber);
+        List<Movie> movies = service.getAllMovies(q, genre, year, rating, toprated, actorid, pagesize, pagenumber);
         return new ResponseEntity<>(movies, HttpStatus.OK);
     }
 
