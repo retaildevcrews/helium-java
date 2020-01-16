@@ -2,6 +2,8 @@ package com.microsoft.azure.helium.app.movie;
 
 import com.azure.data.cosmos.*;
 import com.google.gson.Gson;
+import com.microsoft.azure.helium.app.Constants;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -33,11 +35,10 @@ public class MoviesService {
                                               Optional<Double> rating,
                                               Optional<Boolean> topRated,
                                               Optional<String> actorId,
-                                              Integer pageSize,
-                                              Integer pageNumber) throws CosmosClientException {
+                                              Optional<Integer> pageSize,
+                                              Optional<Integer> pageNumber) throws CosmosClientException {
 
         CosmosClient client = context.getBean(CosmosClient.class);
-        //String databaselink = client.getDatabaseAccount().getDatabasesLink();
         CosmosDatabase database = client.getDatabase("imdb");
         System.out.println("databaselink " + database.id());
         CosmosContainer container =  database.getContainer("movies");
@@ -65,15 +66,36 @@ public class MoviesService {
                                    Optional<Double> rating,
                                    Optional<Boolean> topRated,
                                    Optional<String> actorId,
-                                   Integer pageSize,
-                                   Integer pageNumber) {
+                                   Optional<Integer> pageSize,
+                                   Optional<Integer> pageNumber) {
 
         String sql = "select m.id, m.partitionKey, m.movieId, m.type, m.textSearch, m.title, m.year, m.runtime, m.rating, m.votes, m.totalScore, m.genres, m.roles from m where m.type = 'Movie' ";
-
         String orderBy = " order by m.title";
 
-        int limit = pageSize;
-        int offset = (pageSize * pageNumber);
+        Integer limit = 0;
+        Integer offset = 0;
+
+        if (pageSize.isPresent() && pageSize.get() >= 0) {
+            System.out.println("pageSize is " + pageSize.get());
+
+            limit  = pageSize.get();
+        }
+        if (limit < 1)
+        {
+            limit = Constants.DefaultPageSize;
+        }
+        else if (limit > Constants.MaxPageSize)
+        {
+            limit = Constants.MaxPageSize;
+        }
+
+        System.out.println("limit is " + limit);
+
+        if (pageNumber.isPresent() && pageNumber.get() > 0) {
+            System.out.println("pageNumber is " + pageNumber.get());
+            offset  = (limit * pageNumber.get());
+            System.out.println("offset is " + offset);
+        }
 
         String offsetLimit = " offset " + offset + " limit " + limit;
 

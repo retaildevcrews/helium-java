@@ -44,8 +44,8 @@ public class MoviesController {
             @ApiParam(value = "(optional) Get movies with a rating >= rating (8.5)", required = false , defaultValue = "0") @RequestParam final Optional<Double> rating,
             @ApiParam(value = "(optional) Get top rated movies (true)", required = false , defaultValue = "0") @RequestParam final Optional<Boolean> topRated,
             @ApiParam(value = "(optional) Get movies by Actor Id (nm0000704)", required = false) @RequestParam final Optional<String> actorId,
-            @ApiParam(value = "0 based page index", required = false , defaultValue = "0") @RequestParam Integer pageNumber,
-            @ApiParam(value = "page size (1000 max)", required = false , defaultValue = "100") @RequestParam Integer pageSize
+            @ApiParam(value = "0 based page index", required = false , defaultValue = "0") @RequestParam Optional<Integer>  pageNumber,
+            @ApiParam(value = "page size (1000 max)", required = false , defaultValue = "100") @RequestParam Optional<Integer>  pageSize
     ) throws CosmosClientException {
 
         final Sort sort = Sort.by(Sort.Direction.ASC, "movieId");

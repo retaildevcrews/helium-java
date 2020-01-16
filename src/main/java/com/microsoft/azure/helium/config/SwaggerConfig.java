@@ -29,6 +29,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2).select()
                  .apis(RequestHandlerSelectors.any())
                 .paths(Predicates.not(PathSelectors.regex("/error.*")))
+                .paths(Predicates.not(PathSelectors.regex("/robots*.*")))
                 .paths(Predicates.not(PathSelectors.regex("/api")))
                 .paths(Predicates.not(PathSelectors.regex("/")))
                 .build()

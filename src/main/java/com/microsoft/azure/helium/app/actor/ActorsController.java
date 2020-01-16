@@ -39,8 +39,8 @@ public class ActorsController {
     public ResponseEntity<List<Actor>> getAllActors(
             @ApiParam(value = "(query) (optional) The term used to search Actor name", required = false ) @RequestParam final Optional<String> q,
             @RequestParam("q") final Optional<String> query,
-            @ApiParam(value = "0 based page index", required = false , defaultValue = "0") @RequestParam Integer pageNumber,
-            @ApiParam(value = "page size (1000 max)", required = false , defaultValue = "100") @RequestParam Integer pageSize
+            @ApiParam(value = "0 based page index", defaultValue = "0") @RequestParam Optional<Integer> pageNumber,
+            @ApiParam(value = "page size (1000 max)",defaultValue = "100") @RequestParam Optional<Integer> pageSize
     ) {
         final Sort sort = Sort.by(Sort.Direction.ASC, "actorId");
         List<Actor> actors = service.getAllActors(query, pageNumber, pageSize, sort);

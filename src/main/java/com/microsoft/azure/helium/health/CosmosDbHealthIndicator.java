@@ -54,14 +54,12 @@ public class CosmosDbHealthIndicator extends AbstractHealthIndicator {
 
 	protected HashMap<String, Integer > getStatusCode(String dbName) throws CosmosClientException {
 
-		//ResourceResponse<Database> response = this.documentClient.readDatabase("dbs/" + dbName, new RequestOptions());
 		System.out.println("databaselink " + documentClient.getDatabase(dbName).id());
 		CosmosContainer container =  documentClient.getDatabase(dbName).getContainer("movies");
 
 		CosmosDatabaseResponse response = documentClient.getDatabase(dbName).read().block();
 		HashMap<String, Integer> resultDetails = new HashMap<>();
 		FeedOptions queryOptions = new FeedOptions();
-		//queryOptions.setPageSize(-1);
 		queryOptions.enableCrossPartitionQuery(true);
 
 
@@ -69,19 +67,22 @@ public class CosmosDbHealthIndicator extends AbstractHealthIndicator {
 		String collectionMoviesLink = String.format("/dbs/%s/colls/%s", "imdb","movies");
 
 		Flux<FeedResponse<CosmosItemProperties>> movieResponse =  documentClient.getDatabase(dbName).getContainer("movies").queryItems("SELECT VALUE COUNT(1) FROM c", queryOptions);
-		//TODO check the query response for NPE
-		Integer movieCount = (Integer)  movieResponse.blockLast().results().get(0).get("_aggregate");
-		resultDetails.put("movies", movieCount);
+		if(movieResponse !=null && movieResponse.blockLast().results().size() > 0 && movieResponse.blockLast().results().get(0) != null) {
+			Integer movieCount = (Integer) movieResponse.blockLast().results().get(0).get("_aggregate");
+			resultDetails.put("movies", movieCount);
+		}
 
 		Flux<FeedResponse<CosmosItemProperties>> actorResponse =  documentClient.getDatabase(dbName).getContainer("actors").queryItems("SELECT VALUE COUNT(1) FROM c", queryOptions);
-		//TODO check the query response for NPE
-		Integer actorCount = (Integer)  actorResponse.blockLast().results().get(0).get("_aggregate");
-		resultDetails.put("actors", actorCount);
+		if(actorResponse !=null && actorResponse.blockLast().results().size() > 0 && actorResponse.blockLast().results().get(0) != null) {
+			Integer actorCount = (Integer) actorResponse.blockLast().results().get(0).get("_aggregate");
+			resultDetails.put("actors", actorCount);
+		}
 
 		Flux<FeedResponse<CosmosItemProperties>> genreResponse =  documentClient.getDatabase(dbName).getContainer("genres").queryItems("SELECT VALUE COUNT(1) FROM c", queryOptions);
-		//TODO check the query response for NPE
-		Integer genreCount = (Integer)   actorResponse.blockLast().results().get(0).get("_aggregate");
-		resultDetails.put("genres", genreCount);
+		if(genreResponse !=null && genreResponse.blockLast().results().size() > 0 && genreResponse.blockLast().results().get(0) != null) {
+			Integer genreCount = (Integer) genreResponse.blockLast().results().get(0).get("_aggregate");
+			resultDetails.put("genres", genreCount);
+		}
 
 		Long x = buildProperties.getTime().getEpochSecond();
 		int  y = x.intValue();
