@@ -51,7 +51,7 @@ public class GenresControllerTest {
         // Assert
         action
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0]", is("Animation")))
                 .andExpect(jsonPath("$[1]", is("Comedy")))

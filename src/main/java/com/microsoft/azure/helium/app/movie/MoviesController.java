@@ -3,19 +3,17 @@ package com.microsoft.azure.helium.app.movie;
 import java.util.List;
 import java.util.Optional;
 
+import com.azure.data.cosmos.CosmosClientException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
@@ -35,17 +33,52 @@ public class MoviesController {
     @Autowired
     private MoviesService service;
 
+  //https://github.com/springfox/springfox/issues/2418 - cannot order API Params
     @RequestMapping(value = "", method = RequestMethod.GET)
-    @ApiOperation(value = "Get all movies", notes = "Retrieve and return all movies")
+    @ApiOperation(value = "Get all movies by filters", notes = "Retrieve and return all movies")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "List of movie objects") })
-    public ResponseEntity<List<Movie>> getAllMovies(
-            @ApiParam(value = "The movie title to filter by", required = false) @RequestParam("q") final Optional<String> query) {
+    public ResponseEntity<List<Movie>> getAllMoviesByFilters(
+            @ApiParam(value = "(query) (optional) The term used to search by movie title (rings)", required = false ) @RequestParam final Optional<String> q,
+            @ApiParam(value = "(optional) Movies of a genre (Action)", required = false ) @RequestParam final Optional<String> genre,
+            @ApiParam(value = "(optional) Get movies by year (2005)", required = false , defaultValue = "0") @RequestParam final Optional<Integer> year,
+            @ApiParam(value = "(optional) Get movies with a rating >= rating (8.5)", required = false , defaultValue = "0") @RequestParam final Optional<Double> rating,
+            @ApiParam(value = "(optional) Get top rated movies (true)", required = false , defaultValue = "0") @RequestParam final Optional<Boolean> toprated,
+            @ApiParam(value = "(optional) Get movies by Actor Id (nm0000704)", required = false) @RequestParam final Optional<String> actorid,
+            @ApiParam(value = "0 based page index", required = false , defaultValue = "0") @RequestParam Optional<Integer>  pagenumber,
+            @ApiParam(value = "page size (1000 max)", required = false , defaultValue = "100") @RequestParam Optional<Integer>  pagesize
+    ) throws CosmosClientException {
 
-        final Sort sort = new Sort(Sort.Direction.ASC, "movieId");
-        List<Movie> movies = service.getAllMovies(query, sort);
+        final Sort sort = Sort.by(Sort.Direction.ASC, "movieId");
+
+        if (q.isPresent() && !StringUtils.isEmpty(q.get())) {
+            System.out.println("query is " + q.get().toLowerCase());
+        }
+
+        if (year.isPresent() && year.get() > 0) {
+            System.out.println("year is " + year.get());
+        }
+
+        if (rating.isPresent() && rating.get() > 0) {
+            System.out.println("rating is " + rating.get());
+        }
+
+        if (toprated.isPresent() && toprated.get() == true) {
+            System.out.println("topRated is " + toprated.get());
+
+        }
+
+        if (actorid.isPresent() && !StringUtils.isEmpty(actorid.get())) {
+            System.out.println("actorId is " + actorid.get());
+        }
+
+        if (genre.isPresent() && !StringUtils.isEmpty(genre.get())) {
+            System.out.println("genre is " + genre.get());
+
+        }
+
+        List<Movie> movies = service.getAllMovies(q, genre, year, rating, toprated, actorid, pagesize, pagenumber);
         return new ResponseEntity<>(movies, HttpStatus.OK);
     }
-
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get single movie", notes = "Retrieve and return a single movie by movie ID")

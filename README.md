@@ -2,12 +2,11 @@
 
 A reference app for using the Azure Web App for Containers service.
 
-
-# Contributing
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.microsoft.com.
+the rights to use your contribution. For details, visit <https://cla.microsoft.com.>
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
@@ -16,7 +15,6 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
 
 ## Prerequisites
 
@@ -27,7 +25,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 - Azure CLI 2.0.72+ ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
 - Java 8 above
-
 
 ## Setup
 
@@ -97,7 +94,6 @@ az group create -n $He_Cosmos_RG -l $He_Location
 ```
 
 Save your environment variables for ease of reuse and picking up where you left off.
-
 
 Create and load sample data into CosmosDB
 
@@ -184,7 +180,7 @@ Run the application locally
 # IMP: security hole in keyvault MSI
 KeyVault MSI does not work locally , there is a CSE feedback issue filed on the same
 
-To get KeyVault working locally we would need to go thru clear text route, for that update the clientid and clientkey by uncommenting these lines in application.properties and populating clientid and clientkey 
+To get KeyVault working locally we would need to go thru clear text route, for that update the clientid and clientkey by uncommenting these lines in application.properties and populating clientid and clientkey
 #azure.keyvault.uri=https://{kvurl}.vault.azure.net/
 #azure.keyvault.client-id={client_id}
 #azure.keyvault.client-key={client_key}
@@ -204,7 +200,6 @@ mvn clean spring-boot:run
 curl http://localhost:8080/healthz
 
 ```
-
 
 Setup Container Registry
 

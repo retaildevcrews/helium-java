@@ -38,7 +38,7 @@ public class MoviesRepositoryIT {
     @MockBean
     private MoviesRepository repository;
 
-    @Test
+   @Test
     public void findByMovieIdShouldReturnMovie() throws IOException, ParseException {
 
         Movie expected = MoviesUtils.generateMovieWithId();
@@ -52,22 +52,6 @@ public class MoviesRepositoryIT {
         assertThat(movies, hasSize(1));
         assertNotNull(movies);
         assertEquals(expected.getMovieId(), movies.get(0).getMovieId());
-
-    }
-
-    @Test
-    public void findByTextSearchShouldQueryMoviesTextField() throws IOException, ParseException {
-        Movie expected = MoviesUtils.generateMovieWithId();
-        String movieName = expected.getTextSearch();
-        repository.save(expected);
-
-        List<Movie> movies = new ArrayList<Movie>();
-        movies.add(expected);
-
-        // Act
-        when(repository.findByTextSearchContaining(movieName.toLowerCase())).thenReturn(movies);// lauren bacall
-        assertThat(movies, hasSize(1));
-        assertNotNull(movies);
 
     }
 

@@ -29,6 +29,7 @@ import java.util.List;
  * CosmosDbHealthIndicatorTest
  */
 @RunWith(MockitoJUnitRunner.class)
+
 public class CosmosDbHealthIndicatorTest {
 
     @Spy
@@ -65,15 +66,15 @@ public class CosmosDbHealthIndicatorTest {
         assertThat(health.getStatus(), is(Status.DOWN));
     }
 
-    private HashMap<String, Long> getSuccessResponse(){
+    private HashMap<String, Integer> getSuccessResponse(){
 
-        Long statusCode = (long) (int) IntegrationTestsUtils.getRandomBetween(200, 204);
-        HashMap<String, Long> resultDetails = new HashMap<>();
+        Integer statusCode = IntegrationTestsUtils.getRandomBetween(200, 204);
+        HashMap<String, Integer> resultDetails = new HashMap<>();
         resultDetails.put("status", statusCode);
-        resultDetails.put("actors", 531L);
-        resultDetails.put("movies", 100L);
-        resultDetails.put("genres", 19L);
-        resultDetails.put("version",1L);
+        resultDetails.put("actors", 4434);
+        resultDetails.put("movies", 1303);
+        resultDetails.put("genres", 21);
+        resultDetails.put("version",1);
         return resultDetails;
     }
 
