@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
-
 @Component
 public class BuildConfig {
 
