@@ -50,32 +50,6 @@ public class MoviesController {
 
         final Sort sort = Sort.by(Sort.Direction.ASC, "movieId");
 
-        if (q.isPresent() && !StringUtils.isEmpty(q.get())) {
-            System.out.println("query is " + q.get().toLowerCase());
-        }
-
-        if (year.isPresent() && year.get() > 0) {
-            System.out.println("year is " + year.get());
-        }
-
-        if (rating.isPresent() && rating.get() > 0) {
-            System.out.println("rating is " + rating.get());
-        }
-
-        if (toprated.isPresent() && toprated.get() == true) {
-            System.out.println("topRated is " + toprated.get());
-
-        }
-
-        if (actorid.isPresent() && !StringUtils.isEmpty(actorid.get())) {
-            System.out.println("actorId is " + actorid.get());
-        }
-
-        if (genre.isPresent() && !StringUtils.isEmpty(genre.get())) {
-            System.out.println("genre is " + genre.get());
-
-        }
-
         List<Movie> movies = service.getAllMovies(q, genre, year, rating, toprated, actorid, pagesize, pagenumber);
         return new ResponseEntity<>(movies, HttpStatus.OK);
     }

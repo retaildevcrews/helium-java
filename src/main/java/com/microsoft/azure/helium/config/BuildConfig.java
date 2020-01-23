@@ -1,17 +1,20 @@
 package com.microsoft.azure.helium.config;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Component;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.FormatStyle;
-import java.util.Locale;
+
 
 @Component
 public class BuildConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(BuildConfig.class);
 
     @Autowired
     BuildProperties buildProperties;
@@ -25,6 +28,7 @@ public class BuildConfig {
         String MMDD = DATE_TIME_FORMATTER1.format(buildTime);
         DateTimeFormatter DATE_TIME_FORMATTER2 = DateTimeFormatter.ofPattern("hhmm").withZone( ZoneId.of("UTC"));
         String hhmm = DATE_TIME_FORMATTER2.format(buildTime);
+        logger.info("version" + buildProperties.getTime() + "." + DATE_TIME_FORMATTER1.format(buildTime)  + "." + DATE_TIME_FORMATTER2.format(buildTime));
         return  major + "." + MMDD + "." + hhmm;
 
     }

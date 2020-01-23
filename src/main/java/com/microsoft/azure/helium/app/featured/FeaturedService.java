@@ -55,12 +55,8 @@ public class FeaturedService {
         // get random featured movie by movieId
         // CosmosDB API will throw an exception on a bad movieId
         int randMovieIdIdx = getRandomNumberInRange(0, movieCount-1);
-        System.out.println("randMovieIdIdx "+ randMovieIdIdx);
         String featuredMovieId = featuredMovies.get(randMovieIdIdx).getMovieId();
-        System.out.println("featuredMovieId "+ featuredMovieId);
-
         List<Movie> movies = moviesRepository.findByMovieId(featuredMovieId);
-        System.out.println("movieId "+ movies.get(0).getMovieId());
 
 
         return movies.get(0);
