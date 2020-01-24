@@ -22,7 +22,7 @@ public class SwaggerConfig {
 
 
     @Autowired
-    private BuildProperties buildProperties;
+    private BuildConfig buildConfig;
 
     @Bean
     public Docket api() {
@@ -30,6 +30,8 @@ public class SwaggerConfig {
                  .apis(RequestHandlerSelectors.any())
                 .paths(Predicates.not(PathSelectors.regex("/error.*")))
                 .paths(Predicates.not(PathSelectors.regex("/robots*.*")))
+                .paths(Predicates.not(PathSelectors.regex("/version*.*")))
+                .paths(Predicates.not(PathSelectors.regex("/healthz*.*")))
                 .paths(Predicates.not(PathSelectors.regex("/api")))
                 .paths(Predicates.not(PathSelectors.regex("/")))
                 .build()
@@ -40,7 +42,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Helium(Java)")
                 .description("Java app for bootstrapping your next Web Apps for Containers service using Key Vault and Managed Identities")
-                .version(Long.toString(buildProperties.getTime().toEpochMilli()))
+                .version(buildConfig.getBuildVersion())
                 .build();
     }
 
