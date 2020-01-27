@@ -5,11 +5,6 @@ on:
     branches:
       - master
 
-<<<<<<< HEAD
-    tags:
-      - v*
-=======
->>>>>>> b8efd5c0a9b2ae4adc83f26151db94c226ff3748
 
 #    DOCKER_REPO  - the docker repository name in the form: organization/repository
 
