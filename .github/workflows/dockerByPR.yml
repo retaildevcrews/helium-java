@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: acr-push-build
         run: |
-          # You must add the following secrets to github
+          #    You must add the following secrets to github
           #    SERVICE_PRINCIPAL  - your SP Client ID that has ACR Push IAM role
           #    SERVICE_PRINCIPAL_PASSWORD   - the personal access token for the SP Client id
           #    TENANT  - The tenant ID of the subscription of the ACR
@@ -34,7 +34,7 @@ jobs:
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.head_ref }}")
           echo $VERSION
-          # az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/dev/${ACR_IMAGE}:${VERSION} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
+          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/dev/${ACR_IMAGE}:${VERSION} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
 
 
   
