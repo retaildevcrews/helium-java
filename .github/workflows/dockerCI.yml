@@ -7,7 +7,8 @@ on:
 
 
 #    DOCKER_REPO  - the docker repository name in the form: organization/repository
-
+    tags:
+      - v*
 
 
 jobs:
@@ -86,11 +87,14 @@ jobs:
           then
 
           # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+            VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
         
           # Strip "v" prefix from tag name
-          VERSION=$(echo $VERSION | sed -e 's/^v//')
+            VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+            az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${VERSION} -t ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
+          else
+            az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:beta https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
           fi
-          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${VERSION} -t ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
 
   
