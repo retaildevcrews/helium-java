@@ -80,7 +80,7 @@ jobs:
 
 
           echo "Building Docker image ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} from ${GITHUB_REPOSITORY} on ${{ github.ref }}; and pushing it to ${ACR_REG} Azure Container Registry"
-          az login --service-principal -u ${{ secrets.SERVICE_PRINCIPAL }} -p ${{ secrets.SERVICE_PRINCIPAL_PASSWORD }} --tenant ${{ secret.TENANT }}
+          az login --service-principal -u ${{ secrets.SERVICE_PRINCIPAL }} -p ${{ secrets.SERVICE_PRINCIPAL_PASSWORD }} --tenant ${{ secrets.TENANT }}
           az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
           if [[ "${{ github.ref }}" == "refs/tags/"* ]]
           then
