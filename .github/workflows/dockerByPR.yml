@@ -32,7 +32,7 @@ jobs:
           az login --service-principal -u ${{ secrets.SERVICE_PRINCIPAL }} -p ${{ secrets.SERVICE_PRINCIPAL_SECRET }} --tenant ${{ secrets.TENANT }}
 
           # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}")
+          VERSION=$(echo "${{ github.head_ref }}")
           echo $VERSION
           # az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/dev/${ACR_IMAGE}:${VERSION} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
 
