@@ -74,7 +74,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: acr-push-build
-        id: acr
         uses: actions/checkout@v1
         run: |
           # You must add the following secrets to github
