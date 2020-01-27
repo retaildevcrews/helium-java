@@ -5,19 +5,12 @@ on:
     branches:
       - master
 
-    paths:
-      - '!docs/**'
+    paths-ignore:
+      - 'docs/**'
+      - '.github/workflows/**'
 
     tags:
       - v*
-
-#    DOCKER_REPO  - the docker repository name in the form: organization/repository
-env:
-  DOCKER_REPO: 'retaildevcrew/helium-java'
-  ACR_REG: 'gelatoappsvc'
-  ACR_REPO: 'gelatoappsvc.azurecr.io'
-  ACR_IMAGE: 'helium-java'
-  ACR_TAG: 'stable'
 
 
 jobs:
@@ -25,6 +18,9 @@ jobs:
   docker-build-push:
 
     runs-on: ubuntu-latest
+    env:
+      #    DOCKER_REPO  - the docker repository name in the form: organization/repository
+      DOCKER_REPO: 'retaildevcrew/helium-java'
 
     steps:
     - uses: actions/checkout@v1
@@ -48,10 +44,7 @@ jobs:
       run: |
         # Tag and push the docker image
 
-        IMAGE_ID=${{ DOCKER_REPO }}
-
-        # tag the image with :beta
-        docker tag image $IMAGE_ID:beta
+        IMAGE_ID=$DOCKER_REPO
 
         # Tag image based on repo tag if a github label
         if [[ "${{ github.ref }}" == "refs/tags/"* ]]
@@ -65,6 +58,9 @@ jobs:
   
           docker tag image $IMAGE_ID:$VERSION
           docker tag image $IMAGE_ID:stable
+        else
+          # tag the image with :beta
+          docker tag image $IMAGE_ID:beta
         fi
 
         # Push to the repo
@@ -72,6 +68,11 @@ jobs:
 
   acr-build-push-version:
     runs-on: ubuntu-latest
+    env:
+      ACR_REG: 'gelatoappsvc'
+      ACR_REPO: 'gelatoappsvc.azurecr.io'
+      ACR_IMAGE: 'helium-java'
+      ACR_TAG: 'stable'
     steps:
       - uses: actions/checkout@v1
       - name: acr-push-build
@@ -82,17 +83,21 @@ jobs:
           #    TENANT  - The tenant ID of the subscription of the ACR
 
 
-          echo "Building Docker image ${{ ACR_REPO }}/${{ ACR_IMAGE }}:${{ ACR_TAG }} from ${{ GITHUB_REPOSITORY }} on ${{ github.ref }}; and pushing it to ${{ ACR_REG }} Azure Container Registry"
-          az login --service-principal -u ${{ secret.SERVICE_PRINCIPAL }} -p ${{ secret.SERVICE_PRINCIPAL_PASSWORD }} --tenant ${{ secret.TENANT }}
-          az acr build -r ${{ ACR_REG }} -f Dockerfile -t ${{ ACR_REPO }}/${{ ACR_IMAGE }}:${{ ACR_TAG }} https://github.com/${{ github.repository }}.git#${{ github.ref }}
+          echo "Building Docker image ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} from ${GITHUB_REPOSITORY} on ${{ github.ref }}; and pushing it to ${ACR_REG} Azure Container Registry"
+          az login --service-principal -u ${{ secrets.SERVICE_PRINCIPAL }} -p ${{ secrets.SERVICE_PRINCIPAL_SECRET }} --tenant ${{ secrets.TENANT }}
+          
           if [[ "${{ github.ref }}" == "refs/tags/"* ]]
           then
 
           # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+            VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
         
           # Strip "v" prefix from tag name
-          VERSION=$(echo $VERSION | sed -e 's/^v//')
-          az acr build -r ${{ ACR_REG }} -f Dockerfile -t ${{ ACR_REPO }}/${{ ACR_IMAGE }}:${VERSION} https://github.com/${{ github.repository }}.git#${{ github.ref }}
+            VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+            az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${VERSION} -t ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
+          else
+            az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:beta https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
+          fi
 
   
