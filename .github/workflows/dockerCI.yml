@@ -8,8 +8,6 @@ on:
     paths:
       - '!docs/**'
 
-    tags:
-      - v*
 
 #    DOCKER_REPO  - the docker repository name in the form: organization/repository
 env:
