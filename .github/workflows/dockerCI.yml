@@ -5,19 +5,11 @@ on:
     branches:
       - master
 
-    paths:
-      - '!docs/**'
-
     tags:
       - v*
 
 #    DOCKER_REPO  - the docker repository name in the form: organization/repository
-env:
-  DOCKER_REPO: 'retaildevcrew/helium-java'
-  ACR_REG: 'gelatoappsvc'
-  ACR_REPO: 'gelatoappsvc.azurecr.io'
-  ACR_IMAGE: 'helium-java'
-  ACR_TAG: 'stable'
+
 
 
 jobs:
@@ -25,6 +17,8 @@ jobs:
   docker-build-push:
 
     runs-on: ubuntu-latest
+    env:
+      DOCKER_REPO: 'retaildevcrew/helium-java'
 
     steps:
     - uses: actions/checkout@v1
@@ -72,6 +66,11 @@ jobs:
 
   acr-build-push-version:
     runs-on: ubuntu-latest
+    env:
+      ACR_REG: 'gelatoappsvc'
+      ACR_REPO: 'gelatoappsvc.azurecr.io'
+      ACR_IMAGE: 'helium-java'
+      ACR_TAG: 'stable'
     steps:
       - uses: actions/checkout@v1
       - name: acr-push-build
