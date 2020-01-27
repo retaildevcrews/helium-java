@@ -1,4 +1,4 @@
-![Docker CI](https://github.com/retaildevcrews/helium-java/workflows/Docker%20CI/badge.svg)
+![Docker CI](https://github.com/retaildevcrews/helium-java/workflows/DockerCI/badge.svg)
 
 # Helium JAVA
 

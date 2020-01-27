@@ -1,4 +1,4 @@
-name: Docker CI
+name: DockerCI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
     paths-ignore:
       - 'docs/**'
-      - '.github/workflows/**'
+      - '.github/**'
 
     tags:
       - v*
@@ -19,7 +19,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      #    DOCKER_REPO  - the docker repository name in the form: organization/repository
+      #  DOCKER_REPO  - the docker repository name in the form: organization/repository
       DOCKER_REPO: 'retaildevcrew/helium-java'
 
     steps:
@@ -29,7 +29,7 @@ jobs:
       run: |
         # Login to registry
 
-        # You must add the following secrets to github
+        #    You must add the following secrets to github
         #    DOCKER_USER  - your dockerhub user name
         #    DOCKER_PAT   - the personal access token for dockerhub
        
@@ -77,7 +77,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: acr-push-build
         run: |
-          # You must add the following secrets to github
+          #    You must add the following secrets to github
           #    SERVICE_PRINCIPAL  - your SP Client ID that has ACR Push IAM role
           #    SERVICE_PRINCIPAL_PASSWORD   - the personal access token for the SP Client id
           #    TENANT  - The tenant ID of the subscription of the ACR
