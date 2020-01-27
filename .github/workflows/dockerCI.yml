@@ -40,7 +40,7 @@ jobs:
       run: |
         # Tag and push the docker image
 
-        IMAGE_ID=${{ DOCKER_REPO }}
+        IMAGE_ID=$DOCKER_REPO
 
         # tag the image with :beta
         docker tag image $IMAGE_ID:beta
@@ -79,9 +79,9 @@ jobs:
           #    TENANT  - The tenant ID of the subscription of the ACR
 
 
-          echo "Building Docker image ${{ ACR_REPO }}/${{ ACR_IMAGE }}:${{ ACR_TAG }} from ${{ GITHUB_REPOSITORY }} on ${{ github.ref }}; and pushing it to ${{ ACR_REG }} Azure Container Registry"
+          echo "Building Docker image ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} from ${GITHUB_REPOSITORY} on ${{ github.ref }}; and pushing it to ${ACR_REG} Azure Container Registry"
           az login --service-principal -u ${{ secret.SERVICE_PRINCIPAL }} -p ${{ secret.SERVICE_PRINCIPAL_PASSWORD }} --tenant ${{ secret.TENANT }}
-          az acr build -r ${{ ACR_REG }} -f Dockerfile -t ${{ ACR_REPO }}/${{ ACR_IMAGE }}:${{ ACR_TAG }} https://github.com/${{ github.repository }}.git#${{ github.ref }}
+          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
           if [[ "${{ github.ref }}" == "refs/tags/"* ]]
           then
 
@@ -90,6 +90,6 @@ jobs:
         
           # Strip "v" prefix from tag name
           VERSION=$(echo $VERSION | sed -e 's/^v//')
-          az acr build -r ${{ ACR_REG }} -f Dockerfile -t ${{ ACR_REPO }}/${{ ACR_IMAGE }}:${VERSION} https://github.com/${{ github.repository }}.git#${{ github.ref }}
+          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${VERSION} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
 
   
