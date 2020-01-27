@@ -5,21 +5,17 @@ on:
     branches:
       - master
 
-    paths:
-      - '!docs/**'
-
-    tags:
-      - v*
-
-#    DOCKER_REPO  - the docker repository name in the form: organization/repository
-env:
-  DOCKER_REPO: 'retaildevcrew/helium-java'
+    paths-ignore:
+      - 'docs/**'
 
 jobs:
 
-  build:
+  docker-build-push:
 
     runs-on: ubuntu-latest
+    env:
+      #    DOCKER_REPO  - the docker repository name in the form: organization/repository
+      DOCKER_REPO: 'retaildevcrew/dev/helium-java'
 
     steps:
     - uses: actions/checkout@v1
@@ -31,7 +27,7 @@ jobs:
         # You must add the following secrets to github
         #    DOCKER_USER  - your dockerhub user name
         #    DOCKER_PAT   - the personal access token for dockerhub
-
+       
 
         ## login to dockerhub
         echo "${{ secrets.DOCKER_PAT }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
@@ -43,24 +39,40 @@ jobs:
       run: |
         # Tag and push the docker image
 
-        IMAGE_ID=${{ DOCKER_REPO }}
+        IMAGE_ID=$DOCKER_REPO
 
-        # tag the image with :beta
-        docker tag image $IMAGE_ID:beta
-
-        # Tag image based on repo tag if a github label
-        if [[ "${{ github.ref }}" == "refs/tags/"* ]]
-        then
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        
-          # Strip "v" prefix from tag name
-          VERSION=$(echo $VERSION | sed -e 's/^v//')
+        # Strip git ref prefix from version
+        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
   
-          docker tag image $IMAGE_ID:$VERSION
-          docker tag image $IMAGE_ID:stable
-        fi
+        docker tag image $IMAGE_ID:$VERSION
 
         # Push to the repo
         docker push $IMAGE_ID
+
+  acr-build-push-version:
+    runs-on: ubuntu-latest
+    env:
+      ACR_REG: 'gelatoappsvc'
+      ACR_REPO: 'gelatoappsvc.azurecr.io'
+      ACR_IMAGE: 'helium-java'
+      ACR_TAG: 'stable'
+    steps:
+      - uses: actions/checkout@v1
+      - name: acr-push-build
+        run: |
+          # You must add the following secrets to github
+          #    SERVICE_PRINCIPAL  - your SP Client ID that has ACR Push IAM role
+          #    SERVICE_PRINCIPAL_PASSWORD   - the personal access token for the SP Client id
+          #    TENANT  - The tenant ID of the subscription of the ACR
+
+
+          echo "Building Docker image ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} from ${GITHUB_REPOSITORY} on ${{ github.ref }}; and pushing it to ${ACR_REG} Azure Container Registry"
+          az login --service-principal -u ${{ secrets.SERVICE_PRINCIPAL }} -p ${{ secrets.SERVICE_PRINCIPAL_SECRET }} --tenant ${{ secrets.TENANT }}
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/dev/${ACR_IMAGE}:${VERSION} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
+
+
+  

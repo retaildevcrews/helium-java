@@ -5,8 +5,9 @@ on:
     branches:
       - master
 
+    paths-ignore:
+      - 'docs/**'
 
-#    DOCKER_REPO  - the docker repository name in the form: organization/repository
     tags:
       - v*
 
@@ -17,6 +18,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
+      #    DOCKER_REPO  - the docker repository name in the form: organization/repository
       DOCKER_REPO: 'retaildevcrew/helium-java'
 
     steps:
@@ -43,9 +45,6 @@ jobs:
 
         IMAGE_ID=$DOCKER_REPO
 
-        # tag the image with :beta
-        docker tag image $IMAGE_ID:beta
-
         # Tag image based on repo tag if a github label
         if [[ "${{ github.ref }}" == "refs/tags/"* ]]
         then
@@ -58,6 +57,9 @@ jobs:
   
           docker tag image $IMAGE_ID:$VERSION
           docker tag image $IMAGE_ID:stable
+        else
+          # tag the image with :beta
+          docker tag image $IMAGE_ID:beta
         fi
 
         # Push to the repo
