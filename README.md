@@ -1,3 +1,5 @@
+![Docker CI](https://github.com/retaildevcrews/helium-java/workflows/DockerCI/badge.svg)
+
 # Helium JAVA
 
 A reference app for using the Azure Web App for Containers service.
