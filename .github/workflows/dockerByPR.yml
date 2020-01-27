@@ -34,7 +34,7 @@ jobs:
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.head_ref }}")
           echo $VERSION
-          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/dev/${ACR_IMAGE}:${VERSION} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
+          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/dev/${ACR_IMAGE}:${VERSION} -t ${ACR_REPO}/dev/${ACR_IMAGE} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
 
 
   
