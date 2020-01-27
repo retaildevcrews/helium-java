@@ -31,7 +31,6 @@ public class SwaggerConfig {
                 .paths(Predicates.not(PathSelectors.regex("/error.*")))
                 .paths(Predicates.not(PathSelectors.regex("/robots*.*")))
                 .paths(Predicates.not(PathSelectors.regex("/version*.*")))
-                .paths(Predicates.not(PathSelectors.regex("/healthz*.*")))
                 .paths(Predicates.not(PathSelectors.regex("/api")))
                 .paths(Predicates.not(PathSelectors.regex("/")))
                 .build()
