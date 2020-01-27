@@ -73,8 +73,8 @@ jobs:
   acr-build-push-version:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
       - name: acr-push-build
-        uses: actions/checkout@v1
         run: |
           # You must add the following secrets to github
           #    SERVICE_PRINCIPAL  - your SP Client ID that has ACR Push IAM role
