@@ -81,7 +81,7 @@ jobs:
 
           echo "Building Docker image ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} from ${GITHUB_REPOSITORY} on ${{ github.ref }}; and pushing it to ${ACR_REG} Azure Container Registry"
           az login --service-principal -u ${{ secrets.SERVICE_PRINCIPAL }} -p ${{ secrets.SERVICE_PRINCIPAL_SECRET }} --tenant ${{ secrets.TENANT }}
-          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
+          
           if [[ "${{ github.ref }}" == "refs/tags/"* ]]
           then
 
@@ -90,6 +90,7 @@ jobs:
         
           # Strip "v" prefix from tag name
           VERSION=$(echo $VERSION | sed -e 's/^v//')
-          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${VERSION} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
+          fi
+          az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:${VERSION} -t ${ACR_REPO}/${ACR_IMAGE}:${ACR_TAG} https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
 
   
