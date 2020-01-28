@@ -103,30 +103,29 @@ Create and load sample data into CosmosDB
 # set the other Cosmos environment variables
 export He_Cosmos_URL=https://${He_Name}.documents.azure.com:443/
 export He_Cosmos_DB=imdb
-export He_Cosmos_Col=movies
 
 # since spring-Boot doesnt support single collection with different document types, we will be creating separate collections for each document types
 # There is a CSE feedback filed  issue on spring patch for fixing this issue
 
-export He_Cosmos_MoviesCol=movies
 export He_Cosmos_ActorsCol=actors
+export He_Cosmos_FeaturedCol=featured
 export He_Cosmos_GenresCol=genres
-
+export He_Cosmos_MoviesCol=movies
 
 # create the CosmosDB server
 az cosmosdb create -g $He_Cosmos_RG -n $He_Name
 
 # create the database
-az cosmosdb database create -d $He_Cosmos_DB -g $He_Cosmos_RG -n $He_Name
+az cosmosdb sql database create -d $He_Cosmos_DB -g $He_Cosmos_RG -n $He_Name
 
-# create the collection
+# create the containers
 # 400 is the minimum RUs
 # /partitionKey is the partition key
 # partition key is the id mod 10
-az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c $He_Cosmos_MoviesCol
-az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c $He_Cosmos_ActorsCol
-az cosmosdb collection create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -n $He_Name -d $He_Cosmos_DB -c $He_Cosmos_GenresCol
-
+az cosmosdb sql container create --throughput 400 -p /partitionKey -g $He_Cosmos_RG -a $He_Name -d $He_Cosmos_DB -n $He_Cosmos_ActorsCol
+az cosmosdb sql container create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -a $He_Name -d $He_Cosmos_DB -n $He_Cosmos_FeaturedCol
+az cosmosdb sql container create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -a $He_Name -d $He_Cosmos_DB -n $He_Cosmos_GenresCol
+az cosmosdb sql container create --throughput 400 --partition-key-path /partitionKey -g $He_Cosmos_RG -a $He_Name -d $He_Cosmos_DB -n $He_Cosmos_MoviesCol
 
 # get Cosmos readonly key (used by App Service)
 export He_Cosmos_RO_Key=$(az cosmosdb keys list -n $He_Name -g $He_Cosmos_RG --query primaryReadonlyMasterKey -o tsv)
@@ -134,8 +133,8 @@ export He_Cosmos_RO_Key=$(az cosmosdb keys list -n $He_Name -g $He_Cosmos_RG --q
 # get readwrite key (used by the imdb import)
 export He_Cosmos_RW_Key=$(az cosmosdb keys list -n $He_Name -g $He_Cosmos_RG --query primaryMasterKey -o tsv)
 
-# import data into movies, actors, genres collection
-docker run -it --rm fourco/imdb-import $He_Name $He_Cosmos_RW_Key imdb actors genres movies
+# import data into 4 containers
+docker run -it --rm retaildevcrew/imdb-import $He_Name $He_Cosmos_RW_Key $He_Cosmos_DB $He_Cosmos_ActorsCol $He_Cosmos_FeaturedCol $He_Cosmos_GenresCol $He_Cosmos_MoviesCol
 
 ```
 
