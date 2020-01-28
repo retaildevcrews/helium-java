@@ -41,7 +41,6 @@ public class RepositoryConfig extends AbstractCosmosConfiguration {
         RequestOptions options = getRequestOptions();
         ConnectionPolicy policy = new ConnectionPolicy();
         RetryOptions retryOptions = new RetryOptions();
-        // C# setting - public readonly CosmosClientOptions CosmosClientOptions = new CosmosClientOptions { RequestTimeout = TimeSpan.FromSeconds(60), MaxRetryAttemptsOnRateLimitedRequests = 9, MaxRetryWaitTimeOnRateLimitedRequests = TimeSpan.FromSeconds(60) };
         retryOptions.maxRetryWaitTimeInSeconds(60);
         policy.retryOptions(retryOptions);
         return CosmosDBConfig.builder(uri, key, dbName).requestOptions(options).connectionPolicy(policy).build();
