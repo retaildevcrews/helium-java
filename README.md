@@ -1,22 +1,17 @@
 ![Docker CI](https://github.com/retaildevcrews/helium-java/workflows/DockerCI/badge.svg)
 
-# Helium JAVA
+# [Work in Progress] Build a Docker containerized, secure Java Spring Boot Web API application using Managed Identity, Key Vault, and Cosmos DB that is designed to be deployed to Azure App Service or AKS
 
-A reference app for using the Azure Web App for Containers service.
+This is a Java Spring Boot Web API reference application designed to "fork and code" with the following features:
 
-## Contributing
+- Securely build, deploy and run an App Service (Web App for Containers) application
+- Use Managed Identity to securely access resources
+- Securely store secrets in Key Vault
+- Securely build and deploy the Docker container from Container Registry or Azure DevOps
+- Connect to and query CosmosDB
+- Automatically send telemetry and logs to Azure Monitor
+- Instructions for setting up Key Vault, ACR, Azure Monitor and Cosmos DB are in the Helium [readme](https://github.com/retaildevcrews/helium)
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit <https://cla.microsoft.com.>
-
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Prerequisites
 
@@ -320,13 +315,16 @@ az webapp restart -g $He_App_RG -n $He_Name
 curl https://${He_Name}.azurewebsites.net/healthz
 ```
 
-## Key concepts
+## Contributing
 
-This sample is Java  WebAPI application designed to "fork and code" with the following features:
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit [Microsoft Contributor License Agreement](https://cla.opensource.microsoft.com).
 
-- Securely build, deploy and run an App Service (Web App for Containers) application
-- Use Managed Identity to securely access resources
-- Securely store secrets in Key Vault
-- Securely build and deploy the Docker container from Container Registry or Azure DevOps
-- Connect to and query CosmosDB
-- Automatically send telemetry and logs to Azure Monitor
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
+provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
