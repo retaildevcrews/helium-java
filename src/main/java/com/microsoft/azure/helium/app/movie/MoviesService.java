@@ -55,6 +55,7 @@ public class MoviesService {
 
         CosmosClient client = context.getBean(CosmosClient.class);
         CosmosDatabase database = client.getDatabase("imdb");
+
         logger.info("databaselink " + database.id());
         CosmosContainer container =  database.getContainer("movies");
 

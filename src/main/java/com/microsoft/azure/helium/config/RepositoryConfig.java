@@ -1,7 +1,9 @@
 package com.microsoft.azure.helium.config;
 
 
+import com.azure.data.cosmos.ConnectionPolicy;
 import com.azure.data.cosmos.ConsistencyLevel;
+import com.azure.data.cosmos.RetryOptions;
 import com.azure.data.cosmos.internal.RequestOptions;
 import com.microsoft.azure.spring.data.cosmosdb.config.AbstractCosmosConfiguration;
 import com.microsoft.azure.spring.data.cosmosdb.config.CosmosDBConfig;
@@ -37,6 +39,10 @@ public class RepositoryConfig extends AbstractCosmosConfiguration {
     @Bean
     public CosmosDBConfig getConfig() {
         RequestOptions options = getRequestOptions();
-        return CosmosDBConfig.builder(uri, key, dbName).requestOptions(options).build();
+        ConnectionPolicy policy = new ConnectionPolicy();
+        RetryOptions retryOptions = new RetryOptions();
+        retryOptions.maxRetryWaitTimeInSeconds(60);
+        policy.retryOptions(retryOptions);
+        return CosmosDBConfig.builder(uri, key, dbName).requestOptions(options).connectionPolicy(policy).build();
     }
 }

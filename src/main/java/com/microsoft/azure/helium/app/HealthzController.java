@@ -23,7 +23,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping(path = "/healthz", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/healthz")
 public class HealthzController {
 
     @Autowired
@@ -41,7 +41,7 @@ public class HealthzController {
     @Autowired
     Environment environment;
 
-    @GetMapping(path="")
+    @GetMapping(path="", produces = "text/plain")
     public  ResponseEntity<String> healthCheck(HttpServletResponse response) throws CosmosClientException {
         HashMap<String, Object> healthCheckResult = runHealthChecks();
         int resCode = healthCheckResult.get("status") == IeTfStatus.down.name() ? HttpStatus.SERVICE_UNAVAILABLE.value() : HttpStatus.OK.value();
@@ -53,7 +53,7 @@ public class HealthzController {
     }
 
 
-    @GetMapping(path="/ietf")
+    @GetMapping(path="/ietf", produces = "application/health+json")
     public ResponseEntity<HashMap<String, Object>> ietfHealthCheck(HttpServletResponse response) throws CosmosClientException {
         HashMap<String, Object> healthCheckResult = runHealthChecks();
         int resCode = healthCheckResult.get("status") == IeTfStatus.down.name() ? HttpStatus.SERVICE_UNAVAILABLE.value(): HttpStatus.OK.value();
