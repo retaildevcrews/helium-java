@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -79,21 +76,25 @@ public class HealthzController {
         ieTfResult.put("version", buildConfig.getBuildVersion());
 
 
-        LinkedHashMap<String, HashMap<String, String>> healthChecks = new LinkedHashMap<>();
+        LinkedHashMap<String, LinkedHashMap<String, Object>> healthChecks = new LinkedHashMap<>();
         try {
             healthChecks.put("getGenres", runHealthChecksOnEndpoints("/api/genres", 400));
             healthChecks.put("getActorById", runHealthChecksOnEndpoints("/api/actors/nm0000173", 250));
             healthChecks.put("getMovieById", runHealthChecksOnEndpoints("/api/movies/tt0133093", 250));
             healthChecks.put("searchMovies", runHealthChecksOnEndpoints("/api/movies?q=ring", 400));
             healthChecks.put("searchActors", runHealthChecksOnEndpoints("/api/actors?q=nicole", 400));
-            healthChecks.put("getTopRatedMovie", runHealthChecksOnEndpoints("/api/movies?toprated=true", 400));
+            healthChecks.put("getTopRatedMovies", runHealthChecksOnEndpoints("/api/movies?toprated=true", 400));
 
-            for(Map.Entry<String, HashMap<String, String>> entry : healthChecks.entrySet()) {
-                HashMap check = entry.getValue();
-                if (check.containsKey(IeTfStatus.pass.name())) {
+            // if any health check has a warn or down status -  set overall status to the worst status
+            for(Map.Entry<String, LinkedHashMap<String, Object>> entry : healthChecks.entrySet()) {
+                LinkedHashMap check = entry.getValue();
+                if (check.containsValue(IeTfStatus.pass.name())) {
                     ieTfResult.put("status", IeTfStatus.pass.name());
+                } else if(check.containsValue(IeTfStatus.warn.name())){
+                    ieTfResult.put("status", IeTfStatus.warn.name());
                 }
-                if (check.containsKey(IeTfStatus.fail.name())) {
+                if (check.containsValue(IeTfStatus.fail.name())) {
+                    ieTfResult.put("status", IeTfStatus.fail.name());
                     break;
                 }
             }
@@ -111,11 +112,11 @@ public class HealthzController {
         }
     }
 
-    private HashMap<String, String> runHealthChecksOnEndpoints(String endpoint, Integer target) throws CosmosClientException {
+    private LinkedHashMap<String, Object> runHealthChecksOnEndpoints(String endpoint, Integer target) throws CosmosClientException {
         Date start = new Date();
-        LinkedHashMap<String, String> healthCheckResult = new LinkedHashMap<>();
-
-
+        LinkedHashMap<String, Object> healthCheckResult = new LinkedHashMap<>();
+        ArrayList<String> endPoints = new ArrayList<String>();
+        endPoints.add(endpoint);
         try {
             if (endpoint == "/api/genres") {
                 genresService.getAllGenres();
@@ -147,7 +148,7 @@ public class HealthzController {
 
             if (duration > target) {
                 healthCheckResult.put("status", IeTfStatus.warn.name());
-                healthCheckResult.put("affectedEndpoints", endpoint);
+                healthCheckResult.put("affectedEndpoints", endPoints);
                 healthCheckResult.put("message", "Request exceeded expected duration");
             }
         }catch(Exception ex){
@@ -155,14 +156,13 @@ public class HealthzController {
 
             healthCheckResult.put("observedValue", duration.toString());
             healthCheckResult.put("status", IeTfStatus.fail.name());
-
             healthCheckResult.put("targetValue", target.toString());
             healthCheckResult.put("time", start.toInstant().toString());
-            healthCheckResult.put("affectedEndpoints", endpoint);
+            healthCheckResult.put("affectedEndpoints", endPoints);
             healthCheckResult.put("message", ex.getMessage());
             throw ex;
         }
-            return healthCheckResult;
+        return healthCheckResult;
 
     }
 }
