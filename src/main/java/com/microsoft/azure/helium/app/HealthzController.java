@@ -141,7 +141,7 @@ public class HealthzController {
             } else {
                 moviesService.getAllMovies(null, null, (java.util.Optional.of(0)), (java.util.Optional.of(0.0)), (java.util.Optional.of(Boolean.TRUE)), null, (java.util.Optional.of(100)), (java.util.Optional.of(1)));
             }
-            healthCheckResult.put("duration", new Date().getTime() - start.getTime());
+            healthCheckResult.put("observedValue", new Date().getTime() - start.getTime());
 
 
         }catch(Exception ex){
@@ -155,7 +155,7 @@ public class HealthzController {
             throw ex;
         }
 
-        if ((Long) healthCheckResult.get("duration") > (Long) healthCheckResult.get("targetValue")) {
+        if ((Long) healthCheckResult.get("observedValue") > (Long) healthCheckResult.get("targetValue")) {
             healthCheckResult.put("status", IeTfStatus.warn.name());
             healthCheckResult.put("affectedEndpoints", endPoints);
             healthCheckResult.put("message", "Request exceeded expected duration");
