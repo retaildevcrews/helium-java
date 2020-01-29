@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -68,14 +69,17 @@ public class HealthzController {
         if(webInstanceRole == null || webInstanceRole.isEmpty()){
             webInstanceRole = "unknown";
         }
-        HashMap<String, Object> ieTfResult = new HashMap<>();
+
+
+        LinkedHashMap<String, Object> ieTfResult = new LinkedHashMap<>();
         ieTfResult.put("status", IeTfStatus.pass.name());
         ieTfResult.put("serviceId", "helium-java");
-        ieTfResult.put("description", "helium-java");
-        ieTfResult.put("version", buildConfig.getBuildVersion());
+        ieTfResult.put("description", "Helium Java Health Check");
         ieTfResult.put("instance", webInstanceRole);
+        ieTfResult.put("version", buildConfig.getBuildVersion());
 
-        HashMap<String, HashMap<String, String>> healthChecks = new HashMap<>();
+
+        LinkedHashMap<String, HashMap<String, String>> healthChecks = new LinkedHashMap<>();
         try {
             healthChecks.put("getGenres", runHealthChecksOnEndpoints("/api/genres", 400));
             healthChecks.put("getActorById", runHealthChecksOnEndpoints("/api/actors/nm0000173", 250));
@@ -98,52 +102,67 @@ public class HealthzController {
             return ieTfResult;
 
         }catch (Exception ex) {
-            System.out.println("Error is " + ex.getMessage());
+            System.out.println("CosmosException: Healthz:" + ex.getMessage());
             ieTfResult.put("status", IeTfStatus.fail.name());
             ieTfResult.put("cosmosException", ex.getMessage());
             ieTfResult.put("checks", healthChecks);
             return ieTfResult;
+
         }
     }
 
     private HashMap<String, String> runHealthChecksOnEndpoints(String endpoint, Integer target) throws CosmosClientException {
         Date start = new Date();
+        LinkedHashMap<String, String> healthCheckResult = new LinkedHashMap<>();
 
-        if (endpoint == "/api/genres") {
-            genresService.getAllGenres();
-        }else if (endpoint == "/api/actors/nm0000173") {
-            String [] parts = endpoint.split("/");
-            actorsService.getActor( parts[3]);
-        }else if (endpoint == "/api/movies/tt0133093") {
-            String [] parts = endpoint.split("/");
-            moviesService.getMovie(parts[3]);
-        }else if (endpoint == "/api/movies?q=ring") {
-            String [] parts = endpoint.split("=");
-            moviesService.getAllMovies(java.util.Optional.of(parts[1]), null, (java.util.Optional.of(0)), (java.util.Optional.of(0.0)),(java.util.Optional.of(Boolean.FALSE)), null, (java.util.Optional.of(100)), (java.util.Optional.of(0)));
-        }else if (endpoint == "/api/actors?q=nicole") {
-            String [] parts = endpoint.split("=");
-            actorsService.getAllActors(java.util.Optional.of(parts[1]),  (java.util.Optional.of(0)),  (java.util.Optional.of(100)), null);
-        }else{
-            moviesService.getAllMovies(null, null, (java.util.Optional.of(0)), (java.util.Optional.of(0.0)),(java.util.Optional.of(Boolean.TRUE)), null, (java.util.Optional.of(100)), (java.util.Optional.of(1)));
+
+        try {
+            if (endpoint == "/api/genres") {
+                genresService.getAllGenres();
+            } else if (endpoint == "/api/actors/nm0000173") {
+                String[] parts = endpoint.split("/");
+                actorsService.getActor(parts[3]);
+            } else if (endpoint == "/api/movies/tt0133093") {
+                String[] parts = endpoint.split("/");
+                moviesService.getMovie(parts[3]);
+            } else if (endpoint == "/api/movies?q=ring") {
+                String[] parts = endpoint.split("=");
+                moviesService.getAllMovies(java.util.Optional.of(parts[1]), null, (java.util.Optional.of(0)), (java.util.Optional.of(0.0)), (java.util.Optional.of(Boolean.FALSE)), null, (java.util.Optional.of(100)), (java.util.Optional.of(0)));
+            } else if (endpoint == "/api/actors?q=nicole") {
+                String[] parts = endpoint.split("=");
+                actorsService.getAllActors(java.util.Optional.of(parts[1]), (java.util.Optional.of(0)), (java.util.Optional.of(100)), null);
+            } else {
+                moviesService.getAllMovies(null, null, (java.util.Optional.of(0)), (java.util.Optional.of(0.0)), (java.util.Optional.of(Boolean.TRUE)), null, (java.util.Optional.of(100)), (java.util.Optional.of(1)));
+            }
+
+            Long duration = new Date().getTime() - start.getTime();
+
+            healthCheckResult.put("status", IeTfStatus.pass.name());
+            healthCheckResult.put("componentType", "CosmosDB");
+            healthCheckResult.put("observedUnit", "ms");
+            healthCheckResult.put("observedValue", duration.toString());
+            healthCheckResult.put("targetValue", target.toString());
+            healthCheckResult.put("time", start.toInstant().toString());
+
+
+            if (duration > target) {
+                healthCheckResult.put("status", IeTfStatus.warn.name());
+                healthCheckResult.put("affectedEndpoints", endpoint);
+                healthCheckResult.put("message", "Request exceeded expected duration");
+            }
+        }catch(Exception ex){
+            Long duration = new Date().getTime() - start.getTime();
+
+            healthCheckResult.put("observedValue", duration.toString());
+            healthCheckResult.put("status", IeTfStatus.fail.name());
+
+            healthCheckResult.put("targetValue", target.toString());
+            healthCheckResult.put("time", start.toInstant().toString());
+            healthCheckResult.put("affectedEndpoints", endpoint);
+            healthCheckResult.put("message", ex.getMessage());
+            throw ex;
         }
-
-        Long duration = new Date().getTime() - start.getTime();
-
-        HashMap<String, String> healthCheckResult = new HashMap<>();
-        healthCheckResult.put("status", IeTfStatus.pass.name());
-        healthCheckResult.put("componentType", "CosmosDB");
-        healthCheckResult.put("observedUnit", "ms");
-        healthCheckResult.put("observedValue", duration.toString());
-        healthCheckResult.put("targetValue", target.toString());
-        healthCheckResult.put("time", start.toInstant().toString());
-        healthCheckResult.put("affectedEndpoints", endpoint);
-
-        if (duration > target) {
-            healthCheckResult.put("status", IeTfStatus.warn.name());
-            healthCheckResult.put("message", "Request exceeded expected duration");
-        }
-
-        return healthCheckResult;
+            return healthCheckResult;
 
     }
 }
