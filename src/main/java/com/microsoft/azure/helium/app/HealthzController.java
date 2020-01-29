@@ -44,7 +44,7 @@ public class HealthzController {
     @GetMapping(path="", produces = "text/plain")
     public  ResponseEntity<String> healthCheck(HttpServletResponse response) throws CosmosClientException {
         HashMap<String, Object> healthCheckResult = runHealthChecks();
-        int resCode = healthCheckResult.get("status") == IeTfStatus.down.name() ? HttpStatus.SERVICE_UNAVAILABLE.value() : HttpStatus.OK.value();
+        int resCode = healthCheckResult.get("status") == IeTfStatus.fail.name() ? HttpStatus.SERVICE_UNAVAILABLE.value() : HttpStatus.OK.value();
         String status = healthCheckResult.get("status").toString();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.setContentType(MediaType.TEXT_PLAIN);
@@ -56,7 +56,7 @@ public class HealthzController {
     @GetMapping(path="/ietf", produces = "application/health+json")
     public ResponseEntity<HashMap<String, Object>> ietfHealthCheck(HttpServletResponse response) throws CosmosClientException {
         HashMap<String, Object> healthCheckResult = runHealthChecks();
-        int resCode = healthCheckResult.get("status") == IeTfStatus.down.name() ? HttpStatus.SERVICE_UNAVAILABLE.value(): HttpStatus.OK.value();
+        int resCode = healthCheckResult.get("status") == IeTfStatus.fail.name() ? HttpStatus.SERVICE_UNAVAILABLE.value(): HttpStatus.OK.value();
         response.setHeader("Content-Type", "application/health+json");
         return new ResponseEntity<HashMap<String, Object>>(healthCheckResult, HttpStatus.valueOf(resCode));
 
@@ -69,7 +69,7 @@ public class HealthzController {
             webInstanceRole = "unknown";
         }
         HashMap<String, Object> ieTfResult = new HashMap<>();
-        ieTfResult.put("status", IeTfStatus.up.name());
+        ieTfResult.put("status", IeTfStatus.pass.name());
         ieTfResult.put("serviceId", "helium-java");
         ieTfResult.put("description", "helium-java");
         ieTfResult.put("version", buildConfig.getBuildVersion());
@@ -86,10 +86,10 @@ public class HealthzController {
 
             for(Map.Entry<String, HashMap<String, String>> entry : healthChecks.entrySet()) {
                 HashMap check = entry.getValue();
-                if (check.containsKey(IeTfStatus.up.name())) {
-                    ieTfResult.put("status", IeTfStatus.up.name());
+                if (check.containsKey(IeTfStatus.pass.name())) {
+                    ieTfResult.put("status", IeTfStatus.pass.name());
                 }
-                if (check.containsKey(IeTfStatus.down.name())) {
+                if (check.containsKey(IeTfStatus.fail.name())) {
                     break;
                 }
             }
@@ -99,7 +99,7 @@ public class HealthzController {
 
         }catch (Exception ex) {
             System.out.println("Error is " + ex.getMessage());
-            ieTfResult.put("status", IeTfStatus.down.name());
+            ieTfResult.put("status", IeTfStatus.fail.name());
             ieTfResult.put("cosmosException", ex.getMessage());
             ieTfResult.put("checks", healthChecks);
             return ieTfResult;
@@ -130,7 +130,7 @@ public class HealthzController {
         Long duration = new Date().getTime() - start.getTime();
 
         HashMap<String, String> healthCheckResult = new HashMap<>();
-        healthCheckResult.put("status", IeTfStatus.up.name());
+        healthCheckResult.put("status", IeTfStatus.pass.name());
         healthCheckResult.put("componentType", "CosmosDB");
         healthCheckResult.put("observedUnit", "ms");
         healthCheckResult.put("observedValue", duration.toString());
