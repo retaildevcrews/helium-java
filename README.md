@@ -116,7 +116,7 @@ export He_Cosmos_MoviesCol=movies
 az cosmosdb create -g $He_Cosmos_RG -n $He_Name
 
 # create the database
-az cosmosdb sql database create -d $He_Cosmos_DB -g $He_Cosmos_RG -n $He_Name
+az cosmosdb sql database create -a $He_Name -n $He_Cosmos_DB -g $He_Cosmos_RG
 
 # create the containers
 # 400 is the minimum RUs
@@ -170,19 +170,26 @@ export dev_Object_Id=$(az ad user show --id {developer email address} --query ob
 # grant Key Vault access to each developer (optional)
 az keyvault set-policy -n $He_Name --secret-permissions get list --key-permissions get list --object-id $dev_Object_Id
 
+```
 
 Run the application locally
 
 # IMP: security hole in keyvault MSI
-KeyVault MSI does not work locally , there is a CSE feedback issue filed on the same
+KeyVault MSI does not work locally, there is a CSE feedback issue filed on the same
 
 To get KeyVault working locally we would need to go thru clear text route, for that update the clientid and clientkey by uncommenting these lines in application.properties and populating clientid and clientkey
+
+```bash
+
 #azure.keyvault.uri=https://{kvurl}.vault.azure.net/
 #azure.keyvault.client-id={client_id}
 #azure.keyvault.client-key={client_key}
 
-```bash
+```
 
+Once you are done with the above, you should be able to build and test locally with one of the following commands
+
+```bash
 # run locally with unit tests
 mvn clean package
 
