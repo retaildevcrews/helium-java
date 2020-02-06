@@ -153,8 +153,7 @@ az keyvault create -g $He_App_RG -n $He_Name
 az keyvault secret set -o table --vault-name $He_Name --name "azure-cosmosdb-uri" --value $He_Cosmos_URL
 az keyvault secret set -o table --vault-name $He_Name --name "azure-cosmosdb-key" --value $He_Cosmos_RO_Key
 az keyvault secret set -o table --vault-name $He_Name --name "azure-cosmosdb-database" --value $He_Cosmos_DB
-az keyvault secret set -o table --vault-name $He_Name --name "azure-cosmosdb-coll" --value $He_Cosmos_Col
-
+az keyvault secret set -o table --vault-name $He_Name --name "azure-cosmosdb-coll" --value $He_Cosmos_MoviesCol
 
 ```
 
