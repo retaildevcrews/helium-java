@@ -108,7 +108,7 @@ public class MoviesService {
 
             String offsetLimit = " offset " + offset + " limit " + limit;
 
-            if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
+            if (query != null && query.isPresent() && !StringUtils.isEmpty(query.get())) {
                 //  select m.movieId, m.type, m.textSearch, m.title, m.year, m.rating, m.runtime, m.genres, m.roles from m where (m.type='Movie' and contains(m.textSearch, 'talk to her')
                 sql += " and contains(m.textSearch,'" + query.get().toLowerCase() + "')";
             }
@@ -136,7 +136,7 @@ public class MoviesService {
 
             }
 
-            if (genre.isPresent() && !StringUtils.isEmpty(genre.get())) {
+            if (genre != null &&  genre.isPresent() && !StringUtils.isEmpty(genre.get())) {
                 Optional<Genre> genreResp = genresRepository.findById(genre.get());
                 // get movies by genre
                 String genreQuery = " and array_contains(m.genres,'" + genreResp.get().getGenre() + "')";
