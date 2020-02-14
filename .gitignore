@@ -41,7 +41,6 @@ buildNumber.properties
 src/main/resources/application.properties
 src/main/resources/application.properties
 
-.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
