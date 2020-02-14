@@ -13,6 +13,6 @@ public class TestHandler {
 
   public Mono<ServerResponse> hello(ServerRequest request) {
     return ServerResponse.ok().contentType(MediaType.TEXT_PLAIN)
-      .body(BodyInserters.fromValue("Hello Webflux"));
+      .body(BodyInserters.fromValue("Hello Webflux\n"));
   }
 }
