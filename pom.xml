@@ -92,7 +92,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.microsoft.azure.helium.Application</mainClass>
+              <mainClass>com.microsoft.azure.helium.HeliumJavaApplication</mainClass>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
