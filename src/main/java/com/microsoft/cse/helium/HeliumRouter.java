@@ -1,4 +1,4 @@
-package com.microsoft.azure.helium;
+package com.microsoft.cse.helium;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;

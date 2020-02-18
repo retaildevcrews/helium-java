@@ -8,7 +8,7 @@
 		<version>2.2.4.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.microsoft.azure</groupId>
+	<groupId>com.microsoft.cse</groupId>
 	<artifactId>helium</artifactId>
 	<version>0.1</version>
 	<name>helium-java</name>
@@ -92,7 +92,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.microsoft.azure.helium.HeliumJavaApplication</mainClass>
+              <mainClass>com.microsoft.cse.helium.HeliumJavaApplication</mainClass>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
