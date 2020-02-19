@@ -1,4 +1,4 @@
-package com.microsoft.azure.helium.app.controllers;
+package com.microsoft.cse.helium.app.controllers;
 
 // import com.microsoft.applicationinsights.core.dependencies.apachecommons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;

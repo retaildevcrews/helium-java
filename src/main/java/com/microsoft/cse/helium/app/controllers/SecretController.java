@@ -1,4 +1,4 @@
-package com.microsoft.azure.helium.app.controllers;
+package com.microsoft.cse.helium.app.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

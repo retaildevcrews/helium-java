@@ -1,3 +1,5 @@
+package com.microsoft.cse.helium.app.config;
+
 /*
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
