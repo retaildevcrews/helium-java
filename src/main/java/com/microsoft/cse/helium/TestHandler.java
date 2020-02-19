@@ -1,4 +1,4 @@
-package com.microsoft.azure.helium;
+package com.microsoft.cse.helium;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

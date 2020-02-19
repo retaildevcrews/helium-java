@@ -1,4 +1,4 @@
-package com.microsoft.azure.helium.app.config;
+package com.microsoft.cse.helium.app.config;
 
 
 import org.slf4j.Logger;
