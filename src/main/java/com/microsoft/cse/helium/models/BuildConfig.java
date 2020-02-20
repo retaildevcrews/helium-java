@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class BuildConfig {
 
-        @Autowired
+    @Autowired
     BuildProperties buildProperties;
 
     public String getBuildVersion(){
