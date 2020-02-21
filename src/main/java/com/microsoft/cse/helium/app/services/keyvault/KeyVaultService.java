@@ -29,7 +29,7 @@ public class KeyVaultService implements IKeyVaultService
         _keyVaultName = keyVaultName.trim().toUpperCase();
         _environmentFlag = environmentFlag.trim().toUpperCase();
 
-        // validate environment flag and create credential object
+        // validate params and create credential object
         if(_environmentFlag == "MSI") {
             _credentials = new MSICredentials(AzureEnvironment.AZURE);
         } else if (_environmentFlag == "CLI") {
@@ -42,11 +42,11 @@ public class KeyVaultService implements IKeyVaultService
                 throw(ex);
             }
         } else {
-            throw new IllegalArgumentException("helium.environment.flag must be 'MSI' or 'CLI'.  Check ${He_EnvironmentFlag} in your environment variables.");
+            throw new IllegalArgumentException("helium.environment.flag (value='" + _environmentFlag + "') must be 'MSI' or 'CLI'.  Check ${He_EnvironmentFlag} in your environment variables.");
         }
         
         if(!checkKeyVaultName(_keyVaultName)) {
-            throw new IllegalArgumentException("helium.keyvault.name must be 3-24 characters long, begin with a character, may contain alphanumeric or hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in your environment variables.");
+            throw new IllegalArgumentException("helium.keyvault.name (value='" + _keyVaultName + "') must be 3-24 characters long, begin with a character, may contain alphanumeric or hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in your environment variables.");
         }
 
         KeyVaultClient keyVaultClient = new KeyVaultClient(_credentials);
@@ -74,6 +74,8 @@ public class KeyVaultService implements IKeyVaultService
 
     public String getKey(String keyName){
         String returnValue="";
+        
+        //SecretBundle secret = keyVaultClient.getSecret("https://jf2he.vault.azure.net","CosmosKey","9228944c9038476f8f7d1be86c333c20");
 
         return returnValue;
     }
