@@ -1,9 +1,11 @@
 package com.microsoft.cse.helium.app.services.keyvault;
 
+import com.microsoft.azure.keyvault.models.CertificateBundle;
+import com.microsoft.azure.keyvault.models.KeyBundle;
 
 interface IKeyVaultService {
 
-    String getKey(String keyName);
     String getSecret (String secretName);
-    String getCertificate (String certName);
+    KeyBundle getKey(String keyName);
+    CertificateBundle getCertificate (String certName);
 }
