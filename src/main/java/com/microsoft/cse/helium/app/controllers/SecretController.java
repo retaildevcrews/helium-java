@@ -18,6 +18,7 @@ import com.microsoft.azure.credentials.MSICredentials;
 import com.microsoft.azure.credentials.AzureCliCredentials;
 import com.microsoft.azure.keyvault.KeyVaultClient;
 import com.microsoft.azure.keyvault.models.SecretBundle;
+import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
 
 @RestController
 @RequestMapping (value = "api/secret")
@@ -25,41 +26,26 @@ class SecretController{
 
     private static final Logger logger = LoggerFactory.getLogger(SecretController.class);
 
+    @Autowired
+    private KeyVaultService _keyVaultService;
+
     @GetMapping(value={"/",""}, produces = MediaType.TEXT_PLAIN_VALUE)
     public Mono<ResponseEntity<String>> getSecret(){
 
-        String returnValue = "Return from getSecret()";
-/*
-        MSICredentials credentials = new MSICredentials(AzureEnvironment.AZURE);
-        KeyVaultClient keyVaultClient = new KeyVaultClient(credentials);
-*/
+        String returnValue="";
+
         try{
-            AzureCliCredentials cliCreds = AzureCliCredentials.create();
-            KeyVaultClient keyVaultClient = new KeyVaultClient(cliCreds);
-    
-            SecretBundle secret = keyVaultClient.getSecret("https://jf2he.vault.azure.net","CosmosKey","9228944c9038476f8f7d1be86c333c20");
-            returnValue += " - " + secret;
+   
+            String secretValue = _keyVaultService.getSecret("CosmosKey");
+            returnValue = secretValue;
         }
         catch (Exception ex)
         {
-            logger.error(ex.getMessage());
+            logger.error("Error~SecretController~" + ex.getMessage());
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
         }
 
-
         return Mono.just(ResponseEntity.ok()
             .body(returnValue));
     }
-
-    /* Example with .header() */
-    /*
-    public Mono<ResponseEntity<String>> getSecret(){
-        String contentTypeKey = "Content-Type";
-        String contentTypeValue = "text/html";
-        String returnValue = "Return from getSecret()";
-
-        return Mono.just(ResponseEntity.ok()
-            .header(contentTypeKey, contentTypeValue)    
-            .body(returnValue));
-    }
-    */
 }

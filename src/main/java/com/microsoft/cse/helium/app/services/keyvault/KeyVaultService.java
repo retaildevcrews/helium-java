@@ -32,9 +32,9 @@ public class KeyVaultService implements IKeyVaultService
         _environmentFlag = environmentFlag.trim().toUpperCase();
 
         // validate params and create credential object
-        if(_environmentFlag == "MSI") {
+        if(_environmentFlag.equals("MSI")) {
             _credentials = new MSICredentials(AzureEnvironment.AZURE);
-        } else if (_environmentFlag == "CLI") {
+        } else if (_environmentFlag.equals("CLI")) {
             try{
                 _credentials = AzureCliCredentials.create();
             }
@@ -51,7 +51,7 @@ public class KeyVaultService implements IKeyVaultService
             throw new IllegalArgumentException("helium.keyvault.name (value='" + _keyVaultName + "') must be 3-24 characters long, begin with a character, may contain alphanumeric or hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in your environment variables.");
         }
 
-        KeyVaultClient keyVaultClient = new KeyVaultClient(_credentials);
+        _keyVaultClient = new KeyVaultClient(_credentials);
 
     }
 
@@ -82,7 +82,9 @@ public class KeyVaultService implements IKeyVaultService
     public String getSecret(String secretName){
         String returnValue="";
         
-        SecretBundle secret = _keyVaultClient.getSecret(getKeyVaultUri(), secretName);
+        String kvUri = getKeyVaultUri();
+
+        SecretBundle secret = _keyVaultClient.getSecret(kvUri, secretName);
         returnValue = secret.value();
 
         return returnValue;
