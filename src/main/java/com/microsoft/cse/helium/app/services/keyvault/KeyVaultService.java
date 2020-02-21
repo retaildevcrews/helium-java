@@ -12,6 +12,8 @@ import com.microsoft.azure.credentials.MSICredentials;
 import com.microsoft.azure.credentials.AzureCliCredentials;
 import com.microsoft.azure.credentials.AzureTokenCredentials;
 import com.microsoft.azure.keyvault.KeyVaultClient;
+import com.microsoft.azure.keyvault.models.CertificateBundle;
+import com.microsoft.azure.keyvault.models.KeyBundle;
 import com.microsoft.azure.keyvault.models.SecretBundle;
 
 @Service
@@ -72,24 +74,29 @@ public class KeyVaultService implements IKeyVaultService
         return validSetting;
     }
 
-    public String getKey(String keyName){
+    public String getKeyVaultUri(){
+        String kvUri = "https://" + _keyVaultName + ".vault.azure.net";
+        return kvUri;
+    }
+
+    public String getSecret(String secretName){
         String returnValue="";
         
-        //SecretBundle secret = keyVaultClient.getSecret("https://jf2he.vault.azure.net","CosmosKey","9228944c9038476f8f7d1be86c333c20");
+        SecretBundle secret = _keyVaultClient.getSecret(getKeyVaultUri(), secretName);
+        returnValue = secret.value();
 
         return returnValue;
     }
 
-    public String getSecret (String secretName){
-        String returnValue="";
+    public KeyBundle getKey (String keyName){
 
-        return returnValue;
+        return _keyVaultClient.getKey(getKeyVaultUri(), keyName);
     }
 
-    public String getCertificate (String certName){
-        String returnValue="";
+    public CertificateBundle getCertificate (String certName){
 
-        return returnValue;
+        return _keyVaultClient.getCertificate(getKeyVaultUri(), certName);
+
     }
 
 }
