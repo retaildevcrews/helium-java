@@ -1,3 +1,4 @@
+/*
 package com.microsoft.azure.helium.app.demo;
 
 import org.junit.jupiter.api.Test;
@@ -11,3 +12,4 @@ class HeliumJavaApplicationTests {
 	}
 
 }
+*/

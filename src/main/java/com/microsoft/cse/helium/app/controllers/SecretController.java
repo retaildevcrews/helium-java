@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 import com.microsoft.azure.AzureEnvironment;
 import com.microsoft.azure.credentials.MSICredentials;
+import com.microsoft.azure.credentials.AzureCliCredentials;
 import com.microsoft.azure.keyvault.KeyVaultClient;
 import com.microsoft.azure.keyvault.models.SecretBundle;
 
@@ -28,10 +29,21 @@ class SecretController{
     public Mono<ResponseEntity<String>> getSecret(){
 
         String returnValue = "Return from getSecret()";
-
+/*
         MSICredentials credentials = new MSICredentials(AzureEnvironment.AZURE);
         KeyVaultClient keyVaultClient = new KeyVaultClient(credentials);
-        SecretBundle secret = keyVaultClient.getSecret("https://jf2he.vault.azure.net","CosmosKey","9228944c9038476f8f7d1be86c333c20");
+*/
+        try{
+            AzureCliCredentials cliCreds = AzureCliCredentials.create();
+            KeyVaultClient keyVaultClient = new KeyVaultClient(cliCreds);
+    
+            SecretBundle secret = keyVaultClient.getSecret("https://jf2he.vault.azure.net","CosmosKey","9228944c9038476f8f7d1be86c333c20");
+            returnValue += " - " + secret;
+        }
+        catch (Exception ex)
+        {
+            logger.error(ex.getMessage());
+        }
 
 
         return Mono.just(ResponseEntity.ok()
