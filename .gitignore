@@ -66,4 +66,5 @@ src/main/resources/application.properties
 # Maven
 log/
 target/
+
 run.sh
