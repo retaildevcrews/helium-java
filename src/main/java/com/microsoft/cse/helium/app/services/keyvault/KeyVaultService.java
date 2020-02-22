@@ -31,7 +31,6 @@ public class KeyVaultService implements IKeyVaultService
         _keyVaultName = keyVaultName.trim().toUpperCase();
         _environmentFlag = environmentFlag.trim().toUpperCase();
 
-        // validate params and create credential object
         if(_environmentFlag.equals("MSI")) {
             _credentials = new MSICredentials(AzureEnvironment.AZURE);
         } else if (_environmentFlag.equals("CLI")) {
