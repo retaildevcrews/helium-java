@@ -89,12 +89,10 @@ public class KeyVaultService implements IKeyVaultService
     }
 
     public KeyBundle getKey (String keyName){
-
         return _keyVaultClient.getKey(getKeyVaultUri(), keyName);
     }
 
     public CertificateBundle getCertificate (String certName){
-
         return _keyVaultClient.getCertificate(getKeyVaultUri(), certName);
     }
 
