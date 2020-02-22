@@ -1,4 +1,4 @@
-package com.microsoft.cse.helium.controllers;
+package com.microsoft.cse.helium.app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import reactor.core.publisher.Flux;
-import com.microsoft.cse.helium.models.BuildConfig;;
+import com.microsoft.cse.helium.app.config.BuildConfig;;
 
 @RestController
 public class VersionController {

@@ -19,7 +19,7 @@ import com.microsoft.azure.keyvault.models.SecretBundle;
 @Service
 public class KeyVaultService implements IKeyVaultService
 {
-    private String _keyVaultName = "";
+    private String _keyVaultName;
     private String _environmentFlag = "";
     private AzureTokenCredentials _credentials;
     private KeyVaultClient _keyVaultClient;
@@ -37,8 +37,7 @@ public class KeyVaultService implements IKeyVaultService
             try{
                 _credentials = AzureCliCredentials.create();
             }
-            catch (IOException ex)
-            {
+            catch (IOException ex){
                 _logger.error(ex.getMessage());
                 throw(ex);
             }
@@ -97,7 +96,6 @@ public class KeyVaultService implements IKeyVaultService
     public CertificateBundle getCertificate (String certName){
 
         return _keyVaultClient.getCertificate(getKeyVaultUri(), certName);
-
     }
 
 }

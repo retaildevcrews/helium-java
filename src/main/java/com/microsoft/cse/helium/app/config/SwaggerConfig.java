@@ -1,4 +1,4 @@
-package com.microsoft.cse.helium.models;
+package com.microsoft.cse.helium.app.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

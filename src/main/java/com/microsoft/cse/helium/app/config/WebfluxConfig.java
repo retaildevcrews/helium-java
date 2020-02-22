@@ -1,4 +1,4 @@
-package com.microsoft.cse.helium.models;
+package com.microsoft.cse.helium.app.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
