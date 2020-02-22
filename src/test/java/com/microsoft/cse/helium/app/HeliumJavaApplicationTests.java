@@ -1,4 +1,5 @@
-package com.microsoft.cse.helium.app.demo;
+/*
+package com.microsoft.azure.helium.app.demo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,3 +12,4 @@ class HeliumJavaApplicationTests {
 	}
 
 }
+*/
