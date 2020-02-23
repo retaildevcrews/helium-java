@@ -120,27 +120,25 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-  <build>
+    <build>
     <plugins>
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>com.microsoft.cse.helium.app.HeliumJavaApplication</mainClass>
-              <addDefaultImplementationEntries>false</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Implementation-Build>$\{buildNumber}</Implementation-Build>
-            </manifestEntries>
-          </archive>
-
-        </configuration>
-      </plugin>
-      <plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+			<configuration>
+				<archive>
+					<manifest>
+					<addClasspath>true</addClasspath>
+					<mainClass>com.microsoft.cse.helium.app.HeliumJavaApplication</mainClass>
+					<addDefaultImplementationEntries>false</addDefaultImplementationEntries>
+					</manifest>
+					<manifestEntries>
+					<Implementation-Build>$\{buildNumber}</Implementation-Build>
+					</manifestEntries>
+				</archive>
+			</configuration>
+		</plugin>
+	    <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptorRefs>
@@ -189,5 +187,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

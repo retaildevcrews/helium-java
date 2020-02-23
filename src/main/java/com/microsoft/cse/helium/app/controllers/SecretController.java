@@ -10,32 +10,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import reactor.core.publisher.Mono;
 
 import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
 
 @RestController
 @RequestMapping (value = "api/secret")
-class SecretController{
+public class SecretController{
 
-    private static final Logger logger = LoggerFactory.getLogger(SecretController.class);
+    private static final Logger _logger = LoggerFactory.getLogger(SecretController.class);
 
     @Autowired
     private KeyVaultService _keyVaultService;
+
+    @Value("${helium.keyvault.secretName}")
+    private String _secretName;
 
     @GetMapping(value={"/",""}, produces = MediaType.TEXT_PLAIN_VALUE)
     public Mono<ResponseEntity<String>> getSecret(){
 
         String returnValue="";
-
         try{
    
-            String secretValue = _keyVaultService.getSecret("CosmosKey");
+            String secretValue = _keyVaultService.getSecret(_secretName);
             returnValue = secretValue;
         }
         catch (Exception ex)
         {
-            logger.error("Error~SecretController~" + ex.getMessage());
+            _logger.error("Error~SecretController~" + ex.getMessage());
             return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
         }
 

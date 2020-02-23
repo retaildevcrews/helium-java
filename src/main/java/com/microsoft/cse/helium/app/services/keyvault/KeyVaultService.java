@@ -25,15 +25,19 @@ public class KeyVaultService implements IKeyVaultService
     private KeyVaultClient _keyVaultClient;
 
     private final String _keyVaultNameRegex ="^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$";
+
+    public static final String USE_MSI="MSI";
+    public static final String USE_CLI="CLI";
+
     private static final Logger _logger = LoggerFactory.getLogger(KeyVaultService.class);
 
     public KeyVaultService (@Value("${helium.keyvault.name}") String keyVaultName, @Value("${helium.environment.flag}") String environmentFlag) throws Exception {
         _keyVaultName = keyVaultName.trim().toUpperCase();
         _environmentFlag = environmentFlag.trim().toUpperCase();
 
-        if(_environmentFlag.equals("MSI")) {
+        if(_environmentFlag.equals(USE_MSI)) {
             _credentials = new MSICredentials(AzureEnvironment.AZURE);
-        } else if (_environmentFlag.equals("CLI")) {
+        } else if (_environmentFlag.equals(USE_CLI)) {
             try{
                 _credentials = AzureCliCredentials.create();
             }
