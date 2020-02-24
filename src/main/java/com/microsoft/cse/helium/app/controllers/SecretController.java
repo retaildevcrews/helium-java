@@ -39,7 +39,7 @@ public class SecretController{
         }
         catch (Exception ex)
         {
-            _logger.error("Error~SecretController~" + ex.getMessage());
+            _logger.error("Error:SecretController:" + ex.getMessage());
             return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
         }
 
