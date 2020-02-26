@@ -75,6 +75,11 @@
 				-->
 			</exclusions>
 		</dependency>
+   		<dependency>
+      		<groupId>com.microsoft.azure</groupId>
+      		<artifactId>spring-data-cosmosdb</artifactId>
+     		 <version>2.2.2</version>
+    	</dependency>
 		<dependency>
 			<groupId>io.projectreactor</groupId>
 			<artifactId>reactor-test</artifactId>
