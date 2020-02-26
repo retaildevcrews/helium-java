@@ -43,26 +43,27 @@ public class ActorsController {
     @Autowired
     private ActorsRepository actorRepository;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    @ApiOperation(value = "Get all actors", notes = "Retrieve and return all actors")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "List of actor objects") })    
-    public Mono<Actor> findByActorId(ServerHttpResponse response) {
-        return actorRepository.findByActorId("nm0000502");
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get single actor", notes = "Retrieve and return a single actor by actor ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "The actor object"),
+            @ApiResponse(code = 404, message = "An actor with the specified ID was not found") })  
+    public Mono<Actor> getActor(@ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true) @PathVariable("id")  String actorId) {
+        return actorRepository.findByActorId(actorId);
     }
 
-
-    // @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    // @ApiOperation(value = "Get single actor", notes = "Retrieve and return a single actor by actor ID")
-    // @ApiResponses(value = {
-    //         @ApiResponse(code = 200, message = "The actor object"),
-    //         @ApiResponse(code = 404, message = "An actor with the specified ID was not found") })
-    // public ResponseEntity<Actor> getActor(@ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true) @PathVariable("id")  String actorId) {
-    //     Mono<Actor> actor = actorRepository.findByActorId(actorId);
-    //     if (actor.isPresent()) {
-    //         return new ResponseEntity<>(actor.get(), HttpStatus.OK);
-    //     } else {
-    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    //     }
-    // }
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @ApiOperation(value = "Get all actors", notes = "Retrieve and return all actors")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "List of actor objects") })
+    public Flux<Actor> getAllActors(
+            @ApiParam(value = "(query) (optional) The term used to search Actor name", required = false ) @RequestParam final Optional<String> q,
+            @RequestParam("q") final Optional<String> query,
+            @ApiParam(value = "0 based page index", defaultValue = "0") @RequestParam Optional<Integer> pageNumber,
+            @ApiParam(value = "page size (1000 max)",defaultValue = "100") @RequestParam Optional<Integer> pageSize
+    ) {
+        //final Sort sort = Sort.by(Sort.Direction.ASC, "actorId");
+        //List<Actor> actors = service.getAllActors(query, pageNumber, pageSize, sort);
+        return actorRepository.findAll();
+    }
 
 }
