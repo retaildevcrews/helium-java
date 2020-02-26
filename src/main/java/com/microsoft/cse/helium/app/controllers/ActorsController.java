@@ -29,6 +29,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponses;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import io.swagger.annotations.ApiResponse;
 
 /**
@@ -40,22 +41,28 @@ import io.swagger.annotations.ApiResponse;
 public class ActorsController {
 
     @Autowired
-    BuildConfig buildConfig;
-
-    @Autowired
     private ActorsRepository actorRepository;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "Get all actors", notes = "Retrieve and return all actors")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "List of actor objects") })    
-public Flux<Actor> finActors(ServerHttpResponse response) {
+    public Mono<Actor> findByActorId(ServerHttpResponse response) {
+        return actorRepository.findByActorId("nm0000502");
+    }
 
-    //return actorRepository.findAll();
-    return actorRepository.findByActorId("nm0000502");
-    
-//   response.setStatusCode(HttpStatus.OK);
-//   return Flux.just(buildConfig.getBuildVersion());
-}
 
+    // @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    // @ApiOperation(value = "Get single actor", notes = "Retrieve and return a single actor by actor ID")
+    // @ApiResponses(value = {
+    //         @ApiResponse(code = 200, message = "The actor object"),
+    //         @ApiResponse(code = 404, message = "An actor with the specified ID was not found") })
+    // public ResponseEntity<Actor> getActor(@ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true) @PathVariable("id")  String actorId) {
+    //     Mono<Actor> actor = actorRepository.findByActorId(actorId);
+    //     if (actor.isPresent()) {
+    //         return new ResponseEntity<>(actor.get(), HttpStatus.OK);
+    //     } else {
+    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    //     }
+    // }
 
 }

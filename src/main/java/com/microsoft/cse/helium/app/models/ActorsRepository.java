@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -13,6 +14,6 @@ import reactor.core.publisher.Flux;
  */
 @Repository
 public interface ActorsRepository extends ReactiveCosmosRepository<Actor, String> {
-    Flux<Actor> findByActorId(String actorId);
-   //Flux<Actor> findByTextSearchContainingOrderByActorId(String actorName, Pageable pageable);
+    Mono<Actor> findByActorId(String actorId);
+    Flux<Actor> findByTextSearchContainingOrderByActorId(String nameString);
 }
