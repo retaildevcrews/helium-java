@@ -50,12 +50,16 @@ public class KeyVaultService implements IKeyVaultService
         }
         
         if(!checkKeyVaultName(_keyVaultName)) {
-            _logger.error("helium.keyvault.name (KeyVaultName) value is '" + _keyVaultName + "' which does meet the criteria must be 3-24 characters long, begin with a character, may contain alphanumeric or hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in your environment variables.");
+            _logger.error("helium.keyvault.name (KeyVaultName) value is '" + _keyVaultName + "' which does not meet the criteria must be 3-24 characters long, begin with a character, may contain alphanumeric or hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in your environment variables.");
             throw new IllegalArgumentException("helium.keyvault.name (value='" + _keyVaultName + "') must be 3-24 characters long, begin with a character, may contain alphanumeric or hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in your environment variables.");
         }
 
         _keyVaultClient = new KeyVaultClient(_credentials);
 
+    }
+
+    public static KeyVaultService create(String keyVaultName, String environmentFlag) throws Exception{
+        return new KeyVaultService (keyVaultName, environmentFlag);
     }
 
     private Boolean checkKeyVaultName(String keyVaultName){

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import reactor.core.publisher.Mono;
 
+import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
 import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
 
 @RestController
@@ -23,7 +24,7 @@ public class SecretController{
     private static final Logger _logger = LoggerFactory.getLogger(SecretController.class);
 
     @Autowired
-    private KeyVaultService _keyVaultService;
+    private IKeyVaultService _keyVaultService;
 
     @Value("${helium.keyvault.secretName}")
     private String _secretName;
@@ -45,5 +46,9 @@ public class SecretController{
 
         return Mono.just(ResponseEntity.ok()
             .body(returnValue));
+    }
+
+    public IKeyVaultService getKeyVaultService(){
+        return _keyVaultService;
     }
 }
