@@ -25,7 +25,7 @@ public class BuildConfig {
         // major.minor.MMd.hhmm
         String major = buildProperties.getVersion();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMDD.hhmm").withZone(ZoneId.of("UTC"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd.hhmm").withZone(ZoneId.of("UTC"));
         String formattedDateTime = formatter.format(buildTime);
 
         logger.info("version" + buildProperties.getTime() + "." + formattedDateTime);
