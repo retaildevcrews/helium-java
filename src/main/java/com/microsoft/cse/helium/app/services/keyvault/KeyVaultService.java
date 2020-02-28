@@ -16,6 +16,8 @@ import com.microsoft.azure.keyvault.models.CertificateBundle;
 import com.microsoft.azure.keyvault.models.KeyBundle;
 import com.microsoft.azure.keyvault.models.SecretBundle;
 
+import reactor.core.publisher.Mono;
+
 @Service
 public class KeyVaultService implements IKeyVaultService
 {
@@ -95,7 +97,7 @@ public class KeyVaultService implements IKeyVaultService
         return kvUri;
     }
 
-    public String getSecret(String secretName){
+    public Mono<String> getSecret(String secretName){
         String returnValue="";
         
         String kvUri = getKeyVaultUri();
@@ -103,7 +105,7 @@ public class KeyVaultService implements IKeyVaultService
         SecretBundle secret = _keyVaultClient.getSecret(kvUri, secretName);
         returnValue = secret.value();
 
-        return returnValue;
+        return Mono.just(returnValue);
     }
 
     public KeyBundle getKey (String keyName){

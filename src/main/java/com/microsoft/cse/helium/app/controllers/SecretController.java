@@ -35,17 +35,17 @@ public class SecretController{
         String returnValue="";
         try{
    
-            String secretValue = _keyVaultService.getSecret(_secretName);
-            returnValue = secretValue;
+            Mono<String> secretValue = _keyVaultService.getSecret(_secretName);
+            //secretValue.doOnSuccess(value -> return Mono.just(ResponseEntity.ok().body(value)));
+            return _keyVaultService.getSecret(_secretName)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
         }
         catch (Exception ex)
         {
             _logger.error("Error:SecretController:" + ex.getMessage());
             return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
         }
-
-        return Mono.just(ResponseEntity.ok()
-            .body(returnValue));
     }
 
     public IKeyVaultService getKeyVaultService(){
