@@ -136,7 +136,6 @@ public class KeyVaultService implements IKeyVaultService
     }
 
     public Mono<CertificateBundle> getCertificate (String certName){
-        //return _keyVaultClient.getCertificate(getKeyVaultUri(), certName);
         return Mono.create (sink -> {
             _keyVaultClient.getCertificateAsync(getKeyVaultUri(), certName, new ServiceCallback<CertificateBundle>() {
                 @Override
