@@ -3,7 +3,17 @@ package com.microsoft.cse.helium.app.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import com.azure.data.cosmos.CosmosClient;
+import com.azure.data.cosmos.CosmosItemProperties;
+import com.azure.data.cosmos.FeedOptions;
+import com.azure.data.cosmos.FeedResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
 import com.microsoft.azure.spring.data.cosmosdb.core.query.CosmosPageRequest;
+import com.microsoft.azure.spring.data.cosmosdb.repository.support.CosmosEntityInformation;
 import com.microsoft.cse.helium.app.config.BuildConfig;
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.models.ActorsRepository;
@@ -12,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -72,11 +83,11 @@ public class ActorsController {
         if (pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
             _pageNumber = pageNumber.get();
             if (_pageNumber < 1) {
-                //TODO: return invalid paramter
+                // TODO: return invalid paramter
             }
         }
 
-        if(pageSize.isPresent() && pageSize.get() > 0) {
+        if (pageSize.isPresent() && pageSize.get() > 0) {
             _pageSize = pageSize.get();
 
             // TODO: Should we not return invalid parameter for both these cases
@@ -88,12 +99,53 @@ public class ActorsController {
             }
         }
 
-        if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
-            return actorRepository.findByTextSearchContainingOrderByActorId(query.get().toLowerCase());
-        } else {
-            // return the non-paged results
-            return actorRepository.findAll(Sort.by(Direction.ASC, "actorId"));
-        }
+        final FeedOptions options = new FeedOptions();
+        options.enableCrossPartitionQuery(true);
+        options.maxDegreeOfParallelism(2);
+
+        int skipCount = 0;
+        int takeCount = 10;
+
+        Flux<FeedResponse<CosmosItemProperties>> response = context.getBean(CosmosClient.class).getDatabase("imdb")
+                .getContainer("actors")
+                .queryItems("SELECT * from c OFFSET " + skipCount + " LIMIT " + takeCount, options);
+
+        ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
+
+        Flux<Actor> test = response.flatMap(feedResponse -> {
+            return Flux.fromIterable(feedResponse.results());
+        }).flatMap(cosmosItemProperties -> {
+            // return gson.fromJson(cosmosItemProperties.toString(), Actor.class);
+            try {
+                return Flux.just(objMapper.readValue(cosmosItemProperties.toJson(), Actor.class));
+            } catch (JsonMappingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (JsonProcessingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            return Flux.empty();
+        });
+
+
+        return test;
+        
+        // if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
+        //     return actorRepository.findByTextSearchContainingOrderByActorId(query.get().toLowerCase());
+        // } else {
+        //     // return the non-paged results
+        //     return actorRepository.findAll(Sort.by(Direction.ASC, "actorId"));
+        // }
+
+        //return actorRepository.findAll(Sort.by(Direction.ASC, "actorId"));
     }
+
+    @Autowired
+    ApplicationContext context;
+    
+    private static Gson gson = new Gson();
+    
+    private final CosmosEntityInformation<Actor, String> entityInformation = new CosmosEntityInformation<>(Actor.class);
 
 }
