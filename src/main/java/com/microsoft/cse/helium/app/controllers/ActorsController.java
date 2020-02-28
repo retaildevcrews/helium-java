@@ -107,13 +107,14 @@ public class ActorsController {
 
         String _q = "";
         
-        if(q.isPresent()) {
-            if(q.get() != null && q.get() != "") {
-                _q = " and contains(m.textSearch, '" + q.get() + "') ";
+        if(query.isPresent()) {
+            if(query.get() != null && !query.get().isEmpty()) {
+                String tmpQ = query.get().trim().toLowerCase().replace("'", "''");
+                _q = " and contains(m.textSearch, '" + tmpQ + "') ";
             }
         }
 
-        String queryString = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor'  " + _q + " OFFSET "  + _pageNumber + " LIMIT " + _pageSize;
+        String queryString = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor'  " + _q + " order by m.name offset "  + _pageNumber + " limit " + _pageSize;
 
         Flux<FeedResponse<CosmosItemProperties>> feedResponse = context.getBean(CosmosClient.class).getDatabase("imdb")
                 .getContainer("actors")
@@ -130,21 +131,9 @@ public class ActorsController {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
             return Flux.empty();
         });
 
         return selectedActors;
-        
-        // if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
-        //     return actorRepository.findByTextSearchContainingOrderByActorId(query.get().toLowerCase());
-        // } else {
-        //     // return the non-paged results
-        //     return actorRepository.findAll(Sort.by(Direction.ASC, "actorId"));
-        // }
-
-        //return actorRepository.findAll(Sort.by(Direction.ASC, "actorId"));
     }
-
-
 }
