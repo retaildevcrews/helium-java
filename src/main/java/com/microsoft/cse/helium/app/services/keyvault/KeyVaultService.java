@@ -119,7 +119,6 @@ public class KeyVaultService implements IKeyVaultService
         });
     }
 
-    //public KeyBundle getKey (String keyName){
     public Mono<KeyBundle> getKey (String keyName){
         //return _keyVaultClient.getKey(getKeyVaultUri(), keyName);
         return Mono.create(sink -> {
