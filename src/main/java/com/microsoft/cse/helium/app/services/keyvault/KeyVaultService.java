@@ -27,13 +27,16 @@ public class KeyVaultService implements IKeyVaultService
     private final String _keyVaultNameRegex ="^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$";
     private static final Logger _logger = LoggerFactory.getLogger(KeyVaultService.class);
 
+    public static final String USE_MSI="MSI";
+    public static final String USE_CLI="CLI";
+
     public KeyVaultService (@Value("${helium.keyvault.name}") String keyVaultName, @Value("${helium.environment.flag}") String environmentFlag) throws Exception {
         _keyVaultName = keyVaultName.trim().toUpperCase();
         _environmentFlag = environmentFlag.trim().toUpperCase();
 
-        if(_environmentFlag.equals("MSI")) {
+        if(_environmentFlag.equals(USE_MSI)) {
             _credentials = new MSICredentials(AzureEnvironment.AZURE);
-        } else if (_environmentFlag.equals("CLI")) {
+        } else if (_environmentFlag.equals(USE_CLI)) {
             try{
                 _credentials = AzureCliCredentials.create();
             }
@@ -42,15 +45,21 @@ public class KeyVaultService implements IKeyVaultService
                 throw(ex);
             }
         } else {
+            _logger.error("helium.environment.flag (He_EnvironmentFlag) value is '" + _environmentFlag + "' it must be set to 'CLI' or 'MSI'");
             throw new IllegalArgumentException("helium.environment.flag (value='" + _environmentFlag + "') must be 'MSI' or 'CLI'.  Check ${He_EnvironmentFlag} in your environment variables.");
         }
         
         if(!checkKeyVaultName(_keyVaultName)) {
+            _logger.error("helium.keyvault.name (KeyVaultName) value is '" + _keyVaultName + "' which does not meet the criteria must be 3-24 characters long, begin with a character, may contain alphanumeric or hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in your environment variables.");
             throw new IllegalArgumentException("helium.keyvault.name (value='" + _keyVaultName + "') must be 3-24 characters long, begin with a character, may contain alphanumeric or hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in your environment variables.");
         }
 
         _keyVaultClient = new KeyVaultClient(_credentials);
 
+    }
+
+    public static KeyVaultService create(String keyVaultName, String environmentFlag) throws Exception{
+        return new KeyVaultService (keyVaultName, environmentFlag);
     }
 
     private Boolean checkKeyVaultName(String keyVaultName){
@@ -73,7 +82,16 @@ public class KeyVaultService implements IKeyVaultService
     }
 
     public String getKeyVaultUri(){
-        String kvUri = "https://" + _keyVaultName + ".vault.azure.net";
+        String kvUri = "";
+
+        if (_keyVaultName != null && !_keyVaultName.isEmpty()){
+            if(_keyVaultName.toUpperCase().startsWith("HTTPS://")){
+                kvUri = _keyVaultName;
+            }
+            else{
+                kvUri = "https://" + _keyVaultName + ".vault.azure.net";
+            }
+        }
         return kvUri;
     }
 
