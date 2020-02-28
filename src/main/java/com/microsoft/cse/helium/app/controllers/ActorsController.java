@@ -76,7 +76,8 @@ public class ActorsController {
             @ApiParam(value = "(query) (optional) The term used to search Actor name", required = false) @RequestParam final Optional<String> q,
             @RequestParam("q") final Optional<String> query,
             @ApiParam(value = "0 based page index", defaultValue = "0") @RequestParam Optional<Integer> pageNumber,
-            @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam Optional<Integer> pageSize) {
+            @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam Optional<Integer> pageSize,
+            ServerHttpResponse response) {
         Integer _pageNumber = 0;
         Integer _pageSize = 0;
 
@@ -106,16 +107,16 @@ public class ActorsController {
         int skipCount = 0;
         int takeCount = 10;
 
-        Flux<FeedResponse<CosmosItemProperties>> response = context.getBean(CosmosClient.class).getDatabase("imdb")
+        ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
+
+        Flux<FeedResponse<CosmosItemProperties>> feedResponse = context.getBean(CosmosClient.class).getDatabase("imdb")
                 .getContainer("actors")
                 .queryItems("SELECT * from c OFFSET " + skipCount + " LIMIT " + takeCount, options);
 
-        ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
-
-        Flux<Actor> test = response.flatMap(feedResponse -> {
-            return Flux.fromIterable(feedResponse.results());
+        Flux<Actor> test = feedResponse.flatMap(flatFeedResponse -> {
+            return Flux.fromIterable(flatFeedResponse.results());
         }).flatMap(cosmosItemProperties -> {
-            // return gson.fromJson(cosmosItemProperties.toString(), Actor.class);
+            
             try {
                 return Flux.just(objMapper.readValue(cosmosItemProperties.toJson(), Actor.class));
             } catch (JsonMappingException e) {
@@ -125,6 +126,7 @@ public class ActorsController {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
             return Flux.empty();
         });
 
