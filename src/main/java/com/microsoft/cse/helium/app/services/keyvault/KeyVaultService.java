@@ -99,10 +99,8 @@ public class KeyVaultService implements IKeyVaultService
     }
 
     public Mono<String> getSecret(String secretName){
-        String kvUri = getKeyVaultUri();
-
         return Mono.create(sink -> {
-            _keyVaultClient.getSecretAsync(kvUri, secretName, new ServiceCallback<SecretBundle>(){
+            _keyVaultClient.getSecretAsync( getKeyVaultUri(), secretName, new ServiceCallback<SecretBundle>(){
             
                 @Override
                 public void success(SecretBundle secret) {
