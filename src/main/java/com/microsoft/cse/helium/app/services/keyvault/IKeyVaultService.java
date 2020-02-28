@@ -8,6 +8,6 @@ import reactor.core.publisher.Mono;
 public interface IKeyVaultService {
 
     Mono<String> getSecret (String secretName);
-    KeyBundle getKey(String keyName);
-    CertificateBundle getCertificate (String certName);
+    Mono<KeyBundle> getKey(String keyName);
+    Mono<CertificateBundle> getCertificate (String certName);
 }
