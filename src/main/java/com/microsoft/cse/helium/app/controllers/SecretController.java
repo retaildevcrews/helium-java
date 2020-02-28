@@ -32,7 +32,6 @@ public class SecretController{
     @GetMapping(value={"/",""}, produces = MediaType.TEXT_PLAIN_VALUE)
     public Mono<ResponseEntity<String>> getSecret(){
 
-        String returnValue="";
         try{
    
             Mono<String> secretValue = _keyVaultService.getSecret(_secretName);
