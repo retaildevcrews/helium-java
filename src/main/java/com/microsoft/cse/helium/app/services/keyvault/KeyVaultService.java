@@ -104,13 +104,11 @@ public class KeyVaultService implements IKeyVaultService
             
                 @Override
                 public void success(SecretBundle secret) {
-                    // TODO Auto-generated method stub
                     sink.success (secret.value());
                 }
             
                 @Override
                 public void failure(Throwable error) {
-                    // TODO Auto-generated method stub
                     sink.error(error);
                 }
             });
@@ -122,13 +120,11 @@ public class KeyVaultService implements IKeyVaultService
             _keyVaultClient.getKeyAsync(getKeyVaultUri(), keyName, new ServiceCallback<KeyBundle>() {
                 @Override
                 public void success(KeyBundle keyBundle) {
-                    // TODO Auto-generated method stub
                     sink.success (keyBundle);
                 }
             
                 @Override
                 public void failure(Throwable error) {
-                    // TODO Auto-generated method stub
                     sink.error(error);
                 }
             });
@@ -140,13 +136,11 @@ public class KeyVaultService implements IKeyVaultService
             _keyVaultClient.getCertificateAsync(getKeyVaultUri(), certName, new ServiceCallback<CertificateBundle>() {
                 @Override
                 public void success(CertificateBundle certBundle) {
-                    // TODO Auto-generated method stub
                     sink.success (certBundle);
                 }
             
                 @Override
                 public void failure(Throwable error) {
-                    // TODO Auto-generated method stub
                     sink.error(error);
                 }
             });
