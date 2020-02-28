@@ -56,6 +56,8 @@ import io.swagger.annotations.ApiResponse;
 @RequestMapping(path = "/api/actors", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Actors")
 public class ActorsController {
+    @Autowired
+    ApplicationContext context;
 
     @Autowired
     private ActorsRepository actorRepository;
@@ -79,20 +81,17 @@ public class ActorsController {
             @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam Optional<Integer> pageSize,
             ServerHttpResponse response) {
         Integer _pageNumber = 0;
-        Integer _pageSize = 0;
+        Integer _pageSize = com.microsoft.cse.helium.app.Constants.DefaultPageSize;
 
         if (pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
-            _pageNumber = pageNumber.get();
-            if (_pageNumber < 1) {
-                // TODO: return invalid paramter
+            if (pageNumber.get() >= 1) {
+                _pageNumber = pageNumber.get(); 
             }
         }
 
         if (pageSize.isPresent() && pageSize.get() > 0) {
             _pageSize = pageSize.get();
 
-            // TODO: Should we not return invalid parameter for both these cases
-            // the below comes from the previous implementation
             if (_pageSize < 1) {
                 _pageSize = com.microsoft.cse.helium.app.Constants.DefaultPageSize;
             } else if (_pageSize > com.microsoft.cse.helium.app.Constants.MaxPageSize) {
@@ -104,34 +103,38 @@ public class ActorsController {
         options.enableCrossPartitionQuery(true);
         options.maxDegreeOfParallelism(2);
 
-        int skipCount = 0;
-        int takeCount = 10;
-
         ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
+
+        String _q = "";
+        
+        if(q.isPresent()) {
+            if(q.get() != null && q.get() != "") {
+                _q = " and contains(m.textSearch, '" + q.get() + "') ";
+            }
+        }
+
+        String queryString = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor'  " + _q + " OFFSET "  + _pageNumber + " LIMIT " + _pageSize;
 
         Flux<FeedResponse<CosmosItemProperties>> feedResponse = context.getBean(CosmosClient.class).getDatabase("imdb")
                 .getContainer("actors")
-                .queryItems("SELECT * from c OFFSET " + skipCount + " LIMIT " + takeCount, options);
+                .queryItems(queryString, options);
 
-        Flux<Actor> test = feedResponse.flatMap(flatFeedResponse -> {
+        Flux<Actor> selectedActors = feedResponse.flatMap(flatFeedResponse -> {
             return Flux.fromIterable(flatFeedResponse.results());
         }).flatMap(cosmosItemProperties -> {
             
             try {
                 return Flux.just(objMapper.readValue(cosmosItemProperties.toJson(), Actor.class));
             } catch (JsonMappingException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (JsonProcessingException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
             return Flux.empty();
         });
 
-
-        return test;
+        return selectedActors;
         
         // if (query.isPresent() && !StringUtils.isEmpty(query.get())) {
         //     return actorRepository.findByTextSearchContainingOrderByActorId(query.get().toLowerCase());
@@ -143,11 +146,5 @@ public class ActorsController {
         //return actorRepository.findAll(Sort.by(Direction.ASC, "actorId"));
     }
 
-    @Autowired
-    ApplicationContext context;
-    
-    private static Gson gson = new Gson();
-    
-    private final CosmosEntityInformation<Actor, String> entityInformation = new CosmosEntityInformation<>(Actor.class);
 
 }
