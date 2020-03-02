@@ -12,32 +12,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
  
+import org.springframework.http.server.reactive.ServerHttpResponse;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-/*  
+  
 @RestController
-public class RobotsController {
-    @RequestMapping(value={"/robots*.txt"}, method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public Mono<Resource> robots() {
-        return fileRepository.findByName(fileName)
-                 .map(name -> new FileSystemResource(name));
+public class RobotsController{
+    @RequestMapping(value = "/robots*.txt")
+    public Mono<String> robots(ServerHttpResponse response) {
+        response.setStatusCode(HttpStatus.OK);
+        return Mono.just("User-agent: *\nDisallow: /\n");
     }
-
-    public void oldrobot(HttpServletResponse response) {
-
-        InputStream resourceAsStream = null;
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            resourceAsStream = classLoader.getResourceAsStream("robots.txt");
-            response.addHeader("Content-disposition", "filename=robots.txt");
-            response.setContentType("text/plain");
-            IOUtils.copy(resourceAsStream, response.getOutputStream());
-            response.flushBuffer();
-        } catch (Exception e) {
-            System.out.println("Problem with displaying robot.txt " + e.toString());
-        }
-    }
-
-}*/
+}
