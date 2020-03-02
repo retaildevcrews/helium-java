@@ -4,7 +4,6 @@ import com.microsoft.azure.spring.data.cosmosdb.repository.ReactiveCosmosReposit
 
 import org.springframework.stereotype.Repository;
 
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -13,7 +12,4 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface ActorsRepository extends ReactiveCosmosRepository<Actor, String> {
     Mono<Actor> findByActorId(String actorId);
-
-    Flux<Actor> findByTextSearchContainingOrderByActorId(String nameString);
-
 }

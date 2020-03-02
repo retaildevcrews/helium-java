@@ -38,7 +38,6 @@ public class Actor extends ActorBase{
     private String textSearch;
     private List<MovieBase> movies;
 
-
     public Actor(){
     }
 
