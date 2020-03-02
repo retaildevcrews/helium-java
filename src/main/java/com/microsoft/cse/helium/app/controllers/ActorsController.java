@@ -99,12 +99,6 @@ public class ActorsController {
             }
         }
 
-        final FeedOptions options = new FeedOptions();
-        options.enableCrossPartitionQuery(true);
-        options.maxDegreeOfParallelism(2);
-
-        ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
-
         String _q = "";
         
         if(query.isPresent()) {
@@ -113,6 +107,16 @@ public class ActorsController {
                 _q = " and contains(m.textSearch, '" + tmpQ + "') ";
             }
         }
+
+        return getActorsFromCustomQuery(_pageNumber, _pageSize, _q);
+    }
+
+    private Flux<Actor> getActorsFromCustomQuery(Integer _pageNumber, Integer _pageSize, String _q) {
+        final FeedOptions options = new FeedOptions();
+        options.enableCrossPartitionQuery(true);
+        options.maxDegreeOfParallelism(2);
+
+        ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
         String queryString = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor'  " + _q + " order by m.name offset "  + _pageNumber + " limit " + _pageSize;
 
