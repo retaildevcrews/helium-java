@@ -8,8 +8,9 @@ on:
     paths-ignore:
       - 'docs/**'
       - '.github/**'
-      - 'README.md'
+      - '**.md'
       - 'saveenv.sh'
+      - 'src/test/**'
 
 jobs:
 

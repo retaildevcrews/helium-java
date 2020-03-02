@@ -15,6 +15,9 @@ import com.microsoft.azure.keyvault.KeyVaultClient;
 import com.microsoft.azure.keyvault.models.CertificateBundle;
 import com.microsoft.azure.keyvault.models.KeyBundle;
 import com.microsoft.azure.keyvault.models.SecretBundle;
+import com.microsoft.rest.ServiceCallback;
+
+import reactor.core.publisher.Mono;
 
 @Service
 public class KeyVaultService implements IKeyVaultService
@@ -95,23 +98,53 @@ public class KeyVaultService implements IKeyVaultService
         return kvUri;
     }
 
-    public String getSecret(String secretName){
-        String returnValue="";
-        
-        String kvUri = getKeyVaultUri();
-
-        SecretBundle secret = _keyVaultClient.getSecret(kvUri, secretName);
-        returnValue = secret.value();
-
-        return returnValue;
+    public Mono<String> getSecret(String secretName){
+        return Mono.create(sink -> {
+            _keyVaultClient.getSecretAsync( getKeyVaultUri(), secretName, new ServiceCallback<SecretBundle>(){
+            
+                @Override
+                public void success(SecretBundle secret) {
+                    sink.success (secret.value());
+                }
+            
+                @Override
+                public void failure(Throwable error) {
+                    sink.error(error);
+                }
+            });
+        });
     }
 
-    public KeyBundle getKey (String keyName){
-        return _keyVaultClient.getKey(getKeyVaultUri(), keyName);
+    public Mono<KeyBundle> getKey (String keyName){
+        return Mono.create(sink -> {
+            _keyVaultClient.getKeyAsync(getKeyVaultUri(), keyName, new ServiceCallback<KeyBundle>() {
+                @Override
+                public void success(KeyBundle keyBundle) {
+                    sink.success (keyBundle);
+                }
+            
+                @Override
+                public void failure(Throwable error) {
+                    sink.error(error);
+                }
+            });
+        });
     }
 
-    public CertificateBundle getCertificate (String certName){
-        return _keyVaultClient.getCertificate(getKeyVaultUri(), certName);
+    public Mono<CertificateBundle> getCertificate (String certName){
+        return Mono.create (sink -> {
+            _keyVaultClient.getCertificateAsync(getKeyVaultUri(), certName, new ServiceCallback<CertificateBundle>() {
+                @Override
+                public void success(CertificateBundle certBundle) {
+                    sink.success (certBundle);
+                }
+            
+                @Override
+                public void failure(Throwable error) {
+                    sink.error(error);
+                }
+            });
+        });
     }
 
 }
