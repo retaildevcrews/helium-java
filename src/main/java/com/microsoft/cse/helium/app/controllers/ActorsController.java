@@ -39,6 +39,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import io.swagger.annotations.ApiResponse;
 
+import com.microsoft.cse.helium.app.Constants;
+
 /**
  * ActorController
  */
@@ -72,11 +74,11 @@ public class ActorsController {
             @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam Optional<Integer> pageSize,
             ServerHttpResponse response) {
         Integer _pageNumber = 0;
-        Integer _pageSize = com.microsoft.cse.helium.app.Constants.DefaultPageSize;
+        Integer _pageSize = Constants.DefaultPageSize;
 
         if (pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
             if (pageNumber.get() >= 1) {
-                _pageNumber = pageNumber.get(); 
+                _pageNumber = pageNumber.get();
             }
         }
 
@@ -84,14 +86,14 @@ public class ActorsController {
             _pageSize = pageSize.get();
 
             if (_pageSize < 1) {
-                _pageSize = com.microsoft.cse.helium.app.Constants.DefaultPageSize;
-            } else if (_pageSize > com.microsoft.cse.helium.app.Constants.MaxPageSize) {
-                _pageSize = com.microsoft.cse.helium.app.Constants.MaxPageSize;
+                _pageSize = Constants.DefaultPageSize;
+            } else if (_pageSize > Constants.MaxPageSize) {
+                _pageSize = Constants.MaxPageSize;
             }
         }
 
         String _q = "";
-        
+
         if(query.isPresent()) {
             if(query.get() != null && !query.get().isEmpty()) {
                 String tmpQ = query.get().trim().toLowerCase().replace("'", "''");
@@ -110,7 +112,7 @@ public class ActorsController {
         ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
         String queryString = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor'  " + _q + " order by m.name offset "  + _pageNumber + " limit " + _pageSize;
-    
+
         Flux<FeedResponse<CosmosItemProperties>> feedResponse = context.getBean(CosmosClient.class).getDatabase("imdb")
                 .getContainer("actors")
                 .queryItems(queryString, options);
@@ -118,7 +120,7 @@ public class ActorsController {
         Flux<Actor> selectedActors = feedResponse.flatMap(flatFeedResponse -> {
             return Flux.fromIterable(flatFeedResponse.results());
         }).flatMap(cosmosItemProperties -> {
-            
+
             try {
                 return Flux.just(objMapper.readValue(cosmosItemProperties.toJson(), Actor.class));
             } catch (JsonMappingException e) {
