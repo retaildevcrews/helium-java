@@ -40,6 +40,7 @@ import reactor.core.publisher.Mono;
 import io.swagger.annotations.ApiResponse;
 
 import com.microsoft.cse.helium.app.Constants;
+import com.microsoft.cse.helium.app.dao.ActorsDao;
 
 /**
  * ActorController
@@ -48,9 +49,8 @@ import com.microsoft.cse.helium.app.Constants;
 @RequestMapping(path = "/api/actors", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Actors")
 public class ActorsController {
-
     @Autowired
-    ApplicationContext context;
+    ActorsDao actorsDao;
 
     @Autowired
     private ActorsRepository actorRepository;
@@ -101,36 +101,6 @@ public class ActorsController {
             }
         }
 
-        return getActorsFromCustomQuery(_pageNumber, _pageSize, _q);
-    }
-
-    private Flux<Actor> getActorsFromCustomQuery(Integer _pageNumber, Integer _pageSize, String _q) {
-        final FeedOptions options = new FeedOptions();
-        options.enableCrossPartitionQuery(true);
-        options.maxDegreeOfParallelism(2);
-
-        ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
-
-        String queryString = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor'  " + _q + " order by m.name offset "  + _pageNumber + " limit " + _pageSize;
-
-        Flux<FeedResponse<CosmosItemProperties>> feedResponse = context.getBean(CosmosClient.class).getDatabase("imdb")
-                .getContainer("actors")
-                .queryItems(queryString, options);
-
-        Flux<Actor> selectedActors = feedResponse.flatMap(flatFeedResponse -> {
-            return Flux.fromIterable(flatFeedResponse.results());
-        }).flatMap(cosmosItemProperties -> {
-
-            try {
-                return Flux.just(objMapper.readValue(cosmosItemProperties.toJson(), Actor.class));
-            } catch (JsonMappingException e) {
-                e.printStackTrace();
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-            return Flux.empty();
-        });
-
-        return selectedActors;
+        return actorsDao.getActors(_pageNumber, _pageSize, _q);
     }
 }
