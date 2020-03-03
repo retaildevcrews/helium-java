@@ -1,8 +1,6 @@
 package com.microsoft.cse.helium.app.controllers;
 
-import java.util.List;
 import java.util.Optional;
-
 import com.azure.data.cosmos.CosmosClient;
 import com.azure.data.cosmos.CosmosItemProperties;
 import com.azure.data.cosmos.FeedOptions;
@@ -10,37 +8,29 @@ import com.azure.data.cosmos.FeedResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
-import com.microsoft.azure.spring.data.cosmosdb.core.query.CosmosPageRequest;
-import com.microsoft.azure.spring.data.cosmosdb.repository.support.CosmosEntityInformation;
-import com.microsoft.cse.helium.app.config.BuildConfig;
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.models.ActorsRepository;
+import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
+import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
+import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -56,6 +46,7 @@ import io.swagger.annotations.ApiResponse;
 @RequestMapping(path = "/api/actors", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Actors")
 public class ActorsController {
+
     @Autowired
     ApplicationContext context;
 
@@ -119,7 +110,7 @@ public class ActorsController {
         ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
         String queryString = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor'  " + _q + " order by m.name offset "  + _pageNumber + " limit " + _pageSize;
-
+    
         Flux<FeedResponse<CosmosItemProperties>> feedResponse = context.getBean(CosmosClient.class).getDatabase("imdb")
                 .getContainer("actors")
                 .queryItems(queryString, options);
