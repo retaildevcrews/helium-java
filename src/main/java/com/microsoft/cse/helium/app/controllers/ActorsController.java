@@ -93,11 +93,9 @@ public class ActorsController {
         }
 
         String _q = "";
-
         if(query.isPresent()) {
             if(query.get() != null && !query.get().isEmpty()) {
-                String tmpQ = query.get().trim().toLowerCase().replace("'", "''");
-                _q = " and contains(m.textSearch, '" + tmpQ + "') ";
+                _q = query.get().trim().toLowerCase().replace("'", "''");
             }
         }
 
