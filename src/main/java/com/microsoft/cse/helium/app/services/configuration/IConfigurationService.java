@@ -7,5 +7,5 @@ import lombok.Getter;
 
 public interface IConfigurationService {
 
-    public Dictionary<String, String> getConfigEntries();
+    public Map<String, String> getConfigEntries();
 }

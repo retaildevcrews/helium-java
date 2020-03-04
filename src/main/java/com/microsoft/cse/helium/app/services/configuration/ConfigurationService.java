@@ -5,6 +5,8 @@ import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
 
 import lombok.Getter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +33,11 @@ public class ConfigurationService implements IConfigurationService
     @Autowired
     public ConfigurationService(IKeyVaultService kvService){
         _keyVaultService = kvService;
-        Dictionary<String, String> secrets = _keyVaultService.getSecrets();
+        Map<String, String> secrets = _keyVaultService.getSecrets();
         configEntries = secrets;
     }
 
     @Getter
-    Dictionary configEntries = new Hashtable<String, String>();
+    Map<String, String> configEntries = new ConcurrentHashMap<String, String>();
    
 }

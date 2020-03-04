@@ -13,5 +13,5 @@ public interface IKeyVaultService {
     Mono<List<SecretItem>> listSecrets();
     Mono<KeyBundle> getKey(String keyName);
     Mono<CertificateBundle> getCertificate (String certName);
-    Dictionary<String, String> getSecrets();
+    Map<String, String> getSecrets();
 }

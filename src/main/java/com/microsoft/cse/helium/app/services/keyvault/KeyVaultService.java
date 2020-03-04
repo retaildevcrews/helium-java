@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.microsoft.azure.AzureEnvironment;
 import com.microsoft.azure.credentials.MSICredentials;
@@ -132,10 +133,10 @@ public class KeyVaultService implements IKeyVaultService
     }
 
     // For now, blocking to get MVP of call chain.  Switch to async in the future.
-    public Dictionary<String, String> getSecrets(){
+    public Map<String, String> getSecrets(){
         List<SecretItem> secretItems = listSecrets().block();
 
-        Dictionary<String, String> secrets = new Hashtable<String, String>();
+        Map<String, String> secrets = new ConcurrentHashMap<String, String>();
         secretItems.forEach(item -> {
             String itemName = item.id().substring(item.id().lastIndexOf("/") + 1);
             String secretValue = getSecret(itemName).block();
