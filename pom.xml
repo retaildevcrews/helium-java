@@ -20,14 +20,6 @@
         <azure.version>2.2.0</azure.version>
     </properties>
 
-    <repositories>
-        <repository>
-        <id>jcenter-snapshots</id>
-        <name>jcenter</name>
-        <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
