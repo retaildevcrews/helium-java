@@ -39,8 +39,6 @@ public class SecretController{
 
         try{
    
-            Mono<String> secretValue = _keyVaultService.getSecret(_secretName);
-
             return _keyVaultService.getSecret(_secretName)
                 .map(ResponseEntity::ok)
                 .onErrorReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
