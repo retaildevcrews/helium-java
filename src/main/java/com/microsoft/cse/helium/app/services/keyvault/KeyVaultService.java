@@ -1,5 +1,6 @@
 package com.microsoft.cse.helium.app.services.keyvault;
 
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com.microsoft.azure.keyvault.KeyVaultClient;
 import com.microsoft.azure.keyvault.models.CertificateBundle;
 import com.microsoft.azure.keyvault.models.KeyBundle;
 import com.microsoft.azure.keyvault.models.SecretBundle;
+import com.microsoft.azure.keyvault.models.SecretItem;
 import com.microsoft.rest.ServiceCallback;
 
 import reactor.core.publisher.Mono;
@@ -113,6 +115,33 @@ public class KeyVaultService implements IKeyVaultService
                 }
             });
         });
+    }
+
+    // Need to come back and implement callbacks instead of calling get(). 
+    // Could not find an example of the callback signature so postponing as this method
+    // will be primarily used as blocking call at app startup.
+    public Mono<List<SecretItem>> listSecrets(){
+        List<SecretItem> secrets=null;
+        try{
+            return Mono.just(_keyVaultClient.listSecretsAsync(getKeyVaultUri(), null).get());
+        }
+        catch(Exception exception)
+        {
+            return Mono.error(exception);
+        }
+    }
+
+    // For now, blocking to get MVP of call chain.  Switch to async in the future.
+    public Dictionary<String, String> getSecrets(){
+        List<SecretItem> secretItems = listSecrets().block();
+
+        Dictionary<String, String> secrets = new Hashtable<String, String>();
+        secretItems.forEach(item -> {
+            String itemName = item.id().substring(item.id().lastIndexOf("/") + 1);
+            String secretValue = getSecret(itemName).block();
+            secrets.put(itemName, secretValue);
+        });
+        return secrets;
     }
 
     public Mono<KeyBundle> getKey (String keyName){
