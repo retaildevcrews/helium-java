@@ -6,6 +6,7 @@ import org.springframework.context.annotation.*;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import static org.junit.Assert.*;
@@ -13,21 +14,24 @@ import static org.junit.Assert.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
-// @RunWith(SpringRunner.class)
-// @WebFluxTest
+@ExtendWith(SpringExtension.class)
+@WebFluxTest(controllers = VersionController.class)
 public class VersionControllerTest{
 
-    // @Autowired
+    @Autowired
     private WebTestClient webClient;
 
-    // @Test
+    @Test
     public void testVersion(){
         assertTrue(true);
     }
+
+
 
 }
 
