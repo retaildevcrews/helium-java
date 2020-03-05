@@ -1,5 +1,7 @@
 package com.microsoft.cse.helium.app.controllers;
 
+import com.microsoft.cse.helium.app.services.configuration.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class SecretController{
     @Autowired
     private IKeyVaultService _keyVaultService;
 
+	@Autowired
+	IConfigurationService config;
+
     @Value("${helium.keyvault.secretName}")
     private String _secretName;
 
@@ -34,8 +39,6 @@ public class SecretController{
 
         try{
    
-            Mono<String> secretValue = _keyVaultService.getSecret(_secretName);
-
             return _keyVaultService.getSecret(_secretName)
                 .map(ResponseEntity::ok)
                 .onErrorReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
