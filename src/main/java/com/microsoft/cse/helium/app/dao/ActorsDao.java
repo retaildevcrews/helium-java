@@ -18,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class ActorsDao {
+public class ActorsDao extends BaseDao {
 
     @Autowired
     ApplicationContext _context;
@@ -30,10 +30,6 @@ public class ActorsDao {
 
     public Flux<Actor> getActors(Integer _pageNumber, Integer _pageSize, String _query) {
 
-        final FeedOptions options = new FeedOptions();
-        options.enableCrossPartitionQuery(true);
-        options.maxDegreeOfParallelism(2);
-
         ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
         String _contains = "";
@@ -43,8 +39,8 @@ public class ActorsDao {
 
         String queryString = _actorSelect + _contains +  _actorOrderBy + String.format(_actorOffset, _pageNumber, _pageSize);
 
-        Flux<FeedResponse<CosmosItemProperties>> feedResponse = _context.getBean(CosmosClient.class).getDatabase("imdb")
-                .getContainer("actors").queryItems(queryString, options);
+        Flux<FeedResponse<CosmosItemProperties>> feedResponse = _context.getBean(CosmosClient.class).getDatabase(this._cosmosDatabase)
+                .getContainer(this._cosmosContainer).queryItems(queryString, this._feedOptions);
 
         Flux<Actor> selectedActors = feedResponse.flatMap(flatFeedResponse -> {
             return Flux.fromIterable(flatFeedResponse.results());

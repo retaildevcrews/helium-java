@@ -30,12 +30,16 @@ public class BaseDao{
     private IConfigurationService _configService;
     private String _cosmosContainer= "";
     private String _cosmosDatabase= "";
+    private final FeedOptions _feedOptions = new FeedOptions();
 
     @Autowired
     public BaseDao(IConfigurationService configService){
         _configService = configService;
         _cosmosContainer = _configService.getConfigEntries().get(Constants.COSMOS_COLLECTION_KEYNAME);
         _cosmosDatabase = _configService.getConfigEntries().get(Constants.COSMOS_DATABASE_KEYNAMEq);
+
+        _feedOptions.enableCrossPartitionQuery(true);
+        _feedOptions.maxDegreeOfParallelism(2);
 
     }
 
