@@ -21,13 +21,14 @@ import reactor.core.publisher.Mono;
 public class ActorsDao {
 
     @Autowired
-    ApplicationContext context;
+    ApplicationContext _context;
+
+    final String _actorSelect = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor' ";
+    final String _actorContains = " and contains(m.textSearch, \"%s\") ";
+    final String _actorOrderBy = " order by m.name ";
+    final String _actorOffset = " offset %d limit %d ";
 
     public Flux<Actor> getActors(Integer _pageNumber, Integer _pageSize, String _query) {
-        final String _actorSelect = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor' ";
-        final String _actorContains = " and contains(m.textSearch, \"%s\") ";
-        final String _actorOrderBy = " order by m.name ";
-        final String _actorOffset = " offset %d limit %d ";
 
         final FeedOptions options = new FeedOptions();
         options.enableCrossPartitionQuery(true);
@@ -42,7 +43,7 @@ public class ActorsDao {
 
         String queryString = _actorSelect + _contains +  _actorOrderBy + String.format(_actorOffset, _pageNumber, _pageSize);
 
-        Flux<FeedResponse<CosmosItemProperties>> feedResponse = context.getBean(CosmosClient.class).getDatabase("imdb")
+        Flux<FeedResponse<CosmosItemProperties>> feedResponse = _context.getBean(CosmosClient.class).getDatabase("imdb")
                 .getContainer("actors").queryItems(queryString, options);
 
         Flux<Actor> selectedActors = feedResponse.flatMap(flatFeedResponse -> {

@@ -33,7 +33,7 @@ public class ConfigurationService implements IConfigurationService
     @Autowired
     public ConfigurationService(IKeyVaultService kvService){
         _keyVaultService = kvService;
-        Map<String, String> secrets = _keyVaultService.getSecrets();
+        Map<String, String> secrets = _keyVaultService.getSecretsSync();
         configEntries = secrets;
     }
 

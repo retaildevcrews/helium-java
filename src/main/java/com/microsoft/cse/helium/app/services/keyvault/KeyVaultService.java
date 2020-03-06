@@ -118,23 +118,24 @@ public class KeyVaultService implements IKeyVaultService
         });
     }
 
-    // Need to come back and implement callbacks instead of calling get(). 
-    // Could not find an example of the callback signature so postponing as this method
-    // will be primarily used as blocking call at app startup.
-    public Mono<List<SecretItem>> listSecrets(){
+    // Returns null on error and logs error.
+    // Created as a blocking function as app start-up is dependent on success.
+    public List<SecretItem> listSecretsSync(){
         List<SecretItem> secrets=null;
         try{
-            return Mono.just(_keyVaultClient.listSecretsAsync(getKeyVaultUri(), null).get());
+            secrets = _keyVaultClient.listSecretsAsync(getKeyVaultUri(), null).get();
         }
         catch(Exception exception)
         {
-            return Mono.error(exception);
+            _logger.error(exception.getMessage());
         }
+
+        return secrets;
     }
 
-    // For now, blocking to get MVP of call chain.  Switch to async in the future.
-    public Map<String, String> getSecrets(){
-        List<SecretItem> secretItems = listSecrets().block();
+    // Created as a blocking function as app start-up is dependent on success.
+    public Map<String, String> getSecretsSync(){
+        List<SecretItem> secretItems = listSecretsSync();
 
         Map<String, String> secrets = new ConcurrentHashMap<String, String>();
         secretItems.forEach(item -> {
