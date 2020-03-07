@@ -7,7 +7,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
 
 @SpringBootApplication
-@EnableWebFlux 
+@EnableWebFlux
 @EnableSwagger2WebFlux
 @ComponentScan("com.microsoft.cse.helium")
 public class HeliumJavaApplication {
@@ -15,7 +15,4 @@ public class HeliumJavaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HeliumJavaApplication.class, args);
 	}
-
-
-
 }

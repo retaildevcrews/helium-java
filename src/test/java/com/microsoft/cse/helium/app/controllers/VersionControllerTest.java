@@ -1,34 +1,67 @@
 package com.microsoft.cse.helium.app.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
-
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.mockito.Mock;
 import static org.junit.Assert.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
+import com.microsoft.cse.helium.app.config.BuildConfig;
+import com.microsoft.cse.helium.app.models.HeliumConfig;
 
-@ExtendWith(SpringExtension.class)
-@WebFluxTest(controllers = VersionController.class)
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes=HeliumConfig.class)
+//@org.springframework.beans.factory.annotation.Autowired(required=true)
+
+//@SpringApplicationConfiguration(classes={VersionController.class, BuildConfig.class})
+//@AutoConfigureWebTestClient
 public class VersionControllerTest{
 
-    @Autowired
-    private WebTestClient webClient;
+    @Mock
+    private VersionController versionController;
+
+    // @InjectMocks
+    // private BuildConfig buildConfig;
+
+    //@InjectMocks
+    //private BuildProperties buildProperties;
+
+    // @Autowired
+    // private WebTestClient webClient;
+
+
+    private static final Logger _logger = LoggerFactory.getLogger(VersionControllerTest.class);
 
     @Test
     public void testVersion(){
-        assertTrue(true);
+        assertTrue(versionController != null);
+        WebTestClient webClient = WebTestClient.bindToController(versionController)
+        .configureClient()
+        .baseUrl("/")
+        .build();
+        //BuildConfig buildConfig = mock (BuildConfig.class);
+        //buildConfig.getBuildVersion();
+        // assertTrue(buildConfig != null);
+        // _logger.error("Hello Sanjeev " + buildConfig.getBuildVersion());
+        //webClient = new WebTestClient();
+        assertTrue(webClient != null);
+        webClient
+        .get()
+        .uri("/version")
+        .exchange()
+        .expectStatus()
+        .isOk();
+        _logger.error("hola hola sanjeev");
     }
 
 
