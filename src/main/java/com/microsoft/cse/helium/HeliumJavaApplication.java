@@ -1,8 +1,5 @@
 package com.microsoft.cse.helium;
 
-import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
