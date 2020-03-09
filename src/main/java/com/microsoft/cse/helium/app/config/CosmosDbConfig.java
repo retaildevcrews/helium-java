@@ -10,6 +10,7 @@ import com.azure.data.cosmos.internal.RequestOptions;
 import com.microsoft.azure.spring.data.cosmosdb.config.AbstractCosmosConfiguration;
 import com.microsoft.azure.spring.data.cosmosdb.config.CosmosDBConfig;
 import com.microsoft.azure.spring.data.cosmosdb.repository.config.EnableCosmosRepositories;
+import com.microsoft.azure.spring.data.cosmosdb.repository.config.EnableReactiveCosmosRepositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
