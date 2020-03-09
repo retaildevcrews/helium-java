@@ -1,8 +1,9 @@
 package com.microsoft.cse.helium.app.dao;
 
+import com.microsoft.cse.helium.app.services.configuration.*;
+
 import com.azure.data.cosmos.CosmosClient;
 import com.azure.data.cosmos.CosmosItemProperties;
-import com.azure.data.cosmos.FeedOptions;
 import com.azure.data.cosmos.FeedResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -11,27 +12,25 @@ import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory
 import com.microsoft.cse.helium.app.models.Actor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+// import reactor.core.publisher.Mono;
 
 @Service
-public class ActorsDao {
+public class ActorsDao extends BaseCosmosDbDao {
+
+    final String _actorSelect = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor' ";
+    final String _actorContains = " and contains(m.textSearch, \"%s\") ";
+    final String _actorOrderBy = " order by m.name ";
+    final String _actorOffset = " offset %d limit %d ";
 
     @Autowired
-    ApplicationContext context;
+    public ActorsDao(IConfigurationService configService){
+        super(configService);
+    }
 
     public Flux<Actor> getActors(Integer _pageNumber, Integer _pageSize, String _query) {
-        final String _actorSelect = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor' ";
-        final String _actorContains = " and contains(m.textSearch, \"%s\") ";
-        final String _actorOrderBy = " order by m.name ";
-        final String _actorOffset = " offset %d limit %d ";
-
-        final FeedOptions options = new FeedOptions();
-        options.enableCrossPartitionQuery(true);
-        options.maxDegreeOfParallelism(2);
 
         ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
@@ -42,8 +41,8 @@ public class ActorsDao {
 
         String queryString = _actorSelect + _contains +  _actorOrderBy + String.format(_actorOffset, _pageNumber, _pageSize);
 
-        Flux<FeedResponse<CosmosItemProperties>> feedResponse = context.getBean(CosmosClient.class).getDatabase("imdb")
-                .getContainer("actors").queryItems(queryString, options);
+        Flux<FeedResponse<CosmosItemProperties>> feedResponse = this._context.getBean(CosmosClient.class).getDatabase(this._cosmosDatabase)
+                .getContainer(this._cosmosContainer).queryItems(queryString, this._feedOptions);
 
         Flux<Actor> selectedActors = feedResponse.flatMap(flatFeedResponse -> {
             return Flux.fromIterable(flatFeedResponse.results());

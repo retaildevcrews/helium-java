@@ -1,27 +1,16 @@
 package com.microsoft.cse.helium.app.services.configuration;
 
 import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
-import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
 
-import lombok.Getter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
-import java.io.IOException;
 
-import org.springframework.context.annotation.Bean;
-
-import com.microsoft.azure.keyvault.models.CertificateBundle;
-import com.microsoft.azure.keyvault.models.KeyBundle;
-import com.microsoft.azure.keyvault.models.SecretBundle;
-
-import reactor.core.publisher.Mono;
 
 @Service
 public class ConfigurationService implements IConfigurationService
@@ -30,14 +19,24 @@ public class ConfigurationService implements IConfigurationService
 
     private IKeyVaultService _keyVaultService;
 
-    @Autowired
-    public ConfigurationService(IKeyVaultService kvService){
-        _keyVaultService = kvService;
-        Map<String, String> secrets = _keyVaultService.getSecrets();
-        configEntries = secrets;
+    Map<String, String> _configEntries = new ConcurrentHashMap<String, String>();
+
+    public Map<String, String> getConfigEntries(){
+        return _configEntries;
     }
 
-    @Getter
-    Map<String, String> configEntries = new ConcurrentHashMap<String, String>();
-   
+    @Autowired
+    public ConfigurationService(IKeyVaultService kvService){
+        try{
+            _keyVaultService = kvService;
+            Map<String, String> secrets = _keyVaultService.getSecretsSync();
+            _configEntries = secrets;
+        }
+        catch (Exception ex){
+            _logger.error(ex.getMessage());
+            throw(ex);
+        }
+    }
+
+
 }

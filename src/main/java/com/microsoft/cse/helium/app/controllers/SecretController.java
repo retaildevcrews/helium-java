@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import reactor.core.publisher.Mono;
 
 import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
-import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
+//import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
 
 @RestController
 @RequestMapping (value = "api/secret")
