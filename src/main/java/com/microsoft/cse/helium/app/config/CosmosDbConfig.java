@@ -38,7 +38,7 @@ public class CosmosDbConfig extends AbstractCosmosConfiguration {
 
     @Bean
     @Primary
-    public CosmosDBConfig BuildCosmosDBConfig() {
+    public CosmosDBConfig buildCosmosDBConfig() {
         String uri = _configService.getConfigEntries().get(Constants.COSMOS_URL_KEYNAME);
         String key = _configService.getConfigEntries().get(Constants.COSMOS_KEY_KEYNAME);
         String dbName = _configService.getConfigEntries().get(Constants.COSMOS_DATABASE_KEYNAME);
