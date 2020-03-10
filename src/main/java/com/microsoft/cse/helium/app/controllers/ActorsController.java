@@ -1,29 +1,12 @@
 package com.microsoft.cse.helium.app.controllers;
 
 import java.util.Optional;
-import com.azure.data.cosmos.CosmosClient;
-import com.azure.data.cosmos.CosmosItemProperties;
-import com.azure.data.cosmos.FeedOptions;
-import com.azure.data.cosmos.FeedResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
-import com.microsoft.cse.helium.app.models.Actor;
-import com.microsoft.cse.helium.app.models.ActorsRepository;
-import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
-import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
-import com.microsoft.cse.helium.app.services.keyvault.KeyVaultService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +24,8 @@ import io.swagger.annotations.ApiResponse;
 
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
+import com.microsoft.cse.helium.app.models.Actor;
+import com.microsoft.cse.helium.app.models.ActorsRepository;
 
 /**
  * ActorController
@@ -54,6 +39,8 @@ public class ActorsController {
 
     @Autowired
     private ActorsRepository actorRepository;
+
+    private static final Logger _logger = LoggerFactory.getLogger(ActorsController.class);
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Get single actor", notes = "Retrieve and return a single actor by actor ID")
@@ -74,11 +61,13 @@ public class ActorsController {
             @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam Optional<Integer> pageSize,
             ServerHttpResponse response) {
         Integer _pageNumber = 0;
-        Integer _pageSize = Constants.DefaultPageSize;
+        Integer _pageSize = Constants.DEFAULT_PAGE_SIZE;
 
         if (pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
-            if (pageNumber.get() >= 1) {
+            if (pageNumber.get() >= 1 && pageNumber.get() <= Constants.MAX_PAGE_COUNT) {
                 _pageNumber = pageNumber.get();
+            }else{
+                _logger.error("pageNumber value must be 1-1000.  Value passed = " + pageNumber.get().toString());
             }
         }
 
@@ -86,9 +75,9 @@ public class ActorsController {
             _pageSize = pageSize.get();
 
             if (_pageSize < 1) {
-                _pageSize = Constants.DefaultPageSize;
-            } else if (_pageSize > Constants.MaxPageSize) {
-                _pageSize = Constants.MaxPageSize;
+                _pageSize = Constants.DEFAULT_PAGE_SIZE;
+            } else if (_pageSize > Constants.MAX_PAGE_SIZE) {
+                _pageSize = Constants.MAX_PAGE_SIZE;
             }
         }
 

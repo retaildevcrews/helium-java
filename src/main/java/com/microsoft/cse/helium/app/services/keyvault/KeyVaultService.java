@@ -1,11 +1,12 @@
 package com.microsoft.cse.helium.app.services.keyvault;
 
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.microsoft.azure.AzureEnvironment;
 import com.microsoft.azure.credentials.MSICredentials;
@@ -15,6 +16,7 @@ import com.microsoft.azure.keyvault.KeyVaultClient;
 import com.microsoft.azure.keyvault.models.CertificateBundle;
 import com.microsoft.azure.keyvault.models.KeyBundle;
 import com.microsoft.azure.keyvault.models.SecretBundle;
+import com.microsoft.azure.keyvault.models.SecretItem;
 import com.microsoft.rest.ServiceCallback;
 
 import reactor.core.publisher.Mono;
@@ -113,6 +115,34 @@ public class KeyVaultService implements IKeyVaultService
                 }
             });
         });
+    }
+
+    // Returns null on error and logs error.
+    // Created as a blocking function as app start-up is dependent on success.
+    public List<SecretItem> listSecretsSync(){
+        List<SecretItem> secrets=null;
+        try{
+            secrets = _keyVaultClient.listSecretsAsync(getKeyVaultUri(), null).get();
+        }
+        catch(Exception exception)
+        {
+            _logger.error(exception.getMessage());
+        }
+
+        return secrets;
+    }
+
+    // Created as a blocking function as app start-up is dependent on success.
+    public Map<String, String> getSecretsSync(){
+        List<SecretItem> secretItems = listSecretsSync();
+
+        Map<String, String> secrets = new ConcurrentHashMap<String, String>();
+        secretItems.forEach(item -> {
+            String itemName = item.id().substring(item.id().lastIndexOf("/") + 1);
+            String secretValue = getSecret(itemName).block();
+            secrets.put(itemName, secretValue);
+        });
+        return secrets;
     }
 
     public Mono<KeyBundle> getKey (String keyName){
