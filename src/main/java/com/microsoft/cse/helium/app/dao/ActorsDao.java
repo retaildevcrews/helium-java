@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
 // import reactor.core.publisher.Mono;
 
 @Service
@@ -25,9 +28,26 @@ public class ActorsDao extends BaseCosmosDbDao {
     final String _actorOrderBy = " order by m.name ";
     final String _actorOffset = " offset %d limit %d ";
 
+    final String _actorSelectById = _actorSelect + " and m.actorId = ";
+
+
     @Autowired
     public ActorsDao(IConfigurationService configService){
         super(configService);
+    }
+
+    public Mono<Actor> getActorById(String _actorId) {
+
+        ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
+
+        String readItemQuery = _actorSelectById + _actorId;
+        System.out.println("readItemQuery " + readItemQuery);
+
+       /* Mono<List<FeedResponse<CosmosItemProperties>>> feedResponse = this._context.getBean(CosmosClient.class).getDatabase(this._cosmosDatabase)
+                .getContainer(this._cosmosContainer).queryItems(readItemQuery, this._feedOptions).collectList(); */
+
+       return null;
+
     }
 
     public Flux<Actor> getActors(Integer _pageNumber, Integer _pageSize, String _query) {

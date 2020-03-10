@@ -18,7 +18,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+
 @EnableCosmosRepositories(basePackages = "com.microsoft.azure.helium.app.*")
+
 public class CosmosDbConfig extends AbstractCosmosConfiguration {
 
     protected IConfigurationService _configService;

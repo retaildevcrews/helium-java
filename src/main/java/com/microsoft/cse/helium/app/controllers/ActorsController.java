@@ -37,9 +37,6 @@ public class ActorsController {
     @Autowired
     ActorsDao actorsDao;
 
-    @Autowired
-    private ActorsRepository actorRepository;
-
     private static final Logger _logger = LoggerFactory.getLogger(ActorsController.class);
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -48,7 +45,7 @@ public class ActorsController {
             @ApiResponse(code = 404, message = "An actor with the specified ID was not found") })
     public Mono<Actor> getActor(
             @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true) @PathVariable("id") String actorId) {
-        return actorRepository.findByActorId(actorId);
+        return actorsDao.getActorById(actorId);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
