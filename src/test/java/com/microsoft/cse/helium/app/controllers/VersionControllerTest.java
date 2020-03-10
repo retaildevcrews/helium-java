@@ -1,33 +1,47 @@
 package com.microsoft.cse.helium.app.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
-
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.mockito.Mock;
 import static org.junit.Assert.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
 
-// @RunWith(SpringRunner.class)
-// @WebFluxTest
+import com.microsoft.cse.helium.app.models.HeliumConfig;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes=HeliumConfig.class)
 public class VersionControllerTest{
 
-    // @Autowired
-    private WebTestClient webClient;
+    @Mock
+    private VersionController versionController;
 
-    // @Test
+    private static final Logger _logger = LoggerFactory.getLogger(VersionControllerTest.class);
+
+    @Test
     public void testVersion(){
-        assertTrue(true);
+        assertTrue(versionController != null);
+        WebTestClient webClient = WebTestClient.bindToController(versionController)
+        .configureClient()
+        .baseUrl("/")
+        .build();
+
+        assertTrue(webClient != null);
+        webClient
+        .get()
+        .uri("/version")
+        .exchange()
+        .expectStatus()
+        .isOk();
+        _logger.error("Passed the Unit tests, got a 200 OK!");
     }
+
+
 
 }
 

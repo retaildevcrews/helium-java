@@ -66,4 +66,7 @@ log/
 target/
 
 run.sh
+t.sh
+c.sh
+d.sh
 application-dev.properties
