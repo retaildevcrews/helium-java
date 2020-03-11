@@ -48,10 +48,8 @@ public class ActorsDao extends BaseCosmosDbDao {
         followed by 5-9 digits
         parses to int > 0
         */
-        System.out.println(_actorId);
         Pattern p = Pattern.compile("[nm]{2}[0-9]{5,9}");
         return p.matcher(_actorId).matches();
-
     }
 
 
@@ -63,9 +61,6 @@ public class ActorsDao extends BaseCosmosDbDao {
         }
 
         ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
-
-        String readItemQuery = _actorSelectById + _actorId;
-        System.out.println("readItemQuery " + query);
 
         Mono<Actor> actor =
                 this._context
@@ -85,7 +80,6 @@ public class ActorsDao extends BaseCosmosDbDao {
     }
 
     public Flux<Actor> getActors(Integer _pageNumber, Integer _pageSize, String _query) {
-
         ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
         String _contains = "";
