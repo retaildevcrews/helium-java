@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,6 @@ import io.swagger.annotations.ApiResponse;
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.models.Actor;
-import com.microsoft.cse.helium.app.models.ActorsRepository;
 
 /**
  * ActorController
@@ -43,9 +43,12 @@ public class ActorsController {
     @ApiOperation(value = "Get single actor", notes = "Retrieve and return a single actor by actor ID")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "The actor object"),
             @ApiResponse(code = 404, message = "An actor with the specified ID was not found") })
-    public Mono<Actor> getActor(
+    public Mono<ResponseEntity<Actor>> getActor(
             @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true) @PathVariable("id") String actorId) {
-        return actorsDao.getActorById(actorId);
+        return actorsDao.getActorById(actorId)
+                .map(savedActor -> ResponseEntity.ok(savedActor))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
