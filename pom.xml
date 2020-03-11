@@ -37,11 +37,22 @@
         </dependency>
         <dependency>
             <groupId>com.microsoft.azure</groupId>
-            <artifactId>azure-keyvault-secrets-spring-boot-starter</artifactId>
+            <artifactId>azure-client-authentication</artifactId>
         </dependency>
         <dependency>
             <groupId>com.microsoft.azure</groupId>
-            <artifactId>azure-spring-boot-starter</artifactId>
+            <artifactId>adal4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-keyvault</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.microsoft.azure</groupId>
+                    <artifactId>azure-client-runtime</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -64,14 +75,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions><!--
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-                -->
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.microsoft.azure</groupId>
