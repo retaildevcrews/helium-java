@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -42,14 +43,14 @@ public class ActorsController {
 
     private static final Logger _logger = LoggerFactory.getLogger(ActorsController.class);
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get single actor", notes = "Retrieve and return a single actor by actor ID")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "The actor object"),
             @ApiResponse(code = 404, message = "An actor with the specified ID was not found") })
     public Mono<ResponseEntity<Actor>> getActor(
             @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true) @PathVariable("id") String actorId) {
 
-        if(validator.validActorId(actorId)) {
+        if(validator.isValidActorId(actorId)) {
             return actorsDao.getActorById(actorId)
                     .map(savedActor -> ResponseEntity.ok(savedActor))
                     .defaultIfEmpty(ResponseEntity.notFound().build());
@@ -60,7 +61,7 @@ public class ActorsController {
 
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all actors", notes = "Retrieve and return all actors")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "List of actor objects") })
     public Flux<Actor> getAllActors(

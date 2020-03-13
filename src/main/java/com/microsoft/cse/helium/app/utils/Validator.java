@@ -15,7 +15,7 @@ public class Validator {
     */
     private final String validActorRegex = "[nm]{2}[0-9]{5,9}";
 
-    public Boolean validActorId(String actorId){
+    public Boolean isValidActorId(String actorId){
         Pattern p = Pattern.compile(validActorRegex);
         return p.matcher(actorId).matches();
     }
