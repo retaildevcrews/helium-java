@@ -1,6 +1,5 @@
 package com.microsoft.cse.helium.app.dao;
 
-import com.azure.data.cosmos.internal.HttpConstants;
 import com.microsoft.cse.helium.app.services.configuration.*;
 
 import com.azure.data.cosmos.CosmosClient;
@@ -14,7 +13,6 @@ import com.microsoft.cse.helium.app.models.Actor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
@@ -24,7 +22,6 @@ import reactor.core.publisher.Mono;
 public class ActorsDao extends BaseCosmosDbDao {
 
     private static final Logger _logger = LoggerFactory.getLogger(ActorsDao.class);
-
     final String _actorSelect = "select m.id, m.partitionKey, m.actorId, m.type, m.name, m.birthYear, m.deathYear, m.profession, m.textSearch, m.movies from m where m.type = 'Actor' ";
     final String _actorContains = " and contains(m.textSearch, \"%s\") ";
     final String _actorOrderBy = " order by m.name ";
@@ -35,7 +32,6 @@ public class ActorsDao extends BaseCosmosDbDao {
     public ActorsDao(IConfigurationService configService){
         super(configService);
     }
-
     public Mono<Actor> getActorById(String _actorId)  {
         final String query = String.format(_actorSelectById, _actorId.toString());
 

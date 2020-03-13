@@ -37,7 +37,6 @@ import com.microsoft.cse.helium.app.models.Actor;
 public class ActorsController {
     @Autowired
     ActorsDao actorsDao;
-
     @Autowired
     Validator validator;
 
