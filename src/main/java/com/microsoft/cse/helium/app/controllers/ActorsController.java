@@ -2,6 +2,7 @@ package com.microsoft.cse.helium.app.controllers;
 
 import java.util.Optional;
 
+import com.microsoft.cse.helium.app.utils.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class ActorsController {
     @Autowired
     ActorsDao actorsDao;
 
+    @Autowired
+    Validator validator;
+
     private static final Logger _logger = LoggerFactory.getLogger(ActorsController.class);
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -45,9 +49,15 @@ public class ActorsController {
             @ApiResponse(code = 404, message = "An actor with the specified ID was not found") })
     public Mono<ResponseEntity<Actor>> getActor(
             @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true) @PathVariable("id") String actorId) {
-        return actorsDao.getActorById(actorId)
-                .map(savedActor -> ResponseEntity.ok(savedActor))
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+
+        if(validator.validActorId(actorId)) {
+            return actorsDao.getActorById(actorId)
+                    .map(savedActor -> ResponseEntity.ok(savedActor))
+                    .defaultIfEmpty(ResponseEntity.notFound().build());
+        }else{
+            _logger.error("Invalid actorId parameter " + actorId);
+            return Mono.justOrEmpty(ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).build());
+        }
 
     }
 
