@@ -1,42 +1,38 @@
 package com.microsoft.cse.helium.app.services.configuration;
 
 import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
-
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
-public class ConfigurationService implements IConfigurationService
-{
-    private static final Logger _logger = LoggerFactory.getLogger(ConfigurationService.class);
+public class ConfigurationService implements IConfigurationService {
+  private static final Logger logger = LoggerFactory.getLogger(ConfigurationService.class);
 
-    private IKeyVaultService _keyVaultService;
+  private IKeyVaultService keyVaultService;
 
-    Map<String, String> _configEntries = new ConcurrentHashMap<String, String>();
+  Map<String, String> configEntries = new ConcurrentHashMap<String, String>();
 
-    public Map<String, String> getConfigEntries(){
-        return _configEntries;
+  public Map<String, String> getConfigEntries() {
+    return configEntries;
+  }
+
+  /**
+   * ConfigurationService.
+   */
+  @Autowired
+  public ConfigurationService(IKeyVaultService kvService) {
+    try {
+      keyVaultService = kvService;
+      Map<String, String> secrets = keyVaultService.getSecretsSync();
+      configEntries = secrets;
+    } catch (Exception ex) {
+      logger.error(ex.getMessage());
+      throw (ex);
     }
-
-    @Autowired
-    public ConfigurationService(IKeyVaultService kvService){
-        try{
-            _keyVaultService = kvService;
-            Map<String, String> secrets = _keyVaultService.getSecretsSync();
-            _configEntries = secrets;
-        }
-        catch (Exception ex){
-            _logger.error(ex.getMessage());
-            throw(ex);
-        }
-    }
-
-
+  }
 }

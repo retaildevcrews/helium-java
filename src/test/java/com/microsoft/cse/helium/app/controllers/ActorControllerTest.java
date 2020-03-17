@@ -4,8 +4,6 @@ import com.microsoft.cse.helium.app.models.Actor;
 import net.minidev.json.parser.ParseException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,16 +18,15 @@ import java.io.IOException;
 @AutoConfigureWebTestClient(timeout = "20000")
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
-@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}","helium.environment.flag=${He_EnvironmentFlag}"})
+@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${He_EnvironmentFlag}"})
 
 public class ActorControllerTest {
-    @Autowired
-    private WebTestClient webClient;
+  @Autowired
+  private WebTestClient webClient;
 
-    private static final Logger logger = LoggerFactory.getLogger(ActorControllerTest.class);
 
     @Test
-    public void testGetActorByIdForValidActor() throws IOException, ParseException {
+    public void testGetActorByIdForValidActor() {
         String validActorId = "nm1265067";
         webClient.get().uri("/api/actors/{id}", validActorId)
                 .exchange()
@@ -38,14 +35,14 @@ public class ActorControllerTest {
                 .jsonPath("$.id").isEqualTo(validActorId);
     }
     @Test
-    public void testGetActorByIdForActorBadRequest() throws IOException, ParseException {
+    public void testGetActorByIdForActorBadRequest() {
         webClient.get()
                 .uri("/api/actors/{id}", "tt0000002")
                 .exchange()
                 .expectStatus().isBadRequest();
     }
     @Test
-    public void testGetActorByIdForActorNotFound() throws IOException, ParseException {
+    public void testGetActorByIdForActorNotFound() {
         webClient.get()
                 .uri("/api/actors/{id}", "nm111111")
                 .exchange()
