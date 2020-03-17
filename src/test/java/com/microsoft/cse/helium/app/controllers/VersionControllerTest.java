@@ -3,6 +3,8 @@ package com.microsoft.cse.helium.app.controllers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+
+
 import static org.junit.Assert.*;
 
 
@@ -15,32 +17,30 @@ import org.slf4j.LoggerFactory;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=HeliumConfig.class)
-public class VersionControllerTest{
+@ContextConfiguration(classes = HeliumConfig.class)
+public class VersionControllerTest {
 
-    @Mock
-    private VersionController versionController;
+  @Mock
+  private VersionController versionController;
 
-    private static final Logger _logger = LoggerFactory.getLogger(VersionControllerTest.class);
+  private static final Logger _logger = LoggerFactory.getLogger(VersionControllerTest.class);
 
-    @Test
-    public void testVersion(){
-        assertTrue(versionController != null);
-        WebTestClient webClient = WebTestClient.bindToController(versionController)
+  @Test
+  public void testVersion() {
+    assertTrue(versionController != null);
+    WebTestClient webClient = WebTestClient.bindToController(versionController)
         .configureClient()
         .baseUrl("/")
         .build();
 
-        assertTrue(webClient != null);
-        webClient
+    assertTrue(webClient != null);
+    webClient
         .get()
         .uri("/version")
         .exchange()
         .expectStatus()
         .isOk();
-        _logger.error("Passed the Unit tests, got a 200 OK!");
-    }
-
+  }
 
 
 }

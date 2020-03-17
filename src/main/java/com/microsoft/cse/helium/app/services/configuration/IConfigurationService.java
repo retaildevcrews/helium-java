@@ -1,9 +1,9 @@
 package com.microsoft.cse.helium.app.services.configuration;
 
-import java.util.*;
+import java.util.Map;
 
 
 public interface IConfigurationService {
 
-    public Map<String, String> getConfigEntries();
+  Map<String, String> getConfigEntries();
 }

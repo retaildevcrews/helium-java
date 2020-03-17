@@ -1,13 +1,12 @@
 package com.microsoft.cse.helium.app.models;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.util.List;
-
 /**
- * Movie
+ * Movie.
  */
 @Getter
 @AllArgsConstructor
@@ -22,6 +21,7 @@ public class MovieBase {
   public int runtime;
   private List<String> genres;
 
-  public  MovieBase(){}
+  public MovieBase() {
+  }
 
 }
