@@ -69,4 +69,6 @@ run.sh
 t.sh
 c.sh
 d.sh
+chk.sh
+pmd.sh
 application-dev.properties
