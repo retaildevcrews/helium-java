@@ -6,22 +6,24 @@ import lombok.Getter;
 import net.minidev.json.annotate.JsonIgnore;
 
 /**
- * Actor
+ * ActorBase.
  */
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
-
 public class ActorBase {
 
-    private String actorId;
-    private String name;
-    private int birthYear;
+  private String actorId;
+  private String name;
+  private int birthYear;
 
-    @JsonIgnore
-    public int deathYear;
+  @JsonIgnore
+  public int deathYear;
 
-    public ActorBase() {
+  /**
+   * ActorBase.
+   */
+  public ActorBase(){
 
-    }
+  }
 }

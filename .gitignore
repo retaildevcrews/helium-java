@@ -69,4 +69,8 @@ run.sh
 t.sh
 c.sh
 d.sh
+chk.sh
+pmd.sh
 application-dev.properties
+google_checks.xml
+intellij-java-google-style.xml

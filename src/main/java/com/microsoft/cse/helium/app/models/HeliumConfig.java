@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class HeliumConfig {
-    @Bean
-    public BuildConfig buildConfig() {
-        return new BuildConfig();
-    }
+  @Bean
+  public BuildConfig buildConfig() {
+    return new BuildConfig();
+  }
 }
