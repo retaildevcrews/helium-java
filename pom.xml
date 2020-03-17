@@ -23,6 +23,7 @@
     <name>helium-java</name>
     <description>Helium Java with Spring Boot</description>
 
+
     <properties>
         <java.version>1.8</java.version>
         <azure.version>2.2.0</azure.version>
@@ -46,15 +47,18 @@
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-client-authentication</artifactId>
+            <version>1.7.2</version>
         </dependency>
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>adal4j</artifactId>
+            <version>1.6.4</version>
         </dependency>
 
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-keyvault</artifactId>
+            <version>1.2.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.microsoft.azure</groupId>
@@ -122,18 +126,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.microsoft.azure</groupId>
-                <artifactId>azure-spring-boot-bom</artifactId>
-                <version>${azure.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <build>
     <plugins>
         <plugin>

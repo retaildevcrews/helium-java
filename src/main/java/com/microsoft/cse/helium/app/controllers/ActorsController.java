@@ -2,10 +2,12 @@ package com.microsoft.cse.helium.app.controllers;
 
 import java.util.Optional;
 
+import com.microsoft.cse.helium.app.utils.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -36,22 +38,30 @@ import com.microsoft.cse.helium.app.models.Actor;
 public class ActorsController {
     @Autowired
     ActorsDao actorsDao;
+    @Autowired
+    Validator validator;
 
     private static final Logger _logger = LoggerFactory.getLogger(ActorsController.class);
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get single actor", notes = "Retrieve and return a single actor by actor ID")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "The actor object"),
             @ApiResponse(code = 404, message = "An actor with the specified ID was not found") })
     public Mono<ResponseEntity<Actor>> getActor(
             @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true) @PathVariable("id") String actorId) {
-        return actorsDao.getActorById(actorId)
-                .map(savedActor -> ResponseEntity.ok(savedActor))
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+
+        if(validator.isValidActorId(actorId)) {
+            return actorsDao.getActorById(actorId)
+                    .map(savedActor -> ResponseEntity.ok(savedActor))
+                    .defaultIfEmpty(ResponseEntity.notFound().build());
+        }else{
+            _logger.error("Invalid actorId parameter " + actorId);
+            return Mono.justOrEmpty(ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).build());
+        }
 
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all actors", notes = "Retrieve and return all actors")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "List of actor objects") })
     public Flux<Actor> getAllActors(
