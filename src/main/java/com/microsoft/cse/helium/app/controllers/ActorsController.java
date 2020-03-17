@@ -1,16 +1,18 @@
 package com.microsoft.cse.helium.app.controllers;
 
-import java.util.Optional;
+import java.util.*;
 
-import com.microsoft.cse.helium.app.utils.Validator;
+import com.azure.data.cosmos.CosmosClientException;
+import com.microsoft.cse.helium.app.utils.ParameterValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponses;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import io.swagger.annotations.ApiResponse;
 
@@ -39,7 +40,7 @@ public class ActorsController {
     @Autowired
     ActorsDao actorsDao;
     @Autowired
-    Validator validator;
+    ParameterValidator validator;
 
     private static final Logger _logger = LoggerFactory.getLogger(ActorsController.class);
 
@@ -64,40 +65,64 @@ public class ActorsController {
     @RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Get all actors", notes = "Retrieve and return all actors")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "List of actor objects") })
-    public Flux<Actor> getAllActors(
-            @ApiParam(value = "(query) (optional) The term used to search Actor name", required = false) @RequestParam final Optional<String> q,
-            @RequestParam("q") final Optional<String> query,
-            @ApiParam(value = "0 based page index", defaultValue = "0") @RequestParam Optional<Integer> pageNumber,
-            @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam Optional<Integer> pageSize,
-            ServerHttpResponse response) {
-        Integer _pageNumber = 0;
-        Integer _pageSize = Constants.DEFAULT_PAGE_SIZE;
+    public Object getAllActors(
+            @ApiParam(value = "(query) (optional) The term used to search Actor name") @RequestParam("q") final Optional<String> query,
+            @ApiParam(value = "1 based page index", defaultValue = "1") @RequestParam Optional<String> pageNumber,
+            @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam Optional<String> pageSize) {
 
-        if (pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
-            if (pageNumber.get() >= 1 && pageNumber.get() <= Constants.MAX_PAGE_COUNT) {
-                _pageNumber = pageNumber.get();
-            }else{
-                _logger.error("pageNumber value must be 1-1000.  Value passed = " + pageNumber.get().toString());
-            }
-        }
-
-        if (pageSize.isPresent() && pageSize.get() > 0) {
-            _pageSize = pageSize.get();
-
-            if (_pageSize < 1) {
-                _pageSize = Constants.DEFAULT_PAGE_SIZE;
-            } else if (_pageSize > Constants.MAX_PAGE_SIZE) {
-                _pageSize = Constants.MAX_PAGE_SIZE;
-            }
-        }
-
-        String _q = "";
-        if(query.isPresent()) {
+        String q = null;
+        if(query.isPresent() && !StringUtils.isEmpty(query.get())) {
             if(query.get() != null && !query.get().isEmpty()) {
-                _q = query.get().trim().toLowerCase().replace("'", "''");
+                if (validator.isValidSearchQuery(query.get())) {
+                    q = query.get().trim().toLowerCase().replace("'", "''");
+                }else {
+                    _logger.error("Invalid q(search) parameter");
+                    MultiValueMap<String, String> headers = new HttpHeaders();
+                    headers.put("content-type", Arrays.asList("text/plain"));
+                    return new ResponseEntity<>("Invalid q(search) parameter",
+                            headers,
+                            HttpStatus.BAD_REQUEST);
+                }
             }
         }
 
-        return actorsDao.getActors(_pageNumber, _pageSize, _q);
+        Integer pageNo = 0;
+        if(pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
+            if(!validator.isValidPageNumber(pageNumber.get())) {
+                _logger.error("Invalid pageNumber parameter");
+                MultiValueMap<String, String> headers = new HttpHeaders();
+                headers.put("content-type", Arrays.asList("text/plain"));
+                return new ResponseEntity<>("Invalid pageNumber parameter",
+                        headers,
+                        HttpStatus.BAD_REQUEST);
+            }else{
+                pageNo = Integer.parseInt(pageNumber.get());
+            }
+        }
+
+        Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
+        if(pageSize.isPresent()  && !StringUtils.isEmpty(pageSize.get())) {
+            if(!validator.isValidPageSize(pageSize.get())) {
+                _logger.error("Invalid pageSize parameter");
+                MultiValueMap<String, String> headers = new HttpHeaders();
+                headers.put("content-type", Arrays.asList("text/plain"));
+                return new ResponseEntity<>("Invalid pageSize parameter",
+                        headers,
+                        HttpStatus.BAD_REQUEST);
+            }else{
+                pageSz = Integer.parseInt(pageSize.get());
+            }
+        }
+        try{
+            pageNo--;
+            if (pageNo < 0){
+                pageNo = 0;
+            }
+            return actorsDao.getActors(q, pageNo * pageSz, pageSz);
+        }catch (Exception ex){
+            return new ResponseEntity<>("ActorsControllerException",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 }
