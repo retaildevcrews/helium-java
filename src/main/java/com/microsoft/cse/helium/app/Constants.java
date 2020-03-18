@@ -4,7 +4,6 @@ package com.microsoft.cse.helium.app;
  * Constants.
  */
 public final class Constants {
-  /* Once code is refactored these values neeed removed */
   public static final String DEFAULT_GENRE_COLLECTION_NAME = "genres";
   public static final String DEFAULT_ACTOR_COLLECTION_NAME = "actors";
   public static final String DEFAULT_MOVIE_COLLECTION_NAME = "movies";

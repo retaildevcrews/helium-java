@@ -17,25 +17,23 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(value = "api/secret")
 public class SecretController {
-
   private static final Logger logger = LoggerFactory.getLogger(SecretController.class);
 
-  @Autowired
-  private IKeyVaultService keyVaultService;
+  @Autowired private IKeyVaultService keyVaultService;
 
-  @Autowired
-  IConfigurationService config;
+  @Autowired IConfigurationService config;
 
   @Value("${helium.keyvault.secretName}")
   private String secretName;
 
-  /**
-   * getSecret.
-   */
-  @GetMapping(value = {"/", ""}, produces = MediaType.TEXT_PLAIN_VALUE)
+  /** getSecret. */
+  @GetMapping(
+      value = {"/", ""},
+      produces = MediaType.TEXT_PLAIN_VALUE)
   public Mono<ResponseEntity<String>> getSecret() {
     try {
-      return keyVaultService.getSecret(secretName)
+      return keyVaultService
+          .getSecret(secretName)
           .map(ResponseEntity::ok)
           .onErrorReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
     } catch (Exception ex) {
