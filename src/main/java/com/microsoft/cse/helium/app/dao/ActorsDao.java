@@ -37,8 +37,6 @@ public class ActorsDao extends BaseCosmosDbDao {
   public Mono<Actor> getActorById(String actorId) {
     final String query = String.format(actorSelectById, actorId.toString());
 
-    ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
-
     Mono<Actor> actor =
         this.context
             .getBean(CosmosClient.class)
