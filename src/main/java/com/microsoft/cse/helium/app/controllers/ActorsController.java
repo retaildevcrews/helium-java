@@ -4,6 +4,7 @@ import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
+import io.netty.handler.codec.Headers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -92,8 +93,8 @@ public class ActorsController {
           q = query.get().trim().toLowerCase().replace("'", "''");
         } else {
           logger.error("Invalid q(search) parameter");
-          MultiValueMap<String, String> headers = new HttpHeaders();
-          headers.put("content-type", Arrays.asList("text/plain"));
+          HttpHeaders headers = new HttpHeaders();
+          headers.setContentType(MediaType.TEXT_PLAIN);
           return new ResponseEntity<>(
               "Invalid q(search) parameter", headers, HttpStatus.BAD_REQUEST);
         }
@@ -104,8 +105,8 @@ public class ActorsController {
     if (pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
       if (!validator.isValidPageNumber(pageNumber.get())) {
         logger.error("Invalid pageNumber parameter");
-        MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.put("content-type", Arrays.asList("text/plain"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
         return new ResponseEntity<>(
             "Invalid pageNumber parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -117,8 +118,8 @@ public class ActorsController {
     if (pageSize.isPresent() && !StringUtils.isEmpty(pageSize.get())) {
       if (!validator.isValidPageSize(pageSize.get())) {
         logger.error("Invalid pageSize parameter");
-        MultiValueMap<String, String> headers = new HttpHeaders();
-        headers.put("content-type", Arrays.asList("text/plain"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
         return new ResponseEntity<>("Invalid pageSize parameter", headers,
             HttpStatus.BAD_REQUEST);
       } else {
