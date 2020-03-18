@@ -8,22 +8,20 @@
         <version>2.2.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <!-- <reporting>
-        <plugins>
+<reporting>
+    <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-pmd-plugin</artifactId>
-            <version>3.13.0</version>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <version>3.0.0</version>
         </plugin>
-        </plugins>
-    </reporting> -->
+    </plugins>
+</reporting>
 <groupId>com.microsoft.cse</groupId>
     <artifactId>helium</artifactId>
     <version>0.1</version>
     <name>helium-java</name>
     <description>Helium Java with Spring Boot</description>
-
-
     <properties>
         <java.version>1.8</java.version>
         <azure.version>2.2.0</azure.version>
@@ -212,6 +210,24 @@
                         <goal>verify</goal>
                     </goals>
                 </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <version>3.13.0</version>
+            <configuration>
+                <failOnViolation>true</failOnViolation> <!-- this is actually true by default, but can be disabled -->
+                <printFailingErrors>true</printFailingErrors>
+            </configuration>
+            <executions>
+            <execution>
+                <phase>compile</phase>
+                <goals>
+                    <goal>check</goal>
+                    <goal>cpd-check</goal>
+                </goals>
+            </execution>
             </executions>
         </plugin>
     </plugins>
