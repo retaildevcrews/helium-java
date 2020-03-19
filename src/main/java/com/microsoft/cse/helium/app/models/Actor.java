@@ -16,7 +16,7 @@ import org.springframework.data.annotation.Id;
  */
 @Getter
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = Constants.DEFAULT_ACTOR_COLLECTION_NAME)
 
 @JsonPropertyOrder({"id",

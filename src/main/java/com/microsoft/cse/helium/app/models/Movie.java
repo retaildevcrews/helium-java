@@ -16,7 +16,7 @@ import org.springframework.data.annotation.Id;
  */
 @Getter
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = Constants.DEFAULT_MOVIE_COLLECTION_NAME)
 
 @JsonPropertyOrder({"id", "movieId", "partitionKey", "type", "title", "textSearch", "year",

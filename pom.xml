@@ -221,11 +221,29 @@
                 <printFailingErrors>true</printFailingErrors>
             </configuration>
             <executions>
+                <execution>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>check</goal>
+                        <goal>cpd-check</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>findbugs-maven-plugin</artifactId>
+            <version>3.0.4</version>
+            <configuration>
+            <effort>Max</effort>
+            <threshold>Medium</threshold>
+            <xmlOutput>true</xmlOutput>
+            </configuration>
+            <executions>
             <execution>
                 <phase>compile</phase>
                 <goals>
                     <goal>check</goal>
-                    <goal>cpd-check</goal>
                 </goals>
             </execution>
             </executions>
