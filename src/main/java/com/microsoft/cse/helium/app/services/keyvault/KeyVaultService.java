@@ -53,11 +53,7 @@ public class KeyVaultService implements IKeyVaultService {
         throw ex;
       }
     } else {
-      logger.error("helium.environment.flag (He_EnvironmentFlag) value is '" + this.environmentFlag
-          + "' it must be set to 'CLI' or 'MSI'");
-      throw new IllegalArgumentException("helium.environment.flag (value='" + this.environmentFlag
-          + "') must be 'MSI' or 'CLI'.  Check ${He_EnvironmentFlag} in your environment"
-          + " variables.");
+      this.environmentFlag = USE_MSI;
     }
 
     if (!checkKeyVaultName(this.keyVaultName)) {

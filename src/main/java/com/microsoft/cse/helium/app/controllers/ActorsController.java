@@ -91,17 +91,17 @@ public class ActorsController {
     String q = null;
 
     if (query.isPresent() && !StringUtils.isEmpty(query.get())
-        && query.get() != null && !query.get().isEmpty()
-        && validator.isValidSearchQuery(query.get())) {
-      q = query.get().trim().toLowerCase().replace("'", "''");
-    } else {
-      logger.error("Invalid q(search) parameter");
-      HttpHeaders headers = new HttpHeaders();
-      headers.setContentType(MediaType.TEXT_PLAIN);
-      return new ResponseEntity<>(
-          "Invalid q(search) parameter", headers, HttpStatus.BAD_REQUEST);
+        && query.get() != null && !query.get().isEmpty()) {
+      if (validator.isValidSearchQuery(query.get())) {
+        q = query.get().trim().toLowerCase().replace("'", "''");
+      } else {
+        logger.error("Invalid q(search) parameter");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        return new ResponseEntity<>(
+            "Invalid q(search) parameter", headers, HttpStatus.BAD_REQUEST);
+      }
     }
-
 
     Integer pageNo = 0;
     if (pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
