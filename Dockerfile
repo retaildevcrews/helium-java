@@ -21,6 +21,6 @@ WORKDIR $HOME
 RUN addgroup -g 4120 -S helium && \
     adduser -u 4120 -S helium -G helium
 USER helium
-COPY --from=dependencies /app/target/helium-$build_ver.jar app.jar
+COPY --from=dependencies /app/target/helium-0.1.jar app.jar
 EXPOSE 8080
 CMD ["java", "-jar", "./app.jar"]
