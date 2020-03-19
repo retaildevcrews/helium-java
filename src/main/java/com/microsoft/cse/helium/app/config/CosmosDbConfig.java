@@ -14,14 +14,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+
 @Configuration
-
 @EnableCosmosRepositories(basePackages = "com.microsoft.azure.helium.app.*")
-
 public class CosmosDbConfig extends AbstractCosmosConfiguration {
 
-  protected String cosmosContainer = "";
-  protected String cosmosDatabase = "";
   protected IConfigurationService configurationService;
 
   protected final RequestOptions requestOptions = new RequestOptions();
@@ -32,9 +29,6 @@ public class CosmosDbConfig extends AbstractCosmosConfiguration {
   @Autowired
   public CosmosDbConfig(IConfigurationService configService) {
     configurationService = configService;
-    cosmosContainer = configurationService.getConfigEntries().get(
-        Constants.COSMOS_COLLECTION_KEYNAME);
-    cosmosDatabase = configurationService.getConfigEntries().get(Constants.COSMOS_DATABASE_KEYNAME);
 
     requestOptions.setConsistencyLevel(ConsistencyLevel.CONSISTENT_PREFIX);
     requestOptions.setScriptLoggingEnabled(true);

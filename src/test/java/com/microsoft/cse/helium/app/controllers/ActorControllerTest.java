@@ -18,7 +18,7 @@ import java.io.IOException;
 @AutoConfigureWebTestClient(timeout = "20000")
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
-@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${He_EnvironmentFlag}"})
+@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${AUTH_TYPE}"})
 
 public class ActorControllerTest {
   @Autowired
