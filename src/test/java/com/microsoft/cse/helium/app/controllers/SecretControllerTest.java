@@ -15,7 +15,8 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
 
-@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${He_EnvironmentFlag}"})
+@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}",
+  "helium.environment.flag=${AUTH_TYPE}"})
 
 public class SecretControllerTest {
   @Autowired
