@@ -1,14 +1,9 @@
 package com.microsoft.cse.helium.app.dao;
 
 import com.azure.data.cosmos.CosmosClient;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
 import com.microsoft.cse.helium.app.models.Genre;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

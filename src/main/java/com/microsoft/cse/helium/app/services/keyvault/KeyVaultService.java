@@ -50,14 +50,10 @@ public class KeyVaultService implements IKeyVaultService {
         azureTokenCredentials = AzureCliCredentials.create();
       } catch (final IOException ex) {
         logger.error(ex.getMessage());
-        throw (ex);
+        throw ex;
       }
     } else {
-      logger.error("helium.environment.flag (He_EnvironmentFlag) value is '" + this.environmentFlag
-          + "' it must be set to 'CLI' or 'MSI'");
-      throw new IllegalArgumentException("helium.environment.flag (value='" + this.environmentFlag
-          + "') must be 'MSI' or 'CLI'.  Check ${He_EnvironmentFlag} in your environment"
-          + " variables.");
+      this.environmentFlag = USE_MSI;
     }
 
     if (!checkKeyVaultName(this.keyVaultName)) {
@@ -99,7 +95,7 @@ public class KeyVaultService implements IKeyVaultService {
     // (?!.*--) - look ahead and make sure there are no double hyphens (e.g., "--")
     // [a-zA-Z0-9-]* - match alphanumeric and hyphen as many times as needed
     // [a-zA-Z0-9] - final character must be alphanumeric
-    if (!keyVaultName.matches((keyVaultNameRegex))) {
+    if (!keyVaultName.matches(keyVaultNameRegex)) {
       validSetting = false;
     }
 
