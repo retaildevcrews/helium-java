@@ -9,27 +9,27 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
-@AutoConfigureWebTestClient()
+
+@AutoConfigureWebTestClient(timeout = "20000")
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
+@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${AUTH_TYPE}"})
 
-@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}",
-  "helium.environment.flag=${AUTH_TYPE}"})
-
-public class SecretControllerTest {
+public class GenreControllerTest {
   @Autowired
   private WebTestClient webClient;
 
-  @Test
-  public void testGetSecret() {
-    webClient.get().uri("/api/secret")
-        .header(HttpHeaders.ACCEPT, TEXT_PLAIN_VALUE)
-        .exchange()
-        .expectStatus().isOk()
-        .expectBody(String.class);
-  }
+    @Test
+    public void testGenres(){
+        webClient.get().uri("/api/genres")
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(String.class);
+
+
+    }
 
 }
 

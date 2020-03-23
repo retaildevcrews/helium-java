@@ -77,8 +77,8 @@ jobs:
   acr-build-push-version:
     runs-on: ubuntu-latest
     env:
-      ACR_REG: 'gelatoappsvc'
-      ACR_REPO: 'gelatoappsvc.azurecr.io'
+      ACR_REG: 'devshop'
+      ACR_REPO: 'devshop.azurecr.io'
       ACR_IMAGE: 'helium-java'
       ACR_TAG: 'stable'
     steps:

@@ -32,7 +32,7 @@ public class ConfigurationService implements IConfigurationService {
       configEntries = secrets;
     } catch (Exception ex) {
       logger.error(ex.getMessage());
-      throw (ex);
+      throw ex;
     }
   }
 }
