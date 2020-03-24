@@ -1,5 +1,7 @@
 package com.microsoft.cse.helium.app.dao;
 
+import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
+
 import com.azure.data.cosmos.CosmosClient;
 import com.azure.data.cosmos.CosmosItemProperties;
 import com.azure.data.cosmos.FeedResponse;
@@ -9,8 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
+import com.microsoft.cse.helium.app.utils.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -18,6 +22,8 @@ import reactor.core.publisher.Mono;
 @Service
 public class ActorsDao extends BaseCosmosDbDao {
   private static final Logger logger = LoggerFactory.getLogger(ActorsDao.class);
+
+  @Autowired CommonUtils utils;
 
   private static String actorSelect =
       "select m.id, m.partitionKey, m.actorId, m.type, "
@@ -27,30 +33,26 @@ public class ActorsDao extends BaseCosmosDbDao {
   private static String actorContains = "and contains(m.textSearch, \"%s\") ";
   private static String actorOrderBy = " order by m.textSearch ";
   private static String actorOffset = " offset %d limit %d ";
-  private static String actorSelectById = actorSelect + "and m.actorId = '%s'";
 
+  /** ActorsDao. */
   public ActorsDao(IConfigurationService configService) {
     super(configService);
   }
 
-  /** getActorById. */
+  /** getActorByIdSingleRead. */
   public Mono<Actor> getActorById(String actorId) {
-    final String query = String.format(actorSelectById, actorId.toString());
-
     Mono<Actor> actor =
         this.context
             .getBean(CosmosClient.class)
             .getDatabase(this.cosmosDatabase)
             .getContainer(this.cosmosContainer)
-            .queryItems(query, this.feedOptions)
+            .getItem(actorId, utils.getPartitionKey(actorId))
+            .read()
             .flatMap(
-                cosmosItemFeedResponse ->
-                    Mono.justOrEmpty(
-                        cosmosItemFeedResponse.results().stream()
-                            .map(cosmosItem -> cosmosItem.toObject(Actor.class))
-                            .findFirst()))
-            .onErrorResume(Mono::error)
-            .next();
+                cosmosItemResponse -> {
+                  return Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Actor.class));
+                })
+            .onErrorResume(throwable -> findAPIExceptionHandler("Failed to find item", throwable));
     return actor;
   }
 
