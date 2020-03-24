@@ -67,7 +67,8 @@ public class ActorsController {
     } else {
       logger.error("Invalid actorId parameter " + actorId);
       return Mono.justOrEmpty(
-          ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).build());
+          ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN)
+              .header("Invalid actorId parameter").build());
     }
   }
 
