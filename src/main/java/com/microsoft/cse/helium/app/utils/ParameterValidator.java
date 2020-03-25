@@ -13,11 +13,20 @@ public class ParameterValidator {
   */
   private static final String validActorRegex = "[nm]{2}[0-9]{5,9}";
 
+  private static final String validMovieRegex = "[tt]{2}[0-9]{5,9}";
+
   /** isValidActorId. */
   public Boolean isValidActorId(String actorId) {
     Pattern p = Pattern.compile(validActorRegex);
     return p.matcher(actorId).matches();
   }
+
+  /** isValidMovieId. */
+  public Boolean isValidMovieId(String movieId) {
+    Pattern p = Pattern.compile(validMovieRegex);
+    return p.matcher(movieId).matches();
+  }
+
 
   /** isValidSearchQuery. */
   public Boolean isValidSearchQuery(String query) {
