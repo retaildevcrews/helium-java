@@ -19,24 +19,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-/**
- * MovieController.
- **/
+/** MovieController. */
 @RestController
 @RequestMapping(path = "/api/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Movies")
 public class MoviesController {
-  @Autowired
-  MoviesDao moviesDao;
-  @Autowired
-  ParameterValidator validator;
+  @Autowired MoviesDao moviesDao;
+  @Autowired ParameterValidator validator;
 
   private static final Logger logger = LoggerFactory.getLogger(MoviesController.class);
 
-
-  /**
-   * getMovie.
-   */
+  /** getMovie. */
   @RequestMapping(
       value = "/{id}",
       method = RequestMethod.GET,
@@ -46,25 +39,25 @@ public class MoviesController {
       notes = "Retrieve and return a single movie by movie Id")
   @ApiResponses(
       value = {
-          @ApiResponse(code = 200, message = "The movie object"),
-          @ApiResponse(code = 404, message = "An Movie with the specified ID was not found")
+        @ApiResponse(code = 200, message = "The movie object"),
+        @ApiResponse(code = 404, message = "An Movie with the specified ID was not found")
       })
   public Mono<ResponseEntity<Movie>> getMovie(
       @ApiParam(value = "The ID of the movie to look for", example = "tt0000002", required = true)
-      @PathVariable("id")
+          @PathVariable("id")
           String movieId) {
     if (validator.isValidMovieId(movieId)) {
       return moviesDao
           .getMovieById(movieId)
-          .map(savedMovie -> ResponseEntity.ok(savedMovie))
+          .map(foundMovie -> ResponseEntity.ok(foundMovie))
           .defaultIfEmpty(ResponseEntity.notFound().build());
     } else {
-      logger.error("Invalid movieId parameter " + movieId);
+      logger.error("Movie not found with Id: " + movieId);
       return Mono.justOrEmpty(
-          ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN)
-              .header("Invalid movieId parameter").build());
+          ResponseEntity.badRequest()
+              .contentType(MediaType.TEXT_PLAIN)
+              .header("Movie not found with Id: " + movieId)
+              .build());
     }
   }
-
-
 }
