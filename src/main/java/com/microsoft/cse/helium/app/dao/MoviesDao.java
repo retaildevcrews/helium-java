@@ -2,14 +2,12 @@ package com.microsoft.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
 
-import com.azure.data.cosmos.CosmosClient;
 import com.azure.data.cosmos.CosmosItemProperties;
 import com.azure.data.cosmos.FeedResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
-import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.models.Movie;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
@@ -23,7 +21,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class MoviesDao extends BaseCosmosDbDao {
   private static final Logger logger = LoggerFactory.getLogger(MoviesDao.class);
-
 
   @Autowired CommonUtils utils;
 
@@ -42,12 +39,8 @@ public class MoviesDao extends BaseCosmosDbDao {
 
   /** getMovieByIdSingleRead. */
   public Mono<Movie> getMovieById(String movieId) {
-
     Mono<Movie> movie =
-        this.context
-            .getBean(CosmosClient.class)
-            .getDatabase(this.cosmosDatabase)
-            .getContainer(this.cosmosContainer)
+        getContainer()
             .getItem(movieId, utils.getPartitionKey(movieId))
             .read()
             .flatMap(
@@ -59,7 +52,7 @@ public class MoviesDao extends BaseCosmosDbDao {
   }
 
   /** getAMovies. */
-  public Flux<Actor> getMovies(String query, Integer pageNumber, Integer pageSize) {
+  public Flux<Movie> getMovies(String query, Integer pageNumber, Integer pageSize) {
     ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
     String contains = "";
@@ -73,13 +66,9 @@ public class MoviesDao extends BaseCosmosDbDao {
 
     logger.info("movieQuery " + actorQuery);
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
-        this.context
-            .getBean(CosmosClient.class)
-            .getDatabase(this.cosmosDatabase)
-            .getContainer(this.cosmosContainer)
-            .queryItems(actorQuery, this.feedOptions);
+        getContainer().queryItems(actorQuery, this.feedOptions);
 
-    Flux<Actor> selectedActors =
+    Flux<Movie> selectedMovies =
         feedResponse
             .flatMap(
                 flatFeedResponse -> {
@@ -89,7 +78,7 @@ public class MoviesDao extends BaseCosmosDbDao {
                 cosmosItemProperties -> {
                   try {
                     return Flux.just(
-                        objMapper.readValue(cosmosItemProperties.toJson(), Actor.class));
+                        objMapper.readValue(cosmosItemProperties.toJson(), Movie.class));
                   } catch (JsonMappingException e) {
                     e.printStackTrace();
                   } catch (JsonProcessingException e) {
@@ -98,6 +87,6 @@ public class MoviesDao extends BaseCosmosDbDao {
                   return Flux.empty();
                 });
 
-    return selectedActors;
+    return selectedMovies;
   }
 }
