@@ -26,11 +26,9 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(path = "/api/actors", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Actors")
-public class ActorsController {
+public class ActorsController extends Controller {
 
   @Autowired ActorsDao actorsDao;
-
-  @Autowired CommonController commonController;
 
   @Autowired ParameterValidator validator;
 
@@ -83,6 +81,6 @@ public class ActorsController {
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam
           Optional<String> pageSize) {
 
-    return commonController.getAll(query, pageNumber, pageSize, Entity.Actor);
+    return getAll(query, pageNumber, pageSize, Entity.Actor);
   }
 }

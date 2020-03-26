@@ -26,10 +26,9 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(path = "/api/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Movies")
-public class MoviesController {
+public class MoviesController extends Controller {
   @Autowired MoviesDao moviesDao;
   @Autowired ParameterValidator validator;
-  @Autowired CommonController commonController;
 
   private static final Logger logger = LoggerFactory.getLogger(MoviesController.class);
 
@@ -80,6 +79,6 @@ public class MoviesController {
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam
           Optional<String> pageSize) {
 
-    return commonController.getAll(query, pageNumber, pageSize,  Entity.Movie);
+    return getAll(query, pageNumber, pageSize, Entity.Movie);
   }
 }

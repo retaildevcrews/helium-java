@@ -17,14 +17,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
-public class CommonController {
+public class Controller implements IController {
 
   @Autowired ActorsDao actorsDao;
   @Autowired MoviesDao movieDao;
 
   @Autowired ParameterValidator validator;
 
-  private static final Logger logger = LoggerFactory.getLogger(CommonController.class);
+  private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 
   /** commonControllerUtilAll. */
   public Object getAll(
