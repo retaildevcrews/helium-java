@@ -8,6 +8,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+// @Service
+// public class ArgGetters  {
+//   public ArgGetters() {
+//   }
+//   public void init() {
+//       // logic for cli, env whatever
+//   }
+//   public get getAuthType() {
+//   }
+// }
 
 @Service
 public class ConfigurationService implements IConfigurationService {

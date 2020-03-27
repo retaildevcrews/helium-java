@@ -9,14 +9,16 @@ import com.microsoft.azure.keyvault.models.CertificateBundle;
 import com.microsoft.azure.keyvault.models.KeyBundle;
 import com.microsoft.azure.keyvault.models.SecretBundle;
 import com.microsoft.azure.keyvault.models.SecretItem;
+import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.rest.ServiceCallback;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -30,22 +32,20 @@ public class KeyVaultService implements IKeyVaultService {
   private final String keyVaultNameRegex = "^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$";
   private static final Logger logger = LoggerFactory.getLogger(KeyVaultService.class);
 
-  public static final String USE_MSI = "MSI";
-  public static final String USE_CLI = "CLI";
+
 
   /**
    * KeyVaultService.
    */
-  public KeyVaultService(@Value("${helium.keyvault.name}") final String keyVaultName,
-                         @Value("${helium.environment.flag}") final String environmentFlag)
+  public KeyVaultService(IEnvironmentReader environmentReader)
       throws Exception {
 
-    this.keyVaultName = keyVaultName.trim().toUpperCase();
-    this.environmentFlag = environmentFlag.trim().toUpperCase();
+    this.keyVaultName = environmentReader.getKeyVaultName();
+    this.environmentFlag = environmentReader.getAuthType();
 
-    if (this.environmentFlag.equals(USE_MSI)) {
+    if (this.environmentFlag.equals(Constants.USE_MSI)) {
       azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
-    } else if (this.environmentFlag.equals(USE_CLI)) {
+    } else if (this.environmentFlag.equals(Constants.USE_CLI)) {
       try {
         azureTokenCredentials = AzureCliCredentials.create();
       } catch (final IOException ex) {
@@ -53,7 +53,7 @@ public class KeyVaultService implements IKeyVaultService {
         throw ex;
       }
     } else {
-      this.environmentFlag = USE_MSI;
+      this.environmentFlag = Constants.USE_MSI;
     }
 
     if (!checkKeyVaultName(this.keyVaultName)) {
@@ -71,13 +71,6 @@ public class KeyVaultService implements IKeyVaultService {
 
   }
 
-  /**
-   * KeyVaultService.
-   */
-  public static KeyVaultService create(final String keyVaultName, final String environmentFlag)
-      throws Exception {
-    return new KeyVaultService(keyVaultName, environmentFlag);
-  }
 
   /**
    * checkKeyVaultName.
