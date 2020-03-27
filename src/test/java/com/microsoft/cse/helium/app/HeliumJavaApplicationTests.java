@@ -5,6 +5,7 @@
 //import org.springframework.boot.test.context.SpringBootTest;
 //
 //@SpringBootTest
+//@SpringBootTest(args = "--spring.main.banner-mode=off")
 //class HeliumJavaApplicationTests {
 //
 //	@Test

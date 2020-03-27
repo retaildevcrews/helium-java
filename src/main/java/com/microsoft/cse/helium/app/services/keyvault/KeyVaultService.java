@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class KeyVaultService implements IKeyVaultService {
   private AzureTokenCredentials azureTokenCredentials;
   private final KeyVaultClient keyVaultClient;
 
-  private final String keyVaultNameRegex = "^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$";
+
   private static final Logger logger = LoggerFactory.getLogger(KeyVaultService.class);
 
 
@@ -56,44 +55,10 @@ public class KeyVaultService implements IKeyVaultService {
       this.environmentFlag = Constants.USE_MSI;
     }
 
-    if (!checkKeyVaultName(this.keyVaultName)) {
-      logger.error("helium.keyvault.name (KeyVaultName) value is '" + this.keyVaultName
-          + "' which does not meet the criteria must be 3-24 characters long, begin with a "
-          + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
-          + "alphanumeric.  Check ${KeyVaultName} in your environment variables.");
-      throw new IllegalArgumentException("helium.keyvault.name (value='" + this.keyVaultName
-          + "') must be 3-24 characters long, begin with a character, may contain alphanumeric or"
-          + " hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in"
-          + " your environment variables.");
-    }
-
     keyVaultClient = new KeyVaultClient(azureTokenCredentials);
-
   }
 
 
-  /**
-   * checkKeyVaultName.
-   */
-  private Boolean checkKeyVaultName(final String keyVaultName) {
-    Boolean validSetting = true;
-
-    if (keyVaultName.length() < 3 || keyVaultName.length() > 24) {
-      validSetting = false;
-    }
-
-    // validate key vault name with regex:
-    // ^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$
-    // ^[a-zA-Z] - start of string, must be a alpha character
-    // (?!.*--) - look ahead and make sure there are no double hyphens (e.g., "--")
-    // [a-zA-Z0-9-]* - match alphanumeric and hyphen as many times as needed
-    // [a-zA-Z0-9] - final character must be alphanumeric
-    if (!keyVaultName.matches(keyVaultNameRegex)) {
-      validSetting = false;
-    }
-
-    return validSetting;
-  }
 
   /**
    * getKeyVaultUri.

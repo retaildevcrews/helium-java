@@ -72,6 +72,7 @@ d.sh
 chk.sh
 pmd.sh
 application-dev.properties
+application-dev.properties.orig
 google_checks.xml
 intellij-java-google-style.xml
 pmdcheck.sh
