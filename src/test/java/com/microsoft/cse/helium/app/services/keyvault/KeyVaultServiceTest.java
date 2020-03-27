@@ -2,14 +2,22 @@
 
 // import org.junit.AfterClass;
 // import org.junit.BeforeClass;
+// import org.junit.Rule;
 // import org.junit.Test;
-
+// import org.junit.contrib.java.lang.system.EnvironmentVariables;
+// import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 // import static org.junit.Assert.*;
 
 // public class KeyVaultServiceTest {
 
-//   KeyVaultService keyVaultServiceTest;
+//   @Rule
+//   public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+
+//   @Rule
+//   public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+
+//   IEnvironmentReader environmentReader;
 
 //   @BeforeClass
 //   public static void testSetup() {
@@ -24,7 +32,10 @@
 //   //Constructor:EnvironmentFlag tests
 //   @Test(expected = Exception.class)
 //   public void TestBadEnvironmentFlag() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("One2-3", "BadValue");
+//     exit.expectSystemExitWithStatus(-1);
+//     environmentVariables.set("AUTH_TYPE", "BadValue");
+//     environmentReader.getAuthType();
+
 //   }
 
 //   @Test(expected = Exception.class)
