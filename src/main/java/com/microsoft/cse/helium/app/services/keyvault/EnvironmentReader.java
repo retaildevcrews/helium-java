@@ -1,10 +1,15 @@
 package com.microsoft.cse.helium.app.services.keyvault;
 
+import java.util.Arrays;
+
 import com.microsoft.cse.helium.app.Constants;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,10 +20,33 @@ public class EnvironmentReader implements IEnvironmentReader {
     private final String keyVaultNameRegex = "^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$";
     private static final Logger logger = LoggerFactory.getLogger(EnvironmentReader.class);
 
+    /**
+     * EnvironmentReader
+     * This constructor initializes the class with the arguments provided from the CLI
+     * during the Springboot construction of the beans.
+     * @param applicationArguments
+     */
+    @Autowired
+    public EnvironmentReader(ApplicationArguments applicationArguments) {
+        SimpleCommandLinePropertySource commandLinePropertySource =
+            new SimpleCommandLinePropertySource(applicationArguments.getSourceArgs());
+        Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
+        if(s.equals("authtype")) {
+            setAuthType(commandLinePropertySource.getProperty(s));
+        } else if (s.equals("kvname")) {
+            setKeyVaultName(commandLinePropertySource.getProperty(s));
+        } else if (s.equals("h")) {
+            System.out.println("Usage: mvn clean spring-boot:run  "
+            + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+            System.exit(0);
+        }
+        });
+    }
+
     public void setAuthType(String authType) {
         if(authType == null) {
             System.out.println("Usage: mvn clean spring-boot:run  "
-            + "-Dspring-boot.run.arguments=\"--authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+            + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
             System.exit(-1);
         }
 
@@ -28,7 +56,7 @@ public class EnvironmentReader implements IEnvironmentReader {
             this.authType = Constants.USE_CLI;
           } else {
               System.out.println("Usage: mvn clean spring-boot:run  "
-              + "-Dspring-boot.run.arguments=\"--authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+              + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
               System.exit(-1);
           }
     }
@@ -56,19 +84,24 @@ public class EnvironmentReader implements IEnvironmentReader {
           }
     }
 
-    public void setKeyVaultName(String keyVaultName) {
-
-    if (!checkKeyVaultName(keyVaultName)) {
-        logger.error("helium.keyvault.name (KeyVaultName) value is '" + keyVaultName
-            + "' which does not meet the criteria must be 3-24 characters long, begin with a "
-            + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
-            + "alphanumeric.  Check ${KeyVaultName} in your environment variables.");
-            System.out.println("Usage: mvn clean spring-boot:run"
-              + "-Dspring-boot.run.arguments=\"--authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+    public void setKeyVaultName(String kvName) {
+        if (kvName == null) {
+            System.out.println("Usage: mvn clean spring-boot:run  "
+                    + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
             System.exit(-1);
-      }
+        }
 
-      this.keyVaultName = keyVaultName;
+        if (!checkKeyVaultName(kvName)) {
+            logger.error("helium.keyvault.name (KeyVaultName) value is '" + kvName
+                    + "' which does not meet the criteria must be 3-24 characters long, begin with a "
+                    + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
+                    + "alphanumeric.  Check ${KeyVaultName} in your environment variables.");
+            System.out.println("Usage: mvn clean spring-boot:run"
+                    + "-Dspring-boot.run.arguments=\"--authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+            System.exit(-1);
+        }
+
+        this.keyVaultName = kvName;
     }
 
     public String getKeyVaultName() {
