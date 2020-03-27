@@ -15,4 +15,7 @@ public final class Constants {
   public static final Integer MAX_PAGE_COUNT = 1000;
   public static final String WEB_INSTANCE_ROLE = "WEBSITE_ROLE_INSTANCE_ID";
   public static final Integer MAX_DEGREE_PARALLELISM = 2;
+
+  public static final String ActorControllerException = "ActorControllerException";
+  public static final String MovieControllerException = "MovieControllerException";
 }

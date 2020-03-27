@@ -1,18 +1,17 @@
 package com.microsoft.cse.helium.app.controllers;
 
+import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.models.Entity;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,14 +38,6 @@ public class ActorsController extends Controller {
       value = "/{id}",
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  @ApiOperation(
-      value = "Get single actor",
-      notes = "Retrieve and return a single actor by actor ID")
-  @ApiResponses(
-      value = {
-        @ApiResponse(code = 200, message = "The actor object"),
-        @ApiResponse(code = 404, message = "An actor with the specified ID was not found")
-      })
   public Mono<ResponseEntity<Actor>> getActor(
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
           @PathVariable("id")
@@ -57,11 +48,11 @@ public class ActorsController extends Controller {
           .map(savedActor -> ResponseEntity.ok(savedActor))
           .defaultIfEmpty(ResponseEntity.notFound().build());
     } else {
-      logger.error("Invalid actorId parameter " + actorId);
+      logger.error("Invalid Actor ID parameter " + actorId);
       return Mono.justOrEmpty(
           ResponseEntity.badRequest()
               .contentType(MediaType.TEXT_PLAIN)
-              .header("Invalid actorId parameter")
+              .header("Invalid Actor ID parameter")
               .build());
     }
   }
@@ -71,8 +62,6 @@ public class ActorsController extends Controller {
       value = "",
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  @ApiOperation(value = "Get all actors", notes = "Retrieve and return all actors")
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "List of actor objects")})
   public Object getAllActors(
       @ApiParam(value = "(query) (optional) The term used to search Actor name") @RequestParam("q")
           final Optional<String> query,
@@ -81,6 +70,12 @@ public class ActorsController extends Controller {
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam
           Optional<String> pageSize) {
 
-    return getAll(query, pageNumber, pageSize, Entity.Actor);
+    try {
+      return getAll(query, pageNumber, pageSize, Entity.Actor);
+    } catch (Exception ex) {
+      logger.error("ActorControllerException " + ex.getMessage());
+      return new ResponseEntity<>(
+          Constants.ActorControllerException, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

@@ -14,10 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
-public class Controller implements IController {
+public class Controller {
 
   @Autowired ActorsDao actorsDao;
   @Autowired MoviesDao movieDao;
@@ -27,70 +26,52 @@ public class Controller implements IController {
   private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 
   /** commonControllerUtilAll. */
-  public Object getAll(
-      Optional<String> query,
-      Optional<String> pageNumber,
-      Optional<String> pageSize,
-      Enum entity) {
+  protected Object getAll(
+      Optional<String> query, Optional<String> pageNumber, Optional<String> pageSize, Enum entity) {
     String q = null;
 
-    if (query.isPresent()
-        && !StringUtils.isEmpty(query.get())
-        && query.get() != null
-        && !query.get().isEmpty()) {
+    if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
         q = query.get().trim().toLowerCase().replace("'", "''");
       } else {
-        logger.error("Invalid q(search) parameter");
+        logger.error("Invalid q (search) parameter");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        return new ResponseEntity<>("Invalid q(search) parameter", headers, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+            "Invalid q (search) parameter", headers, HttpStatus.BAD_REQUEST);
       }
     }
 
     Integer pageNo = 0;
-    if (pageNumber.isPresent() && !StringUtils.isEmpty(pageNumber.get())) {
+    if (pageNumber.isPresent()) {
       if (!validator.isValidPageNumber(pageNumber.get())) {
-        logger.error("Invalid pageNumber parameter");
+        logger.error("Invalid PageNumber parameter");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
         return new ResponseEntity<>(
-            "Invalid pageNumber parameter", headers, HttpStatus.BAD_REQUEST);
+            "Invalid PageNumber parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
     }
 
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
-    if (pageSize.isPresent() && !StringUtils.isEmpty(pageSize.get())) {
+    if (pageSize.isPresent()) {
       if (!validator.isValidPageSize(pageSize.get())) {
-        logger.error("Invalid pageSize parameter");
+        logger.error("Invalid PageSize parameter");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        return new ResponseEntity<>("Invalid pageSize parameter", headers, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
     }
 
-    try {
-      pageNo--;
-      if (pageNo < 0) {
-        pageNo = 0;
-      }
-
-      if (entity.equals(Entity.Actor)) {
-        return actorsDao.getActors(q, pageNo * pageSz, pageSz);
-      } else if (entity.equals(Entity.Movie)) {
-        return movieDao.getMovies(q, pageNo * pageSz, pageSz);
-      } else {
-        return new ResponseEntity<>(
-            "ControllerException : No entity specified", HttpStatus.BAD_REQUEST);
-      }
-    } catch (Exception ex) {
-      return new ResponseEntity<>("ControllerException", HttpStatus.INTERNAL_SERVER_ERROR);
+    pageNo = pageNo > 1 ? pageNo - 1 : 0;
+    if (entity.equals(Entity.Actor)) {
+      return actorsDao.getActors(q, pageNo * pageSz, pageSz);
+    } else {
+      return movieDao.getMovies(q, pageNo * pageSz, pageSz);
     }
   }
-
 }
-

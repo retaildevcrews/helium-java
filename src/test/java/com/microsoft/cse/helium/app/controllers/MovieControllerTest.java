@@ -54,7 +54,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid q(search) parameter");
+        .expectBody(String.class).isEqualTo("Invalid q (search) parameter");
   }
   @Test
   public void testBadQueryMovies_2(){
@@ -63,7 +63,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid q(search) parameter");
+        .expectBody(String.class).isEqualTo("Invalid q (search) parameter");
   }
   @Test
   public void testBadPageSize_1(){
@@ -72,7 +72,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageSize parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
   }
   @Test
   public void testBadPageSize_2(){
@@ -81,7 +81,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageSize parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
   }
   @Test
   public void testBadPageSize_3(){
@@ -90,7 +90,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageSize parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
   }
   @Test
   public void testBadPageSize_4(){
@@ -99,7 +99,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageSize parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
   }
   @Test
   public void testBadPageSize_5(){
@@ -108,7 +108,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageSize parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
   }
   @Test
   public void testBadPageNumber_1(){
@@ -117,7 +117,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageNumber parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
   }
   @Test
   public void testBadPageNumber_2(){
@@ -126,7 +126,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageNumber parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
   }
 
   @Test
@@ -136,7 +136,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageNumber parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
   }
 
   @Test
@@ -146,7 +146,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageNumber parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
   }
   @Test
   public void testBadPageNumber_5(){
@@ -155,7 +155,7 @@ public class MovieControllerTest {
         .exchange()
         .expectHeader().contentType(MediaType.TEXT_PLAIN)
         .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid pageNumber parameter");
+        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
   }
 
 }
