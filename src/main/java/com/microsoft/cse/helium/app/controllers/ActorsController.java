@@ -75,7 +75,7 @@ public class ActorsController extends Controller {
     } catch (Exception ex) {
       logger.error("ActorControllerException " + ex.getMessage());
       return new ResponseEntity<>(
-          Constants.ActorControllerException, HttpStatus.INTERNAL_SERVER_ERROR);
+          Constants.ACTOR_CONTROLLER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

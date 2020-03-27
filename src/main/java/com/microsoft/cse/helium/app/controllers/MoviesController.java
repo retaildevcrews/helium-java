@@ -73,7 +73,7 @@ public class MoviesController extends Controller {
     } catch (Exception ex) {
       logger.error("MovieControllerException " + ex.getMessage());
       return new ResponseEntity<>(
-          Constants.MovieControllerException, HttpStatus.INTERNAL_SERVER_ERROR);
+          Constants.MOVIE_CONTROLLER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
