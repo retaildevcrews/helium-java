@@ -40,7 +40,7 @@ public class ActorsController extends Controller {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<Actor>> getActor(
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
-          @PathVariable("id")
+      @PathVariable("id")
           String actorId) {
     if (validator.isValidActorId(actorId)) {
       return actorsDao
@@ -64,7 +64,7 @@ public class ActorsController extends Controller {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Object getAllActors(
       @ApiParam(value = "(query) (optional) The term used to search Actor name") @RequestParam("q")
-          final Optional<String> query,
+      final Optional<String> query,
       @ApiParam(value = "1 based page index", defaultValue = "1") @RequestParam
           Optional<String> pageNumber,
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam

@@ -38,7 +38,7 @@ public class MoviesController extends Controller {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<Movie>> getMovie(
       @ApiParam(value = "The ID of the movie to look for", example = "tt0000002", required = true)
-          @PathVariable("id")
+      @PathVariable("id")
           String movieId) {
     if (validator.isValidMovieId(movieId)) {
       return moviesDao
@@ -62,7 +62,7 @@ public class MoviesController extends Controller {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Object getAllMovies(
       @ApiParam(value = "(query) (optional) The term used to search Movie name") @RequestParam("q")
-          final Optional<String> query,
+      final Optional<String> query,
       @ApiParam(value = "1 based page index", defaultValue = "1") @RequestParam
           Optional<String> pageNumber,
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam

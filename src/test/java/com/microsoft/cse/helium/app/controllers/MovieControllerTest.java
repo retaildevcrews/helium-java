@@ -22,29 +22,29 @@ public class MovieControllerTest {
   private WebTestClient webClient;
 
 
-    @Test
-    public void testGetMovieByIdForValidMovie() {
-        String validMovieId = "tt0120737";
-        webClient.get().uri("/api/movies/{id}", validMovieId)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.id").isEqualTo(validMovieId);
-    }
-    @Test
-    public void testGetMovieByIdForMovieBadRequest() {
-        webClient.get()
-                .uri("/api/movies/{id}", "nm0000002")
-                .exchange()
-                .expectStatus().isBadRequest();
-    }
-    @Test
-    public void testGetMovieByIdForMovieNotFound() {
-        webClient.get()
-                .uri("/api/movies/{id}", "tt111111")
-                .exchange()
-                .expectStatus().isNotFound();
-    }
+  @Test
+  public void testGetMovieByIdForValidMovie() {
+    String validMovieId = "tt0120737";
+    webClient.get().uri("/api/movies/{id}", validMovieId)
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody()
+        .jsonPath("$.id").isEqualTo(validMovieId);
+  }
+  @Test
+  public void testGetMovieByIdForMovieBadRequest() {
+    webClient.get()
+        .uri("/api/movies/{id}", "nm0000002")
+        .exchange()
+        .expectStatus().isBadRequest();
+  }
+  @Test
+  public void testGetMovieByIdForMovieNotFound() {
+    webClient.get()
+        .uri("/api/movies/{id}", "tt111111")
+        .exchange()
+        .expectStatus().isNotFound();
+  }
 
 
   @Test
@@ -159,5 +159,3 @@ public class MovieControllerTest {
   }
 
 }
-
-
