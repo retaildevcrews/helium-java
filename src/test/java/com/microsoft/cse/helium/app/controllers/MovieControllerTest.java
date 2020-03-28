@@ -1,6 +1,7 @@
 package com.microsoft.cse.helium.app.controllers;
 
 import com.microsoft.cse.helium.app.models.Movie;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,4 +159,15 @@ public class MovieControllerTest {
         .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
   }
 
+  @Test
+  public void testAllMovies_1(){
+    webClient.get().uri("/api/movies")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class)
+        .consumeWith(movies ->
+            Assert.assertEquals(movies.getResponseBody().get(0).getType(), "Movie"));
+  }
 }
