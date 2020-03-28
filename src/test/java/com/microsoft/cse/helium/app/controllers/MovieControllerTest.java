@@ -1,5 +1,7 @@
 package com.microsoft.cse.helium.app.controllers;
 
+import com.microsoft.cse.helium.app.Constants;
+import com.microsoft.cse.helium.app.models.Entity;
 import com.microsoft.cse.helium.app.models.Movie;
 import org.junit.Assert;
 import org.junit.Test;
@@ -168,6 +170,7 @@ public class MovieControllerTest {
         .expectStatus().isOk()
         .expectBodyList(Movie.class)
         .consumeWith(movies ->
-            Assert.assertEquals(movies.getResponseBody().get(0).getType(), "Movie"));
+            Assert.assertEquals(movies.getResponseBody().get(0).getType(), Constants.ENTITY_MOVIE));
   }
 }
+
