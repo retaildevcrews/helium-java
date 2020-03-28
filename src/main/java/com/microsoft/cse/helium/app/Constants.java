@@ -18,4 +18,8 @@ public final class Constants {
 
   public static final String ACTOR_CONTROLLER_EXCEPTION = "ActorControllerException";
   public static final String MOVIE_CONTROLLER_EXCEPTION = "MovieControllerException";
+
+  public static final String ENTITY_MOVIE = "Movie";
+  public static final String ENTITY_ACTOR = "Actor";
+
 }
