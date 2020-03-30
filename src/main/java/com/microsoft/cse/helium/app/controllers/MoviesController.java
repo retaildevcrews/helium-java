@@ -69,7 +69,7 @@ public class MoviesController extends Controller {
           Optional<String> pageSize) {
 
     try {
-      return getAll(query, pageNumber, pageSize, Entity.Actor);
+      return getAll(query, pageNumber, pageSize, Entity.Movie);
     } catch (Exception ex) {
       logger.error("MovieControllerException " + ex.getMessage());
       return new ResponseEntity<>(

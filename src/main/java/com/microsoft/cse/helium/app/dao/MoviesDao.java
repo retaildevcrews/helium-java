@@ -61,12 +61,12 @@ public class MoviesDao extends BaseCosmosDbDao {
       contains = String.format(movieContains, query);
     }
 
-    String actorQuery =
+    String movieQuery =
         movieSelect + contains + movieOrderBy + String.format(movieOffset, pageNumber, pageSize);
 
-    logger.info("movieQuery " + actorQuery);
+    logger.info("movieQuery " + movieQuery);
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
-        getContainer().queryItems(actorQuery, this.feedOptions);
+        getContainer().queryItems(movieQuery, this.feedOptions);
 
     Flux<Movie> selectedMovies =
         feedResponse
