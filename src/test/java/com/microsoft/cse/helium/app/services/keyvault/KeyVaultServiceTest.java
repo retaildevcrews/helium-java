@@ -1,114 +1,131 @@
-// package com.microsoft.cse.helium.app.services.keyvault;
+package com.microsoft.cse.helium.app.services.keyvault;
 
-// import org.junit.AfterClass;
-// import org.junit.BeforeClass;
-// import org.junit.Rule;
-// import org.junit.Test;
-// import org.junit.contrib.java.lang.system.EnvironmentVariables;
-// import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-// import static org.junit.Assert.*;
+import static org.junit.Assert.*;
 
-// public class KeyVaultServiceTest {
+public class KeyVaultServiceTest {
 
-//   @Rule
-//   public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+  @Rule
+  public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
-//   @Rule
-//   public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+  @Rule
+  public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
-//   IEnvironmentReader environmentReader;
+  @MockBean
+  private ApplicationArguments applicationArguments;
 
-//   @BeforeClass
-//   public static void testSetup() {
 
-//   }
 
-//   @AfterClass
-//   public static void testCleanup() {
-//     // Do your cleanup here like close URL connection , releasing resources etc
-//   }
+  @BeforeClass
+  public static void testSetup() {
 
-//   //Constructor:EnvironmentFlag tests
-//   @Test(expected = Exception.class)
-//   public void TestBadEnvironmentFlag() throws Exception {
-//     exit.expectSystemExitWithStatus(-1);
-//     environmentVariables.set("AUTH_TYPE", "BadValue");
-//     environmentReader.getAuthType();
+  }
 
-//   }
+  @AfterClass
+  public static void testCleanup() {
+    // Do your cleanup here like close URL connection , releasing resources etc
+  }
 
-//   @Test(expected = Exception.class)
-//   public void TestEmptyEnvironmentFlag() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("One2-3", "");
-//   }
 
-//   @Test(expected = Exception.class)
-//   public void TestNullEnvironmentFlag() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("One2-3", null);
-//   }
+  @Test
+  public void TestBadAuthType() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    exit.expectSystemExitWithStatus(-1);
+    environmentVariables.set("AUTH_TYPE", "BadValue");
+    environmentReader.getAuthType();
 
-//   @Test
-//   public void TestGoodEnvironmentFlag() throws Exception {
-//     keyVaultServiceTest = null;
-//     keyVaultServiceTest = new KeyVaultService("One2-thR33", "CLI");
-//     assertNotNull(keyVaultServiceTest);
+  }
 
-//     keyVaultServiceTest = null;
-//     keyVaultServiceTest = new KeyVaultService("One2-thR33", "MSI");
-//     assertNotNull(keyVaultServiceTest);
-//   }
-//   // END Constructor:EnvironmentFlag tests
+  @Test
+  public void TestEmptyAuthType() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    environmentVariables.clear("AUTH_TYPE");
+    assertTrue("No Auth specified, MSI used", environmentReader.getAuthType() == "MSI");
+  }
 
-//   //Constructor:KeyVaultName tests
-//   @Test(expected = Exception.class)
-//   public void TestShortKeyVaultName() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("kv", "MSI");
-//   }
+  @Test
+  public void TestPositiveMSI() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    environmentVariables.set("AUTH_TYPE", "MSI");
+    assertTrue("MSI specified, MSI used", environmentReader.getAuthType() == "MSI");
+  }
 
-//   @Test(expected = Exception.class)
-//   public void TestLongKeyVaultName() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("one234five6789ten1112thirteen", "MSI");
-//   }
+  @Test
+  public void TestPositiveCLI() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    environmentVariables.set("AUTH_TYPE", "CLI");
+    assertTrue("CLI specified, CLI used", environmentReader.getAuthType() == "CLI");
+  }
 
-//   @Test(expected = Exception.class)
-//   public void TestEmptyKeyVaultName() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("", "MSI");
-//   }
+  @Test
+  public void TestGoodEnvironmentFlag() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    environmentVariables.set("KeyVaultName", "One2-thR33");
+    assertTrue("Key vault name is good", environmentReader.getKeyVaultName().equals("One2-thR33"));
+  }
 
-//   @Test(expected = Exception.class)
-//   public void TestNullKeyVaultName() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService(null, "MSI");
-//   }
+  //KeyVaultName tests
+  @Test
+  public void TestShortKeyVaultName() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    exit.expectSystemExitWithStatus(-1);
+    environmentVariables.set("KeyVaultName", "kv");
+    environmentReader.getKeyVaultName();
+  }
 
-//   @Test(expected = Exception.class)
-//   public void TestTrailingHyphenKeyVaultName() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("one2-3-", "MSI");
-//   }
+  @Test
+  public void TestLongKeyVaultName() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    exit.expectSystemExitWithStatus(-1);
+    environmentVariables.set("KeyVaultName", "one234five6789ten1112thirteen");
+    environmentReader.getKeyVaultName();
+  }
 
-//   @Test(expected = Exception.class)
-//   public void TestConsecutiveHyphenKeyVaultName() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("one2--3", "MSI");
-//   }
+  @Test
+  public void TestEmptyKeyVaultName() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    exit.expectSystemExitWithStatus(-1);
+    environmentVariables.set("KeyVaultName", "");
+    environmentReader.getKeyVaultName();
+  }
 
-//   @Test(expected = Exception.class)
-//   public void TestLeadingNumberKeyVaultName() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("1one2--3", "MSI");
-//   }
+  @Test(expected = Exception.class)
+  public void TestNullKeyVaultName() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    exit.expectSystemExitWithStatus(-1);
+    environmentVariables.set("KeyVaultName", null);
+    environmentReader.getKeyVaultName();
+  }
 
-//   @Test(expected = Exception.class)
-//   public void TestLeadingHyphenKeyVaultName() throws Exception {
-//     keyVaultServiceTest = new KeyVaultService("1one2--3", "MSI");
-//   }
+  @Test(expected = Exception.class)
+  public void TestTrailingHyphenKeyVaultName() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    exit.expectSystemExitWithStatus(-1);
+    environmentVariables.set("KeyVaultName", "one2-3-");
+    environmentReader.getKeyVaultName();
+  }
 
-//   @Test
-//   public void TestGoodKeyVaultName() throws Exception {
-//     keyVaultServiceTest = null;
-//     keyVaultServiceTest = new KeyVaultService("One2-thR33", "CLI");
-//     assertNotNull(keyVaultServiceTest);
+  @Test
+  public void TestConsecutiveHyphenKeyVaultName() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    exit.expectSystemExitWithStatus(-1);
+    environmentVariables.set("KeyVaultName", "one2--3");
+    environmentReader.getKeyVaultName();
+  }
 
-//     keyVaultServiceTest = null;
-//     keyVaultServiceTest = new KeyVaultService("One2-thR33", "MSI");
-//     assertNotNull(keyVaultServiceTest);
-//   }
-// }
+  @Test
+  public void TestLeadingNumberKeyVaultName() throws Exception {
+    EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
+    exit.expectSystemExitWithStatus(-1);
+    environmentVariables.set("KeyVaultName", "1one2--3");
+    environmentReader.getKeyVaultName();
+  }
+}

@@ -33,19 +33,21 @@ public class EnvironmentReader implements IEnvironmentReader {
   @SuppressFBWarnings("DM_EXIT")
   @Autowired
   public EnvironmentReader(ApplicationArguments applicationArguments) {
-    SimpleCommandLinePropertySource commandLinePropertySource =
-        new SimpleCommandLinePropertySource(applicationArguments.getSourceArgs());
-    Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
-      if (s.equals("authtype")) {
-        setAuthType(commandLinePropertySource.getProperty(s));
-      } else if (s.equals("kvname")) {
-        setKeyVaultName(commandLinePropertySource.getProperty(s));
-      } else if (s.equals("h")) {
-        System.out.println("Usage: mvn clean spring-boot:run  "
-            + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
-        System.exit(0);
-      }
-    });
+    if (applicationArguments != null) {
+      SimpleCommandLinePropertySource commandLinePropertySource = new SimpleCommandLinePropertySource(
+          applicationArguments.getSourceArgs());
+      Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
+        if (s.equals("authtype")) {
+          setAuthType(commandLinePropertySource.getProperty(s));
+        } else if (s.equals("kvname")) {
+          setKeyVaultName(commandLinePropertySource.getProperty(s));
+        } else if (s.equals("h")) {
+          System.out.println("Usage: mvn clean spring-boot:run  "
+              + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+          System.exit(0);
+        }
+      });
+    }
   }
 
   @SuppressFBWarnings("DM_EXIT")
@@ -91,7 +93,9 @@ public class EnvironmentReader implements IEnvironmentReader {
     } else if (authType.equals(Constants.USE_CLI)) {
       return Constants.USE_CLI;
     } else {
-      return Constants.USE_MSI;
+      System.exit(-1);
+      // following return needs to be there because java compiler wants a return statement.
+      return null;
     }
   }
 
@@ -103,7 +107,7 @@ public class EnvironmentReader implements IEnvironmentReader {
       System.exit(-1);
     }
 
-    if (!checkKeyVaultName(kvName)) {
+    if (!isValidKeyVaultName(kvName)) {
       logger.error("helium.keyvault.name (KeyVaultName) value is '" + kvName
           + "' which does not meet the criteria must be 3-24 characters long, begin with a "
           + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
@@ -127,16 +131,17 @@ public class EnvironmentReader implements IEnvironmentReader {
     }
 
     keyVaultName = System.getenv(Constants.KEY_VAULT_NAME);
-    if (keyVaultName == null || StringUtils.isEmpty(keyVaultName)) {
-      throw new IllegalArgumentException("keyVaultName");
+    if (keyVaultName == null || !isValidKeyVaultName(keyVaultName)) {
+      System.exit(-1);
     }
+
     return keyVaultName;
   }
 
   /**
-   * checkKeyVaultName.
+   * isValidKeyVaultName.
    */
-  private Boolean checkKeyVaultName(final String keyVaultName) {
+  private Boolean isValidKeyVaultName(final String keyVaultName) {
     Boolean validSetting = true;
 
     if (keyVaultName.length() < 3 || keyVaultName.length() > 24) {
