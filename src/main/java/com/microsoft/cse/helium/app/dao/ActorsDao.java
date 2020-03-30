@@ -1,13 +1,15 @@
 package com.microsoft.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
-
+/*
 import com.azure.data.cosmos.CosmosItemProperties;
 import com.azure.data.cosmos.FeedResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
+*/
+
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
@@ -54,7 +56,7 @@ public class ActorsDao extends BaseCosmosDbDao {
 
   /** getActors. */
   public Flux<Actor> getActors(String query, Integer pageNumber, Integer pageSize) {
-    ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
+    //ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
     String contains = "";
 
@@ -66,6 +68,10 @@ public class ActorsDao extends BaseCosmosDbDao {
         actorSelect + contains + actorOrderBy + String.format(actorOffset, pageNumber, pageSize);
 
     logger.info("actorQuery " + actorQuery);
+
+    Flux<Actor> testBaseResult = this.getAll(Actor.class, actorQuery);
+    return testBaseResult;
+    /*
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
         getContainer().queryItems(actorQuery, this.feedOptions);
 
@@ -89,5 +95,6 @@ public class ActorsDao extends BaseCosmosDbDao {
                 });
 
     return selectedActors;
+    */
   }
 }
