@@ -70,12 +70,5 @@ public class Controller {
 
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
     return dataObject.getAll(q, pageNo * pageSz, pageSz);
-    /*
-    if (entity.equals(Entity.Actor)) {
-      return actorsDao.getActors(q, pageNo * pageSz, pageSz);
-    } else {
-      return movieDao.getMovies(q, pageNo * pageSz, pageSz);
-    }
-    */
   }
 }
