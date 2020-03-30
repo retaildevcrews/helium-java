@@ -48,7 +48,6 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
 
   /** getActors. */
   public Flux<Actor> getAll(String query, Integer pageNumber, Integer pageSize) {
-    //ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
     String contains = "";
 
@@ -61,7 +60,7 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
 
     logger.info("actorQuery " + actorQuery);
 
-    Flux<Actor> testBaseResult = super.getAll(Actor.class, actorQuery);
-    return testBaseResult;
+    Flux<Actor> queryResult = super.getAll(Actor.class, actorQuery);
+    return queryResult;
   }
 }

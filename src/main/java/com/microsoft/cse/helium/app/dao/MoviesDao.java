@@ -58,7 +58,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
         movieSelect + contains + movieOrderBy + String.format(movieOffset, pageNumber, pageSize);
     logger.info("Movies query = " + moviesQuery);
 
-    Flux<Movie> testBaseResult = super.getAll(Movie.class, moviesQuery);
-    return testBaseResult;
+    Flux<Movie> queryResult = super.getAll(Movie.class, moviesQuery);
+    return queryResult;
   }
 }
