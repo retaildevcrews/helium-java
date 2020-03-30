@@ -3,7 +3,6 @@ package com.microsoft.cse.helium.app.services.keyvault;
 import com.microsoft.cse.helium.app.Constants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +33,8 @@ public class EnvironmentReader implements IEnvironmentReader {
   @Autowired
   public EnvironmentReader(ApplicationArguments applicationArguments) {
     if (applicationArguments != null) {
-      SimpleCommandLinePropertySource commandLinePropertySource = new SimpleCommandLinePropertySource(
-          applicationArguments.getSourceArgs());
+      SimpleCommandLinePropertySource commandLinePropertySource =
+          new SimpleCommandLinePropertySource(applicationArguments.getSourceArgs());
       Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
         if (s.equals("authtype")) {
           setAuthType(commandLinePropertySource.getProperty(s));
@@ -74,6 +73,7 @@ public class EnvironmentReader implements IEnvironmentReader {
    *
    * @return returns CLI or MSI.
    */
+  @SuppressFBWarnings("DM_EXIT")
   public String getAuthType() {
     if (this.authType != null) {
       return this.authType;
@@ -125,6 +125,7 @@ public class EnvironmentReader implements IEnvironmentReader {
    *
    * @return returns the key vault name.
    */
+  @SuppressFBWarnings("DM_EXIT")
   public String getKeyVaultName() {
     if (this.keyVaultName != null) {
       return this.keyVaultName;
