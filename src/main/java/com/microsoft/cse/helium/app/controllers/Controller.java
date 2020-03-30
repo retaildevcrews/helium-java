@@ -2,8 +2,8 @@ package com.microsoft.cse.helium.app.controllers;
 
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
+import com.microsoft.cse.helium.app.dao.IDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
-import com.microsoft.cse.helium.app.models.Entity;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -28,7 +28,8 @@ public class Controller {
   /** commonControllerUtilAll. */
   @SuppressWarnings("rawtypes")
   protected Object getAll(
-      Optional<String> query, Optional<String> pageNumber, Optional<String> pageSize, Enum entity) {
+      Optional<String> query, Optional<String> pageNumber, 
+      Optional<String> pageSize, IDao dataObject) {
     String q = null;
 
     if (query.isPresent()) {
@@ -69,10 +70,13 @@ public class Controller {
     }
 
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
+    return dataObject.getAll(q, pageNo * pageSz, pageSz);
+    /*
     if (entity.equals(Entity.Actor)) {
       return actorsDao.getActors(q, pageNo * pageSz, pageSz);
     } else {
       return movieDao.getMovies(q, pageNo * pageSz, pageSz);
     }
+    */
   }
 }

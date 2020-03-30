@@ -21,7 +21,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class ActorsDao extends BaseCosmosDbDao {
+public class ActorsDao extends BaseCosmosDbDao implements IDao {
   private static final Logger logger = LoggerFactory.getLogger(ActorsDao.class);
 
   @Autowired CommonUtils utils;
@@ -55,7 +55,7 @@ public class ActorsDao extends BaseCosmosDbDao {
   }
 
   /** getActors. */
-  public Flux<Actor> getActors(String query, Integer pageNumber, Integer pageSize) {
+  public Flux<Actor> getAll(String query, Integer pageNumber, Integer pageSize) {
     //ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
     String contains = "";

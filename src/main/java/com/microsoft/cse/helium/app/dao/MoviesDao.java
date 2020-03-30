@@ -21,7 +21,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class MoviesDao extends BaseCosmosDbDao {
+public class MoviesDao extends BaseCosmosDbDao implements IDao {
   private static final Logger logger = LoggerFactory.getLogger(MoviesDao.class);
 
   @Autowired CommonUtils utils;
@@ -54,7 +54,7 @@ public class MoviesDao extends BaseCosmosDbDao {
   }
 
   /** getAMovies. */
-  public Flux<Movie> getMovies(String query, Integer pageNumber, Integer pageSize) {
+  public Flux<Movie> getAll(String query, Integer pageNumber, Integer pageSize) {
 
     String contains = "";
 
