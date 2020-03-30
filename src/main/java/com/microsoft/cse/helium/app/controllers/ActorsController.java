@@ -3,7 +3,6 @@ package com.microsoft.cse.helium.app.controllers;
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.models.Actor;
-import com.microsoft.cse.helium.app.models.Entity;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
@@ -71,7 +70,7 @@ public class ActorsController extends Controller {
           Optional<String> pageSize) {
 
     try {
-      return getAll(query, pageNumber, pageSize, Entity.Actor);
+      return getAll(query, pageNumber, pageSize, actorsDao);
     } catch (Exception ex) {
       logger.error("ActorControllerException " + ex.getMessage());
       return new ResponseEntity<>(
