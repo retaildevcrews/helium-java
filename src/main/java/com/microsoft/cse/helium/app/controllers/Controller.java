@@ -26,7 +26,6 @@ public class Controller {
   private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 
   /** commonControllerUtilAll. */
-  @SuppressWarnings("rawtypes")
   protected Object getAll(
       Optional<String> query, Optional<String> pageNumber, 
       Optional<String> pageSize, IDao dataObject) {

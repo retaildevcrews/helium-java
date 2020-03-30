@@ -1,14 +1,6 @@
 package com.microsoft.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
-/*
-import com.azure.data.cosmos.CosmosItemProperties;
-import com.azure.data.cosmos.FeedResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
-*/
 
 import com.microsoft.cse.helium.app.models.Movie;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
@@ -66,35 +58,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
         movieSelect + contains + movieOrderBy + String.format(movieOffset, pageNumber, pageSize);
     logger.info("Movies query = " + moviesQuery);
 
-    Flux<Movie> testBaseResult = this.getAll(Movie.class, moviesQuery);
+    Flux<Movie> testBaseResult = super.getAll(Movie.class, moviesQuery);
     return testBaseResult;
-    /*
-    ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
-
-    logger.info("movieQuery " + moviesQuery);
-    Flux<FeedResponse<CosmosItemProperties>> feedResponse =
-        getContainer().queryItems(moviesQuery, this.feedOptions);
-
-    Flux<Movie> selectedMovies =
-        feedResponse
-            .flatMap(
-                flatFeedResponse -> {
-                  return Flux.fromIterable(flatFeedResponse.results());
-                })
-            .flatMap(
-                cosmosItemProperties -> {
-                  try {
-                    return Flux.just(
-                        objMapper.readValue(cosmosItemProperties.toJson(), Movie.class));
-                  } catch (JsonMappingException e) {
-                    e.printStackTrace();
-                  } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                  }
-                  return Flux.empty();
-                });
-
-    return selectedMovies;
-    */
   }
 }

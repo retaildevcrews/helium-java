@@ -12,9 +12,6 @@ import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
-//import java.lang.reflect.ParameterizedType;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import reactor.core.publisher.Flux;
@@ -54,19 +51,21 @@ public class BaseCosmosDbDao {
     return container;
   }
 
-  /** getAMovies. */
-  //@SuppressWarnings("unchecked")
+  /**
+   * Common template method used to execute and retrieve queries for the given type 
+   * using the passed in query.
+   *
+   * @param classType used for the object mapper to map results into object
+   * @param query is passed in from the specific data access object and used to 
+   *              fetch matching records
+   * @return Flux/<T/> is returned to contains results for the specific entity type
+  */
   public <T> Flux<T> getAll(Class<T> classType, String query) {
     ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
-    //logger.info("BaseCosmosDbDao::getAll::query:" + query);
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
         getContainer().queryItems(query, this.feedOptions);
-    /*
-    @SuppressWarnings("rawtypes")
-    Class<T> classType = (Class) ((ParameterizedType) getClass()
-        .getGenericSuperclass()).getActualTypeArguments()[0];
-    */
+
     Flux<T> selectedItems = (Flux<T>)feedResponse
         .flatMap(flatFeedResponse -> {
           return Flux.fromIterable(flatFeedResponse.results());
