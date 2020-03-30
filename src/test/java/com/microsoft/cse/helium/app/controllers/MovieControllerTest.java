@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -157,4 +158,15 @@ public class MovieControllerTest {
         .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
   }
 
+  @Test
+  public void testAllMovies_1() {
+    webClient.get().uri("/api/movies")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class)
+        .consumeWith(movies ->
+            Assert.assertEquals(movies.getResponseBody().get(0).getType(), Constants.ENTITY_MOVIE));
+  }
 }
