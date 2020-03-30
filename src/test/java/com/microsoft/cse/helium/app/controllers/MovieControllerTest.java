@@ -1,6 +1,5 @@
 package com.microsoft.cse.helium.app.controllers;
 
-import com.microsoft.cse.helium.app.models.Movie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

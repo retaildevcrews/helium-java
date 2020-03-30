@@ -1,5 +1,7 @@
 package com.microsoft.cse.helium.app.controllers;
 
+
+
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
@@ -26,6 +28,7 @@ public class Controller {
   private static final Logger logger = LoggerFactory.getLogger(Controller.class);
 
   /** commonControllerUtilAll. */
+  @SuppressWarnings("rawtypes")
   protected Object getAll(
       Optional<String> query, Optional<String> pageNumber, Optional<String> pageSize, Enum entity) {
     String q = null;

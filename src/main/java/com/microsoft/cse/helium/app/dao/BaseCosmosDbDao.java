@@ -55,17 +55,17 @@ public class BaseCosmosDbDao {
   }
 
   /** getAMovies. */
-  public <T> Flux getAll(T entityType, String query) {
+  public <T> Flux<T> getAll(T entityType, String query) {
     ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
     //logger.info("BaseCosmosDbDao::getAll::query:" + query);
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
         getContainer().queryItems(query, this.feedOptions);
 
-    Class classType = entityType.getClass();
-
-    Flux selectedItems =
-        feedResponse
+    Class<?> classType = entityType.getClass();
+    @SuppressWarnings("unchecked")
+    Flux<T> selectedItems =
+        (Flux<T>)feedResponse
             .flatMap(
                 flatFeedResponse -> {
                   return Flux.fromIterable(flatFeedResponse.results());
