@@ -2,7 +2,6 @@ package com.microsoft.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
 
-import com.azure.data.cosmos.CosmosClient;
 import com.azure.data.cosmos.CosmosItemProperties;
 import com.azure.data.cosmos.FeedResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -42,10 +41,7 @@ public class ActorsDao extends BaseCosmosDbDao {
   /** getActorByIdSingleRead. */
   public Mono<Actor> getActorById(String actorId) {
     Mono<Actor> actor =
-        this.context
-            .getBean(CosmosClient.class)
-            .getDatabase(this.cosmosDatabase)
-            .getContainer(this.cosmosContainer)
+        getContainer()
             .getItem(actorId, utils.getPartitionKey(actorId))
             .read()
             .flatMap(
@@ -71,11 +67,7 @@ public class ActorsDao extends BaseCosmosDbDao {
 
     logger.info("actorQuery " + actorQuery);
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
-        this.context
-            .getBean(CosmosClient.class)
-            .getDatabase(this.cosmosDatabase)
-            .getContainer(this.cosmosContainer)
-            .queryItems(actorQuery, this.feedOptions);
+        getContainer().queryItems(actorQuery, this.feedOptions);
 
     Flux<Actor> selectedActors =
         feedResponse

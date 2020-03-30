@@ -2,6 +2,7 @@ package com.microsoft.cse.helium.app.utils;
 
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /** ParameterValidator. */
 @Component
@@ -27,43 +28,41 @@ public class ParameterValidator {
     return p.matcher(movieId).matches();
   }
 
-
   /** isValidSearchQuery. */
   public Boolean isValidSearchQuery(String query) {
-    Boolean isValid = true;
-    if (query.length() < 2 || query.length() > 20) {
-      isValid = false;
+    if (!StringUtils.isEmpty(query) && (query.length() < 2 || query.length() > 20)) {
+      return false;
     }
-    return isValid;
+    return true;
   }
 
   /** isValidPageNumber. */
   public Boolean isValidPageNumber(String pageNumber) {
-    Boolean isValid = true;
-    try {
-      Integer pageNo = Integer.parseInt(pageNumber);
-      if (pageNo < 1 || pageNo > 10000) {
-        isValid = false;
+    if (!StringUtils.isEmpty(pageNumber)) {
+      try {
+        Integer pageNo = Integer.parseInt(pageNumber);
+        if (pageNo < 1 || pageNo > 10000) {
+          return false;
+        }
+      } catch (Exception ex) {
+        return false;
       }
-    } catch (Exception ex) {
-      isValid = false;
     }
-    return isValid;
+    return true;
   }
 
-  /**
-   * isValidPageSize.
-   */
+  /** isValidPageSize. */
   public Boolean isValidPageSize(String pageSize) {
-    Boolean isValid = true;
-    try {
-      Integer pageSz = Integer.parseInt(pageSize);
-      if (pageSz < 1 || pageSz > 1000) {
-        isValid = false;
+    if (!StringUtils.isEmpty(pageSize)) {
+      try {
+        Integer pageSz = Integer.parseInt(pageSize);
+        if (pageSz < 1 || pageSz > 1000) {
+          return false;
+        }
+      } catch (Exception ex) {
+        return false;
       }
-    } catch (Exception ex) {
-      isValid = false;
     }
-    return isValid;
+    return true;
   }
 }
