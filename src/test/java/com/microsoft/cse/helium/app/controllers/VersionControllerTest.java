@@ -12,8 +12,6 @@ import com.microsoft.cse.helium.app.models.HeliumConfig;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -22,8 +20,6 @@ public class VersionControllerTest {
 
   @Mock
   private VersionController versionController;
-
-  private static final Logger _logger = LoggerFactory.getLogger(VersionControllerTest.class);
 
   @Test
   public void testVersion() {

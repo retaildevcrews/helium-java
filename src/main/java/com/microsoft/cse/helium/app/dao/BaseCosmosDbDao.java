@@ -12,12 +12,12 @@ import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
+//import java.lang.reflect.ParameterizedType;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import reactor.core.publisher.Flux;
-
 
 public class BaseCosmosDbDao {
 
@@ -55,33 +55,31 @@ public class BaseCosmosDbDao {
   }
 
   /** getAMovies. */
-  public <T> Flux<T> getAll(T entityType, String query) {
+  //@SuppressWarnings("unchecked")
+  public <T> Flux<T> getAll(Class<T> classType, String query) {
     ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
     //logger.info("BaseCosmosDbDao::getAll::query:" + query);
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
         getContainer().queryItems(query, this.feedOptions);
-
-    Class<?> classType = entityType.getClass();
-    @SuppressWarnings("unchecked")
-    Flux<T> selectedItems =
-        (Flux<T>)feedResponse
-            .flatMap(
-                flatFeedResponse -> {
-                  return Flux.fromIterable(flatFeedResponse.results());
-                })
-            .flatMap(
-                cosmosItemProperties -> {
-                  try {
-                    return Flux.just(
-                        objMapper.readValue(cosmosItemProperties.toJson(), classType));
-                  } catch (JsonMappingException e) {
-                    e.printStackTrace();
-                  } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                  }
-                  return Flux.empty();
-                });
+    /*
+    @SuppressWarnings("rawtypes")
+    Class<T> classType = (Class) ((ParameterizedType) getClass()
+        .getGenericSuperclass()).getActualTypeArguments()[0];
+    */
+    Flux<T> selectedItems = (Flux<T>)feedResponse
+        .flatMap(flatFeedResponse -> {
+          return Flux.fromIterable(flatFeedResponse.results());
+        }).flatMap(cosmosItemProperties -> {
+          try {
+            return Flux.just(objMapper.readValue(cosmosItemProperties.toJson(), classType));
+          } catch (JsonMappingException e) {
+            e.printStackTrace();
+          } catch (JsonProcessingException e) {
+            e.printStackTrace();
+          }
+          return Flux.empty();
+        });
 
     return selectedItems;
   }

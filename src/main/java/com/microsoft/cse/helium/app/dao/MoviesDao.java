@@ -65,8 +65,8 @@ public class MoviesDao extends BaseCosmosDbDao {
     String moviesQuery =
         movieSelect + contains + movieOrderBy + String.format(movieOffset, pageNumber, pageSize);
     logger.info("Movies query = " + moviesQuery);
-    Movie movie = new Movie();
-    Flux<Movie> testBaseResult = this.getAll(movie, moviesQuery);
+
+    Flux<Movie> testBaseResult = this.getAll(Movie.class, moviesQuery);
     return testBaseResult;
     /*
     ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
