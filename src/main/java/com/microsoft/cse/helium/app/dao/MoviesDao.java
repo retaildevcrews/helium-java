@@ -1,13 +1,15 @@
 package com.microsoft.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
-
+/*
 import com.azure.data.cosmos.CosmosItemProperties;
 import com.azure.data.cosmos.FeedResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
+*/
+
 import com.microsoft.cse.helium.app.models.Movie;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
@@ -53,7 +55,6 @@ public class MoviesDao extends BaseCosmosDbDao {
 
   /** getAMovies. */
   public Flux<Movie> getMovies(String query, Integer pageNumber, Integer pageSize) {
-    ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
     String contains = "";
 
@@ -61,12 +62,18 @@ public class MoviesDao extends BaseCosmosDbDao {
       contains = String.format(movieContains, query);
     }
 
-    String actorQuery =
+    String moviesQuery =
         movieSelect + contains + movieOrderBy + String.format(movieOffset, pageNumber, pageSize);
+    logger.info("Movies query = " + moviesQuery);
+    Movie movie = new Movie();
+    Flux<Movie> testBaseResult = this.getAll(movie, moviesQuery);
+    return testBaseResult;
+    /*
+    ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
-    logger.info("movieQuery " + actorQuery);
+    logger.info("movieQuery " + moviesQuery);
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
-        getContainer().queryItems(actorQuery, this.feedOptions);
+        getContainer().queryItems(moviesQuery, this.feedOptions);
 
     Flux<Movie> selectedMovies =
         feedResponse
@@ -88,5 +95,6 @@ public class MoviesDao extends BaseCosmosDbDao {
                 });
 
     return selectedMovies;
+    */
   }
 }
