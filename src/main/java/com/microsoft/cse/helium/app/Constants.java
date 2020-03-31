@@ -17,9 +17,10 @@ public final class Constants {
   public static final Integer MAX_DEGREE_PARALLELISM = 2;
 
   public static final String AUTH_TYPE = "AUTH_TYPE";
-  public static final String KEY_VAULT_NAME = "KeyVaultName";
+  public static final String KEY_VAULT_NAME = "KEYVAULT_NAME";
   public static final String USE_MSI = "MSI";
   public static final String USE_CLI = "CLI";
+  public static final String USE_VS = "VS";
   public static final String ACTOR_CONTROLLER_EXCEPTION = "ActorControllerException";
   public static final String MOVIE_CONTROLLER_EXCEPTION = "MovieControllerException";
 

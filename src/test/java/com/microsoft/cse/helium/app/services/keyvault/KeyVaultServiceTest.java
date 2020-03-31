@@ -68,7 +68,7 @@ public class KeyVaultServiceTest {
   @Test
   public void TestGoodEnvironmentFlag() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
-    environmentVariables.set("KeyVaultName", "One2-thR33");
+    environmentVariables.set("KEYVAULT_NAME", "One2-thR33");
     assertTrue("Key vault name is good", environmentReader.getKeyVaultName().equals("One2-thR33"));
   }
 
@@ -77,7 +77,7 @@ public class KeyVaultServiceTest {
   public void TestShortKeyVaultName() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     exit.expectSystemExitWithStatus(-1);
-    environmentVariables.set("KeyVaultName", "kv");
+    environmentVariables.set("KEYVAULT_NAME", "kv");
     environmentReader.getKeyVaultName();
   }
 
@@ -85,7 +85,7 @@ public class KeyVaultServiceTest {
   public void TestLongKeyVaultName() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     exit.expectSystemExitWithStatus(-1);
-    environmentVariables.set("KeyVaultName", "one234five6789ten1112thirteen");
+    environmentVariables.set("KEYVAULT_NAME", "one234five6789ten1112thirteen");
     environmentReader.getKeyVaultName();
   }
 
@@ -93,7 +93,7 @@ public class KeyVaultServiceTest {
   public void TestEmptyKeyVaultName() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     exit.expectSystemExitWithStatus(-1);
-    environmentVariables.set("KeyVaultName", "");
+    environmentVariables.set("KEYVAULT_NAME", "");
     environmentReader.getKeyVaultName();
   }
 
@@ -101,7 +101,7 @@ public class KeyVaultServiceTest {
   public void TestNullKeyVaultName() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     exit.expectSystemExitWithStatus(-1);
-    environmentVariables.set("KeyVaultName", null);
+    environmentVariables.set("KEYVAULT_NAME", null);
     environmentReader.getKeyVaultName();
   }
 
@@ -109,7 +109,7 @@ public class KeyVaultServiceTest {
   public void TestTrailingHyphenKeyVaultName() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     exit.expectSystemExitWithStatus(-1);
-    environmentVariables.set("KeyVaultName", "one2-3-");
+    environmentVariables.set("KEYVAULT_NAME", "one2-3-");
     environmentReader.getKeyVaultName();
   }
 
@@ -117,7 +117,7 @@ public class KeyVaultServiceTest {
   public void TestConsecutiveHyphenKeyVaultName() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     exit.expectSystemExitWithStatus(-1);
-    environmentVariables.set("KeyVaultName", "one2--3");
+    environmentVariables.set("KEYVAULT_NAME", "one2--3");
     environmentReader.getKeyVaultName();
   }
 
@@ -125,7 +125,7 @@ public class KeyVaultServiceTest {
   public void TestLeadingNumberKeyVaultName() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     exit.expectSystemExitWithStatus(-1);
-    environmentVariables.set("KeyVaultName", "1one2--3");
+    environmentVariables.set("KEYVAULT_NAME", "1one2--3");
     environmentReader.getKeyVaultName();
   }
 }

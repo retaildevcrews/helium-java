@@ -36,13 +36,14 @@ public class EnvironmentReader implements IEnvironmentReader {
       SimpleCommandLinePropertySource commandLinePropertySource =
           new SimpleCommandLinePropertySource(applicationArguments.getSourceArgs());
       Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
-        if (s.equals("authtype")) {
+        if (s.equals("auth-type")) {
           setAuthType(commandLinePropertySource.getProperty(s));
-        } else if (s.equals("kvname")) {
+        } else if (s.equals("keyvault-name")) {
           setKeyVaultName(commandLinePropertySource.getProperty(s));
         } else if (s.equals("h")) {
           System.out.println("Usage: mvn clean spring-boot:run  "
-              + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+              + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
+              + " -keyvault-name=<keyVaultName>\"");
           System.exit(0);
         }
       });
@@ -53,7 +54,8 @@ public class EnvironmentReader implements IEnvironmentReader {
   private void setAuthType(String authType) {
     if (authType == null) {
       System.out.println("Usage: mvn clean spring-boot:run  "
-          + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+          + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
+          + " -keyvault-name=<keyVaultName>\"");
       System.exit(-1);
     }
 
@@ -61,9 +63,13 @@ public class EnvironmentReader implements IEnvironmentReader {
       this.authType = Constants.USE_MSI;
     } else if (authType.equals(Constants.USE_CLI)) {
       this.authType = Constants.USE_CLI;
+    } else if (authType.equals(Constants.USE_VS)) {
+      System.out.println("VS Credentials are not yet supported in Java");
+      System.exit(-1);
     } else {
       System.out.println("Usage: mvn clean spring-boot:run  "
-          + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+          + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
+          + " -keyvault-name=<keyVaultName>\"");
       System.exit(-1);
     }
   }
@@ -92,6 +98,11 @@ public class EnvironmentReader implements IEnvironmentReader {
       return Constants.USE_MSI;
     } else if (authType.equals(Constants.USE_CLI)) {
       return Constants.USE_CLI;
+    } else if (authType.equals(Constants.USE_VS)) {
+      System.out.println("VS Credentials are not yet supported in Java");
+      System.exit(-1);
+      // following return needs to be there because java compiler wants a return statement.
+      return null;
     } else {
       System.exit(-1);
       // following return needs to be there because java compiler wants a return statement.
@@ -103,7 +114,8 @@ public class EnvironmentReader implements IEnvironmentReader {
   private void setKeyVaultName(String kvName) {
     if (kvName == null) {
       System.out.println("Usage: mvn clean spring-boot:run  "
-          + "-Dspring-boot.run.arguments=\"--h --authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+          + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
+          + " -keyvault-name=<keyVaultName>\"");
       System.exit(-1);
     }
 
@@ -112,8 +124,9 @@ public class EnvironmentReader implements IEnvironmentReader {
           + "' which does not meet the criteria must be 3-24 characters long, begin with a "
           + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
           + "alphanumeric.  Check ${KeyVaultName} in your environment variables.");
-      System.out.println("Usage: mvn clean spring-boot:run"
-          + "-Dspring-boot.run.arguments=\"--authtype=<CLI|MSI> --kvname=<keyVaultName>\"");
+      System.out.println("Usage: mvn clean spring-boot:run  "
+          + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
+          + " -keyvault-name=<keyVaultName>\"");
       System.exit(-1);
     }
 
