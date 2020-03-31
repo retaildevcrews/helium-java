@@ -2,12 +2,6 @@ package com.microsoft.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
 
-import com.azure.data.cosmos.CosmosItemProperties;
-import com.azure.data.cosmos.FeedResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
 import com.microsoft.cse.helium.app.models.Movie;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
@@ -19,7 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class MoviesDao extends BaseCosmosDbDao {
+public class MoviesDao extends BaseCosmosDbDao implements IDao {
   private static final Logger logger = LoggerFactory.getLogger(MoviesDao.class);
 
   @Autowired CommonUtils utils;
@@ -52,8 +46,7 @@ public class MoviesDao extends BaseCosmosDbDao {
   }
 
   /** getAMovies. */
-  public Flux<Movie> getMovies(String query, Integer pageNumber, Integer pageSize) {
-    ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
+  public Flux<Movie> getAll(String query, Integer pageNumber, Integer pageSize) {
 
     String contains = "";
 
@@ -61,32 +54,11 @@ public class MoviesDao extends BaseCosmosDbDao {
       contains = String.format(movieContains, query);
     }
 
-    String movieQuery =
+    String moviesQuery =
         movieSelect + contains + movieOrderBy + String.format(movieOffset, pageNumber, pageSize);
+    logger.info("Movies query = " + moviesQuery);
 
-    logger.info("movieQuery " + movieQuery);
-    Flux<FeedResponse<CosmosItemProperties>> feedResponse =
-        getContainer().queryItems(movieQuery, this.feedOptions);
-
-    Flux<Movie> selectedMovies =
-        feedResponse
-            .flatMap(
-                flatFeedResponse -> {
-                  return Flux.fromIterable(flatFeedResponse.results());
-                })
-            .flatMap(
-                cosmosItemProperties -> {
-                  try {
-                    return Flux.just(
-                        objMapper.readValue(cosmosItemProperties.toJson(), Movie.class));
-                  } catch (JsonMappingException e) {
-                    e.printStackTrace();
-                  } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                  }
-                  return Flux.empty();
-                });
-
-    return selectedMovies;
+    Flux<Movie> queryResult = super.getAll(Movie.class, moviesQuery);
+    return queryResult;
   }
 }
