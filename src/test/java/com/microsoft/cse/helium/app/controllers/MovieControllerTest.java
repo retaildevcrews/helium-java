@@ -15,7 +15,7 @@ import com.microsoft.cse.helium.app.models.Movie;
 @AutoConfigureWebTestClient(timeout = "20000")
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
-@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${AUTH_TYPE}"})
+@SpringBootTest
 
 public class MovieControllerTest {
   @Autowired

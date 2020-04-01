@@ -124,6 +124,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-rules</artifactId>
+            <version>1.19.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
             <version>3.1.12</version>
@@ -222,7 +228,7 @@
             <artifactId>maven-pmd-plugin</artifactId>
             <version>3.13.0</version>
             <configuration>
-                <failOnViolation>true</failOnViolation> <!-- this is actually true by default, but can be disabled -->
+                <failOnViolation>true</failOnViolation>
                 <printFailingErrors>true</printFailingErrors>
             </configuration>
             <executions>
