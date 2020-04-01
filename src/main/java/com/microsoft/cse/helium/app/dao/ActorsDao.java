@@ -59,7 +59,6 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
         actorSelect + contains + actorOrderBy + String.format(actorOffset, pageNumber, pageSize);
 
     logger.info("actorQuery " + actorQuery);
-
     Flux<Actor> queryResult = super.getAll(Actor.class, actorQuery);
     return queryResult;
   }

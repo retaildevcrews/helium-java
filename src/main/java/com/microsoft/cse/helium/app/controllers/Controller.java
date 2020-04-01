@@ -27,8 +27,10 @@ public class Controller {
 
   /** commonControllerUtilAll. */
   protected Object getAll(
+
       Optional<String> query, Optional<String> pageNumber, 
       Optional<String> pageSize, IDao dataObject) {
+
     String q = null;
 
     if (query.isPresent()) {
@@ -69,6 +71,8 @@ public class Controller {
     }
 
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
+
     return dataObject.getAll(q, pageNo * pageSz, pageSz);
+
   }
 }

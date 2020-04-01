@@ -52,33 +52,39 @@ public class BaseCosmosDbDao {
   }
 
   /**
-   * Common template method used to execute and retrieve queries for the given type 
-   * using the passed in query.
+   * Common template method used to execute and retrieve queries for the given type using the passed
+   * in query.
    *
    * @param classType used for the object mapper to map results into object
-   * @param query is passed in from the specific data access object and used to 
-   *              fetch matching records
+   * @param query is passed in from the specific data access object and used to fetch matching
+   *     records
    * @return Flux/<T/> is returned to contains results for the specific entity type
-  */
+   */
   public <T> Flux<T> getAll(Class<T> classType, String query) {
     ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
 
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
         getContainer().queryItems(query, this.feedOptions);
 
-    Flux<T> selectedItems = (Flux<T>)feedResponse
-        .flatMap(flatFeedResponse -> {
-          return Flux.fromIterable(flatFeedResponse.results());
-        }).flatMap(cosmosItemProperties -> {
-          try {
-            return Flux.just(objMapper.readValue(cosmosItemProperties.toJson(), classType));
-          } catch (JsonMappingException e) {
-            e.printStackTrace();
-          } catch (JsonProcessingException e) {
-            e.printStackTrace();
-          }
-          return Flux.empty();
-        });
+    Flux<T> selectedItems =
+        (Flux<T>)
+            feedResponse
+                .flatMap(
+                    flatFeedResponse -> {
+                      return Flux.fromIterable(flatFeedResponse.results());
+                    })
+                .flatMap(
+                    cosmosItemProperties -> {
+                      try {
+                        return Flux.just(
+                            objMapper.readValue(cosmosItemProperties.toJson(), classType));
+                      } catch (JsonMappingException e) {
+                        e.printStackTrace();
+                      } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                      }
+                      return Flux.empty();
+                    });
 
     return selectedItems;
   }
