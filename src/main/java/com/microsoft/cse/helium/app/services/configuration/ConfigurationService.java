@@ -1,6 +1,7 @@
 package com.microsoft.cse.helium.app.services.configuration;
 
 import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
@@ -23,11 +24,16 @@ public class ConfigurationService implements IConfigurationService {
   /**
    * ConfigurationService.
    */
+  @SuppressFBWarnings("DM_EXIT")
   @Autowired
   public ConfigurationService(IKeyVaultService kvService) {
     try {
+      if (kvService == null) {
+        logger.info("keyVaultService is null");
+        System.exit(-1);
+      }
+
       keyVaultService = kvService;
-      logger.info("keyVaultService is " + (keyVaultService == null ? "NULL" : "NOT NULL"));
       Map<String, String> secrets = keyVaultService.getSecretsSync();
       logger.info("Secrets are " + (secrets == null ? "NULL" : "NOT NULL"));
       configEntries = secrets;
