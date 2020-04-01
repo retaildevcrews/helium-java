@@ -120,10 +120,10 @@ public class EnvironmentReader implements IEnvironmentReader {
     }
 
     if (!isValidKeyVaultName(kvName)) {
-      logger.error("helium.keyvault.name (KeyVaultName) value is '" + kvName
+      logger.error("KEYVAULT_NAME value is '" + kvName
           + "' which does not meet the criteria must be 3-24 characters long, begin with a "
           + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
-          + "alphanumeric.  Check ${KeyVaultName} in your environment variables.");
+          + "alphanumeric.  Check ${KEYVAULT_NAME} in your environment variables.");
       System.out.println("Usage: mvn clean spring-boot:run  "
           + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
           + " -keyvault-name=<keyVaultName>\"");

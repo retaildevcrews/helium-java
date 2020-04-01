@@ -23,7 +23,7 @@ import reactor.core.publisher.Mono;
 @Service
 public class KeyVaultService implements IKeyVaultService {
   private final String keyVaultName;
-  private String environmentFlag = "";
+  private String authType = "";
   private AzureTokenCredentials azureTokenCredentials;
   private final KeyVaultClient keyVaultClient;
 
@@ -38,11 +38,11 @@ public class KeyVaultService implements IKeyVaultService {
       throws Exception {
 
     this.keyVaultName = environmentReader.getKeyVaultName();
-    this.environmentFlag = environmentReader.getAuthType();
+    this.authType = environmentReader.getAuthType();
 
-    if (this.environmentFlag.equals(Constants.USE_MSI)) {
+    if (this.authType.equals(Constants.USE_MSI)) {
       azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
-    } else if (this.environmentFlag.equals(Constants.USE_CLI)) {
+    } else if (this.authType.equals(Constants.USE_CLI)) {
       try {
         azureTokenCredentials = AzureCliCredentials.create();
       } catch (final IOException ex) {
@@ -50,7 +50,7 @@ public class KeyVaultService implements IKeyVaultService {
         throw ex;
       }
     } else {
-      this.environmentFlag = Constants.USE_MSI;
+      this.authType = Constants.USE_MSI;
     }
 
     keyVaultClient = new KeyVaultClient(azureTokenCredentials);
