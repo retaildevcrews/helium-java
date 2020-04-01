@@ -15,7 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @AutoConfigureWebTestClient(timeout = "20000")
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
-@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${AUTH_TYPE}"})
+@SpringBootTest
 
 public class MovieControllerTest {
   @Autowired
@@ -46,8 +46,6 @@ public class MovieControllerTest {
         .expectStatus().isNotFound();
   }
 
-
-  @Test
   public void testBadQueryMovies_1(){
     webClient.get().uri("/api/movies?q=a")
         .header(HttpHeaders.ACCEPT, "application/json")
@@ -158,4 +156,14 @@ public class MovieControllerTest {
         .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
   }
 
+  @Test
+  public void testAllMovies_1() {
+    webClient.get().uri("/api/movies")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class);
+  }
 }
+

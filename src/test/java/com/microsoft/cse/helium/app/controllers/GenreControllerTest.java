@@ -14,7 +14,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @AutoConfigureWebTestClient(timeout = "20000")
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
-@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${AUTH_TYPE}"})
+@SpringBootTest
 
 public class GenreControllerTest {
   @Autowired
@@ -27,7 +27,6 @@ public class GenreControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(String.class);
-
 
     }
 

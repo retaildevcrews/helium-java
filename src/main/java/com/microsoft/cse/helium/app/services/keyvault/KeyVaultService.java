@@ -9,6 +9,7 @@ import com.microsoft.azure.keyvault.models.CertificateBundle;
 import com.microsoft.azure.keyvault.models.KeyBundle;
 import com.microsoft.azure.keyvault.models.SecretBundle;
 import com.microsoft.azure.keyvault.models.SecretItem;
+import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.rest.ServiceCallback;
 import java.io.IOException;
 import java.util.List;
@@ -16,36 +17,32 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 public class KeyVaultService implements IKeyVaultService {
   private final String keyVaultName;
-  private String environmentFlag = "";
+  private String authType = "";
   private AzureTokenCredentials azureTokenCredentials;
   private final KeyVaultClient keyVaultClient;
 
-  private final String keyVaultNameRegex = "^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$";
+
   private static final Logger logger = LoggerFactory.getLogger(KeyVaultService.class);
 
-  public static final String USE_MSI = "MSI";
-  public static final String USE_CLI = "CLI";
 
   /**
    * KeyVaultService.
    */
-  public KeyVaultService(@Value("${helium.keyvault.name}") final String keyVaultName,
-                         @Value("${helium.environment.flag}") final String environmentFlag)
+  public KeyVaultService(IEnvironmentReader environmentReader)
       throws Exception {
 
-    this.keyVaultName = keyVaultName.trim().toUpperCase();
-    this.environmentFlag = environmentFlag.trim().toUpperCase();
+    this.keyVaultName = environmentReader.getKeyVaultName();
+    this.authType = environmentReader.getAuthType();
 
-    if (this.environmentFlag.equals(USE_MSI)) {
+    if (this.authType.equals(Constants.USE_MSI)) {
       azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
-    } else if (this.environmentFlag.equals(USE_CLI)) {
+    } else if (this.authType.equals(Constants.USE_CLI)) {
       try {
         azureTokenCredentials = AzureCliCredentials.create();
       } catch (final IOException ex) {
@@ -53,54 +50,12 @@ public class KeyVaultService implements IKeyVaultService {
         throw ex;
       }
     } else {
-      this.environmentFlag = USE_MSI;
-    }
-
-    if (!checkKeyVaultName(this.keyVaultName)) {
-      logger.error("helium.keyvault.name (KeyVaultName) value is '" + this.keyVaultName
-          + "' which does not meet the criteria must be 3-24 characters long, begin with a "
-          + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
-          + "alphanumeric.  Check ${KeyVaultName} in your environment variables.");
-      throw new IllegalArgumentException("helium.keyvault.name (value='" + this.keyVaultName
-          + "') must be 3-24 characters long, begin with a character, may contain alphanumeric or"
-          + " hyphen, no repeating hyphens, and end with alphanumeric.  Check ${KeyVaultName} in"
-          + " your environment variables.");
+      this.authType = Constants.USE_MSI;
     }
 
     keyVaultClient = new KeyVaultClient(azureTokenCredentials);
-
   }
 
-  /**
-   * KeyVaultService.
-   */
-  public static KeyVaultService create(final String keyVaultName, final String environmentFlag)
-      throws Exception {
-    return new KeyVaultService(keyVaultName, environmentFlag);
-  }
-
-  /**
-   * checkKeyVaultName.
-   */
-  private Boolean checkKeyVaultName(final String keyVaultName) {
-    Boolean validSetting = true;
-
-    if (keyVaultName.length() < 3 || keyVaultName.length() > 24) {
-      validSetting = false;
-    }
-
-    // validate key vault name with regex:
-    // ^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$
-    // ^[a-zA-Z] - start of string, must be a alpha character
-    // (?!.*--) - look ahead and make sure there are no double hyphens (e.g., "--")
-    // [a-zA-Z0-9-]* - match alphanumeric and hyphen as many times as needed
-    // [a-zA-Z0-9] - final character must be alphanumeric
-    if (!keyVaultName.matches(keyVaultNameRegex)) {
-      validSetting = false;
-    }
-
-    return validSetting;
-  }
 
   /**
    * getKeyVaultUri.

@@ -2,12 +2,6 @@ package com.microsoft.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
 
-import com.azure.data.cosmos.CosmosItemProperties;
-import com.azure.data.cosmos.FeedResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
@@ -19,7 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class ActorsDao extends BaseCosmosDbDao {
+public class ActorsDao extends BaseCosmosDbDao implements IDao {
   private static final Logger logger = LoggerFactory.getLogger(ActorsDao.class);
 
   @Autowired CommonUtils utils;
@@ -53,8 +47,7 @@ public class ActorsDao extends BaseCosmosDbDao {
   }
 
   /** getActors. */
-  public Flux<Actor> getActors(String query, Integer pageNumber, Integer pageSize) {
-    ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
+  public Flux<Actor> getAll(String query, Integer pageNumber, Integer pageSize) {
 
     String contains = "";
 
@@ -66,28 +59,7 @@ public class ActorsDao extends BaseCosmosDbDao {
         actorSelect + contains + actorOrderBy + String.format(actorOffset, pageNumber, pageSize);
 
     logger.info("actorQuery " + actorQuery);
-    Flux<FeedResponse<CosmosItemProperties>> feedResponse =
-        getContainer().queryItems(actorQuery, this.feedOptions);
-
-    Flux<Actor> selectedActors =
-        feedResponse
-            .flatMap(
-                flatFeedResponse -> {
-                  return Flux.fromIterable(flatFeedResponse.results());
-                })
-            .flatMap(
-                cosmosItemProperties -> {
-                  try {
-                    return Flux.just(
-                        objMapper.readValue(cosmosItemProperties.toJson(), Actor.class));
-                  } catch (JsonMappingException e) {
-                    e.printStackTrace();
-                  } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                  }
-                  return Flux.empty();
-                });
-
-    return selectedActors;
+    Flux<Actor> queryResult = super.getAll(Actor.class, actorQuery);
+    return queryResult;
   }
 }
