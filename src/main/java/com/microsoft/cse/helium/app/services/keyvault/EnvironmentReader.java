@@ -104,6 +104,7 @@ public class EnvironmentReader implements IEnvironmentReader {
       // following return needs to be there because java compiler wants a return statement.
       return null;
     } else {
+      logger.info("AUTH_TYPE is not set and could not default. Exiting");
       System.exit(-1);
       // following return needs to be there because java compiler wants a return statement.
       return null;
@@ -146,6 +147,7 @@ public class EnvironmentReader implements IEnvironmentReader {
 
     keyVaultName = System.getenv(Constants.KEY_VAULT_NAME);
     if (keyVaultName == null || !isValidKeyVaultName(keyVaultName)) {
+      logger.info("No proper Key vault name not set. Exiting");
       System.exit(-1);
     }
 

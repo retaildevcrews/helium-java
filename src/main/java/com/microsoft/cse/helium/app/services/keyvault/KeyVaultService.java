@@ -38,7 +38,9 @@ public class KeyVaultService implements IKeyVaultService {
       throws Exception {
 
     this.keyVaultName = environmentReader.getKeyVaultName();
+    logger.info("KeyVaultName is " + this.keyVaultName);
     this.authType = environmentReader.getAuthType();
+    logger.info("Auth type is " + this.authType);
 
     if (this.authType.equals(Constants.USE_MSI)) {
       azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
@@ -70,6 +72,7 @@ public class KeyVaultService implements IKeyVaultService {
         kvUri = "https://" + keyVaultName + ".vault.azure.net";
       }
     }
+    logger.info("KeyVaultUrl is " + kvUri);
     return kvUri;
   }
 
@@ -77,6 +80,7 @@ public class KeyVaultService implements IKeyVaultService {
    * getSecret.
    */
   public Mono<String> getSecret(final String secretName) {
+    logger.info("Secrets in getSecret are " + (secretName == null ? "NULL" : "NOT NULL"));
     return Mono.create(sink -> {
       keyVaultClient.getSecretAsync(getKeyVaultUri(), secretName,
           new ServiceCallback<SecretBundle>() {
@@ -103,6 +107,7 @@ public class KeyVaultService implements IKeyVaultService {
     List<SecretItem> secrets = null;
     try {
       secrets = keyVaultClient.listSecretsAsync(getKeyVaultUri(), null).get();
+      logger.info("Secrets in listSecretsSync are " + (secrets == null ? "NULL" : "NOT NULL"));
     } catch (final Exception exception) {
       logger.error(exception.getMessage());
     }
@@ -117,12 +122,21 @@ public class KeyVaultService implements IKeyVaultService {
   public Map<String, String> getSecretsSync() {
     final List<SecretItem> secretItems = listSecretsSync();
 
+    logger.info("secretItems variable is" + secretItems);
     final Map<String, String> secrets = new ConcurrentHashMap<String, String>();
-    secretItems.forEach(item -> {
-      final String itemName = item.id().substring(item.id().lastIndexOf("/") + 1);
-      final String secretValue = getSecret(itemName).block();
-      secrets.put(itemName, secretValue);
-    });
+    try {
+      secretItems.forEach(item -> {
+        logger.info("secretItem single in the loop is " + (item == null ? "NULL" : "NOT NULL"));
+        final String itemName = item.id().substring(item.id().lastIndexOf("/") + 1);
+        final String secretValue = getSecret(itemName).block();
+        logger.info("lengths of secretItem name and value are " + itemName.length()
+            + " " + secretValue.length());
+        secrets.put(itemName, secretValue);
+      });
+    } catch (Exception ex) {
+      logger.error("Hit Exception getting the secrets from keyvault ", ex);
+      throw ex;
+    }
     return secrets;
   }
 

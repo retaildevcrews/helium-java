@@ -27,7 +27,9 @@ public class ConfigurationService implements IConfigurationService {
   public ConfigurationService(IKeyVaultService kvService) {
     try {
       keyVaultService = kvService;
+      logger.info("keyVaultService is " + (keyVaultService == null ? "NULL" : "NOT NULL"));
       Map<String, String> secrets = keyVaultService.getSecretsSync();
+      logger.info("Secrets are " + (secrets == null ? "NULL" : "NOT NULL"));
       configEntries = secrets;
     } catch (Exception ex) {
       logger.error(ex.getMessage());
