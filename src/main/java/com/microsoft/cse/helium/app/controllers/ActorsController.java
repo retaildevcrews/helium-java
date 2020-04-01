@@ -71,6 +71,7 @@ public class ActorsController extends Controller {
 
     try {
       return getAll(query, pageNumber, pageSize, actorsDao);
+
     } catch (Exception ex) {
       logger.error("ActorControllerException " + ex.getMessage());
       return new ResponseEntity<>(

@@ -47,9 +47,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
   /** getAMovies. */
   public Flux<Movie> getAll(String query, Integer pageNumber, Integer pageSize) {
-
     String contains = "";
-
     if (query != null) {
       contains = String.format(movieContains, query);
     }

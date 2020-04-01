@@ -1,5 +1,6 @@
 package com.microsoft.cse.helium.app.controllers;
 
+import com.microsoft.cse.helium.app.models.Movie;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +15,23 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @AutoConfigureWebTestClient(timeout = "20000")
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
-@SpringBootTest
+@SpringBootTest(properties = {"helium.keyvault.name=${KeyVaultName}", "helium.environment.flag=${AUTH_TYPE}"})
 
-public class GenreControllerTest {
+public class FeaturedMovieControllerTest {
   @Autowired
   private WebTestClient webClient;
 
     @Test
-    public void testGenres(){
-        webClient.get().uri("/api/genres")
-                .header(HttpHeaders.ACCEPT, "application/json")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBodyList(String.class);
-
+    public void testFeaturedMovie(){
+    webClient
+        .get()
+        .uri("/api/featured/movie")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(Movie.class);
     }
-
 }
 
 
