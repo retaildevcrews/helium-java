@@ -53,6 +53,7 @@ public class KeyVaultService implements IKeyVaultService {
       }
     } else {
       this.authType = Constants.USE_MSI;
+      azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
     }
 
     keyVaultClient = new KeyVaultClient(azureTokenCredentials);
