@@ -63,6 +63,8 @@ public class EnvironmentReader implements IEnvironmentReader {
       this.authType = Constants.USE_MSI;
     } else if (authType.equals(Constants.USE_CLI)) {
       this.authType = Constants.USE_CLI;
+    } else if (authType.equals(Constants.USE_MSI_APPSVC)) {
+      this.authType = Constants.USE_MSI_APPSVC;
     } else if (authType.equals(Constants.USE_VS)) {
       System.out.println("VS Credentials are not yet supported in Java");
       System.exit(-1);
