@@ -57,7 +57,7 @@ public class KeyVaultService implements IKeyVaultService {
     } else if (this.authType.equals(Constants.USE_MSI_APPSVC)) {
       try {
         azureTokenCredentials = new AppServiceMSICredentials(AzureEnvironment.AZURE);
-      } catch (final IOException ex) {
+      } catch (final Exception ex) {
         logger.error(ex.getMessage());
         throw ex;
       }
