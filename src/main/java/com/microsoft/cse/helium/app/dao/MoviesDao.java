@@ -2,13 +2,19 @@ package com.microsoft.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
 
+
+import com.microsoft.cse.helium.app.models.Genre;
 import com.microsoft.cse.helium.app.models.Movie;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
+import java.util.Objects;
+import net.minidev.json.JSONUtil;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -17,6 +23,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
   private static final Logger logger = LoggerFactory.getLogger(MoviesDao.class);
 
   @Autowired CommonUtils utils;
+  @Autowired GenresDao genresDao;
 
   private static String movieSelect =
       "select m.id, m.partitionKey, m.movieId, m.type, m.textSearch, m.title, m.year, m.runtime,"
@@ -45,18 +52,50 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
     return movie;
   }
 
-  /** getAMovies. */
-  public Flux<Movie> getAll(String query, Integer pageNumber, Integer pageSize) {
+  /** getAllMovies. */
+  public Flux<Movie> getAll(
+      String query, String genre, Integer year, Integer pageNumber, Integer pageSize) {
+    StringBuilder formedQuery = new StringBuilder(movieSelect);
+
     String contains = "";
     if (query != null) {
       contains = String.format(movieContains, query);
+      formedQuery.append(contains);
+    }
+
+     if (genre != null) {
+      genresDao
+          .getGenreByKey(genre)
+          .subscribe(
+              s -> {
+                System.out.println("genre in subscribe " + s.getGenre());
+                String genreSelect = "";
+                genreSelect = " and array_contains(m.genres,'" + s.getGenre() + "')";
+                System.out.println("genreSelect "+genreSelect);
+                formedQuery.append(genreSelect);
+                System.out.println("formedQuery "+formedQuery.toString());
+              });
+    }
+
+    String yearSelect = "";
+    if (year > 0) {
+      yearSelect = " and m.year = " + year;
+      formedQuery.append(yearSelect);
     }
 
     String moviesQuery =
-        movieSelect + contains + movieOrderBy + String.format(movieOffset, pageNumber, pageSize);
+        formedQuery
+            .append(movieOrderBy)
+            .append(String.format(movieOffset, pageNumber, pageSize))
+            .toString();
+
     logger.info("Movies query = " + moviesQuery);
 
     Flux<Movie> queryResult = super.getAll(Movie.class, moviesQuery);
     return queryResult;
+  }
+
+  public Flux<?> getAll(String query, Integer pageNumber, Integer pageSize) {
+    throw new NotImplementedException("Not Implemented");
   }
 }

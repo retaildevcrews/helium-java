@@ -37,7 +37,7 @@ public class MoviesController extends Controller {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<ResponseEntity<Movie>> getMovie(
       @ApiParam(value = "The ID of the movie to look for", example = "tt0000002", required = true)
-      @PathVariable("id")
+          @PathVariable("id")
           String movieId) {
     if (validator.isValidMovieId(movieId)) {
       return moviesDao
@@ -61,14 +61,23 @@ public class MoviesController extends Controller {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Object getAllMovies(
       @ApiParam(value = "(query) (optional) The term used to search Movie name") @RequestParam("q")
-      final Optional<String> query,
+          final Optional<String> query,
+      @ApiParam(
+          value = "(optional) Movies of a genre (Action)")
+      @RequestParam
+      final Optional<String> genre,
+      @ApiParam(
+              value = "(optional) Get movies by year (2005)",
+              defaultValue = "0")
+          @RequestParam
+          final Optional<String> year,
       @ApiParam(value = "1 based page index", defaultValue = "1") @RequestParam
           Optional<String> pageNumber,
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam
           Optional<String> pageSize) {
 
     try {
-      return getAll(query, pageNumber, pageSize, moviesDao);
+      return getAll(query, genre, year, pageNumber, pageSize, moviesDao);
     } catch (Exception ex) {
       logger.error("MovieControllerException " + ex.getMessage());
       return new ResponseEntity<>(

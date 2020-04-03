@@ -5,6 +5,7 @@ import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExcepti
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +41,16 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
             .read()
             .flatMap(
                 cosmosItemResponse -> {
-                  return Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Actor.class));
+                  return
+                      Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Actor.class));
                 })
-            .onErrorResume(throwable -> findAPIExceptionHandler("Failed to find item", throwable));
+            .onErrorResume(throwable ->
+                findAPIExceptionHandler("Failed to find item", throwable));
     return actor;
   }
 
   /** getActors. */
-  public Flux<Actor> getAll(String query, Integer pageNumber, Integer pageSize) {
+  public Flux<?> getAll(String query, Integer pageNumber, Integer pageSize) {
 
     String contains = "";
 
@@ -61,5 +64,13 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
     logger.info("actorQuery " + actorQuery);
     Flux<Actor> queryResult = super.getAll(Actor.class, actorQuery);
     return queryResult;
+  }
+
+  public Flux<Actor> getAll(String query,
+                            String genre,
+                            Integer year,
+                            Integer pageNumber,
+                            Integer pageSize) {
+    throw new NotImplementedException("Not Implemented");
   }
 }
