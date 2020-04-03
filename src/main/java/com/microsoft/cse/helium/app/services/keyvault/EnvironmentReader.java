@@ -63,6 +63,8 @@ public class EnvironmentReader implements IEnvironmentReader {
       this.authType = Constants.USE_MSI;
     } else if (authType.equals(Constants.USE_CLI)) {
       this.authType = Constants.USE_CLI;
+    } else if (authType.equals(Constants.USE_MSI_APPSVC)) {
+      this.authType = Constants.USE_MSI_APPSVC;
     } else if (authType.equals(Constants.USE_VS)) {
       System.out.println("VS Credentials are not yet supported in Java");
       System.exit(-1);
@@ -82,6 +84,7 @@ public class EnvironmentReader implements IEnvironmentReader {
   @SuppressFBWarnings("DM_EXIT")
   public String getAuthType() {
     if (this.authType != null) {
+      logger.info("Auth type is " + this.authType);
       return this.authType;
     }
 
@@ -89,14 +92,20 @@ public class EnvironmentReader implements IEnvironmentReader {
 
     // If it is not set, use the MSI
     if (authType == null) {
-      return Constants.USE_MSI;
+      // TODO: changing this temporarily to force using app svc msi if
+      // auth type is not set
+      logger.info("Auth type is null, defaulting to MSI APP SVC");
+      return Constants.USE_MSI_APPSVC;
+      //return Constants.USE_MSI;
     }
 
     // ONLY If it is set and values are either MSI or CLI, we will accept.
     // otherwise, default is just the MSI
     if (authType.equals(Constants.USE_MSI)) {
+      logger.info("Auth type is MSI");
       return Constants.USE_MSI;
     } else if (authType.equals(Constants.USE_CLI)) {
+      logger.info("Auth type is CLI");
       return Constants.USE_CLI;
     } else if (authType.equals(Constants.USE_VS)) {
       System.out.println("VS Credentials are not yet supported in Java");
@@ -104,6 +113,7 @@ public class EnvironmentReader implements IEnvironmentReader {
       // following return needs to be there because java compiler wants a return statement.
       return null;
     } else {
+      logger.info("AUTH_TYPE is not set and could not default. Exiting");
       System.exit(-1);
       // following return needs to be there because java compiler wants a return statement.
       return null;
@@ -141,11 +151,13 @@ public class EnvironmentReader implements IEnvironmentReader {
   @SuppressFBWarnings("DM_EXIT")
   public String getKeyVaultName() {
     if (this.keyVaultName != null) {
+      logger.info("KeyVaultName is " + this.keyVaultName);
       return this.keyVaultName;
     }
 
     keyVaultName = System.getenv(Constants.KEY_VAULT_NAME);
     if (keyVaultName == null || !isValidKeyVaultName(keyVaultName)) {
+      logger.info("No proper Key vault name not set. Exiting");
       System.exit(-1);
     }
 

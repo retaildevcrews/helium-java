@@ -55,6 +55,12 @@
 
         <dependency>
             <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure</artifactId>
+            <version>1.23.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-keyvault</artifactId>
             <version>1.2.2</version>
             <exclusions>
