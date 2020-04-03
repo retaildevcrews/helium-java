@@ -1,12 +1,9 @@
 package com.microsoft.cse.helium.app.dao;
 
-import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
-
 import com.azure.data.cosmos.CosmosClient;
 import com.microsoft.cse.helium.app.models.Genre;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
