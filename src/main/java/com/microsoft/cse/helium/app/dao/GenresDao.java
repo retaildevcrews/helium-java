@@ -49,31 +49,5 @@ public class GenresDao extends BaseCosmosDbDao {
     return selectedGenres;
   }
 
-  /**
-   * getGenreByKey.
-   *
-   * @return
-   */
-  public Mono<Genre> getGenreByKey(String key) {
-    logger.info("key " + key);
-    Mono<Genre> genreMono =
-        getContainer()
-            .getItem(key.toLowerCase(), "0")
-            .read()
-            .flatMap(
-                cosmosItemResponse -> {
-                  return Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Genre.class));
-                });
-
-/*    genreMono.subscribe(s->{
-      System.out.println("am i here " + s.getGenre());
-    }); */
-
-    logger.info("completed");
-    return genreMono;
-  }
-
-
-
 
 }

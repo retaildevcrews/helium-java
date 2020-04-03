@@ -264,15 +264,6 @@ public class MovieControllerTest {
         .expectBody(String.class).isEqualTo("Invalid Year parameter");
   }
 
-  @Test
-  public void testMoviesWithValidGenre_1() {
-    webClient.get().uri("/api/movies?genre=action")
-        .header(HttpHeaders.ACCEPT, "application/json")
-        .exchange()
-        .expectHeader().contentType(MediaType.APPLICATION_JSON)
-        .expectStatus().isOk();
-  }
-
 
 }
 
