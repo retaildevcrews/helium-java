@@ -39,9 +39,12 @@ public class GenresDao extends BaseCosmosDbDao {
                 flatFeedResponse -> {
                   return Flux.fromIterable(flatFeedResponse.results());
                 })
-            .map(cosmosItemProperties -> cosmosItemProperties.toObject(Genre.class).getGenre())
+            .map(cosmosItemProperties ->
+                cosmosItemProperties.toObject(Genre.class).getGenre())
             .collectList();
 
     return selectedGenres;
   }
+
+
 }

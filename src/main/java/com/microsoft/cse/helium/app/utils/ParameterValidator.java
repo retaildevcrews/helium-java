@@ -1,5 +1,6 @@
 package com.microsoft.cse.helium.app.utils;
 
+import java.time.OffsetDateTime;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -65,4 +66,49 @@ public class ParameterValidator {
     }
     return true;
   }
+
+  /** isValidGenre. */
+  public Boolean isValidGenre(String genre) {
+    if (!StringUtils.isEmpty(genre)) {
+      try {
+        if (genre.length() < 3 || genre.length() > 20) {
+          return false;
+        }
+      } catch (Exception ex) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /** isValidYear. */
+  public Boolean isValidYear(String year) {
+    if (!StringUtils.isEmpty(year)) {
+      try {
+        Integer movieYear = Integer.parseInt(year);
+        if (movieYear < 1874 || movieYear > OffsetDateTime.now().getYear() + 5) {
+          return false;
+        }
+      } catch (Exception ex) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /** isValidRating. */
+  public Boolean isValidRating(String rating) {
+    if (!StringUtils.isEmpty(rating)) {
+      try {
+        Integer movieRating = Integer.parseInt(rating);
+        if (movieRating < 0 || movieRating > 10) {
+          return false;
+        }
+      } catch (Exception ex) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 }

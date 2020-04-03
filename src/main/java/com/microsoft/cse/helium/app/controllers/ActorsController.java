@@ -70,7 +70,7 @@ public class ActorsController extends Controller {
           Optional<String> pageSize) {
 
     try {
-      return getAll(query, pageNumber, pageSize, actorsDao);
+      return getAll(query,pageNumber, pageSize, actorsDao);
 
     } catch (Exception ex) {
       logger.error("ActorControllerException " + ex.getMessage());

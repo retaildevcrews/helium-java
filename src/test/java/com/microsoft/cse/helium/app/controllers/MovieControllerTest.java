@@ -1,6 +1,7 @@
 package com.microsoft.cse.helium.app.controllers;
 
 import com.microsoft.cse.helium.app.models.Movie;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,5 +166,104 @@ public class MovieControllerTest {
         .expectStatus().isOk()
         .expectBodyList(Movie.class);
   }
+
+  @Test
+  public void testMoviesWithValidYear_1() {
+    webClient.get().uri("/api/movies?year=2005")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class).consumeWith(movies ->
+        Assert.assertEquals(movies.getResponseBody().get(0).getYear(), 2005));
+  }
+
+  @Test
+  public void testMoviesWithValidYear_2(){
+    webClient.get().uri("/api/movies?year=2025")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectBodyList(Movie.class).hasSize(0);
+  }
+
+  @Test
+  public void testMoviesWithValidYear_3(){
+    webClient.get().uri("/api/movies?year=1874")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectBodyList(Movie.class).hasSize(0);
+  }
+
+  @Test
+  public void testMoviesWithBadYear_1(){
+    webClient.get().uri("/api/movies?year=foo")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadYear_2(){
+    webClient.get().uri("/api/movies?year=-1")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadYear_3(){
+    webClient.get().uri("/api/movies?year=0")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadYear_4(){
+    webClient.get().uri("/api/movies?year=1")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadYear_5(){
+    webClient.get().uri("/api/movies?year=1873")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadYear_6(){
+    webClient.get().uri("/api/movies?year=2026")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadYear_7(){
+    webClient.get().uri("/api/movies?year=2020.1")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+  }
+
+
 }
 
