@@ -48,7 +48,7 @@ public class KeyVaultServiceTest {
   public void TestEmptyAuthType() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     environmentVariables.clear("AUTH_TYPE");
-    assertTrue("No Auth specified, MSI used", environmentReader.getAuthType() == "MSI");
+    assertTrue("No Auth specified, MSI used", environmentReader.getAuthType() == "MSI_APPSVC");
   }
 
   @Test

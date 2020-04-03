@@ -1,6 +1,7 @@
 package com.microsoft.cse.helium.app.services.keyvault;
 
 import com.microsoft.azure.AzureEnvironment;
+import com.microsoft.azure.credentials.AppServiceMSICredentials;
 import com.microsoft.azure.credentials.AzureCliCredentials;
 import com.microsoft.azure.credentials.AzureTokenCredentials;
 import com.microsoft.azure.credentials.MSICredentials;
@@ -48,6 +49,13 @@ public class KeyVaultService implements IKeyVaultService {
       try {
         azureTokenCredentials = AzureCliCredentials.create();
       } catch (final IOException ex) {
+        logger.error(ex.getMessage());
+        throw ex;
+      }
+    } else if (this.authType.equals(Constants.USE_MSI_APPSVC)) {
+      try {
+        azureTokenCredentials = new AppServiceMSICredentials(AzureEnvironment.AZURE);
+      } catch (final Exception ex) {
         logger.error(ex.getMessage());
         throw ex;
       }
