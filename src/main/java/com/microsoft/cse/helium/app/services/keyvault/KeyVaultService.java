@@ -10,8 +10,6 @@ import com.microsoft.azure.keyvault.models.CertificateBundle;
 import com.microsoft.azure.keyvault.models.KeyBundle;
 import com.microsoft.azure.keyvault.models.SecretBundle;
 import com.microsoft.azure.keyvault.models.SecretItem;
-//import com.microsoft.azure.management.Azure;
-//import com.microsoft.azure.management.keyvault.Vault;
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.rest.ServiceCallback;
 import java.io.IOException;
