@@ -66,7 +66,8 @@ public class Controller {
         logger.error("Invalid PageSize parameter");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        return new ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
+        return new
+            ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -92,6 +93,8 @@ public class Controller {
       Optional<String> query,
       Optional<String> genre,
       Optional<String> year,
+      Optional<String> rating,
+      Optional<String> actorId,
       Optional<String> pageNumber,
       Optional<String> pageSize,
       IDao dataObject) {
@@ -129,7 +132,8 @@ public class Controller {
         logger.error("Invalid PageSize parameter");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        return new ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
+        return new
+            ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -141,7 +145,8 @@ public class Controller {
         logger.error("Invalid Genre parameter");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        return new ResponseEntity<>("Invalid Genre parameter", headers, HttpStatus.BAD_REQUEST);
+        return new
+            ResponseEntity<>("Invalid Genre parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieGenre = genre.get();
       }
@@ -153,14 +158,42 @@ public class Controller {
         logger.error("Invalid Year parameter");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
-        return new ResponseEntity<>("Invalid Year parameter", headers, HttpStatus.BAD_REQUEST);
+        return new
+            ResponseEntity<>("Invalid Year parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieYear = Integer.parseInt(year.get());
       }
     }
 
+    Integer movieRating = 0;
+    if (rating.isPresent()) {
+      if (!validator.isValidRating(rating.get())) {
+        logger.error("Invalid Rating parameter");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        return new
+            ResponseEntity<>("Invalid Rating parameter", headers, HttpStatus.BAD_REQUEST);
+      } else {
+        movieRating = Integer.parseInt(rating.get());
+      }
+    }
+
+    String movieActorId = "";
+    if (actorId.isPresent()) {
+      if (!validator.isValidActorId(actorId.get())) {
+        logger.error("Invalid Actor ID parameter");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        return new ResponseEntity<>(
+            "Invalid Actor ID parameter", headers, HttpStatus.BAD_REQUEST);
+      } else {
+        movieActorId = actorId.get();
+      }
+    }
+
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
 
-    return dataObject.getAll(q, movieGenre, movieYear, pageNo * pageSz, pageSz);
+    return dataObject.getAll(q, movieGenre, movieYear,
+        movieRating, movieActorId,pageNo * pageSz, pageSz);
   }
 }

@@ -69,8 +69,10 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
   public Flux<Actor> getAll(String query,
                             String genre,
                             Integer year,
+                            Integer rating,
+                            String actorId,
                             Integer pageNumber,
                             Integer pageSize) {
-    throw new NotImplementedException("Not Implemented");
+    throw new NotImplementedException("Operation Not Supported");
   }
 }
