@@ -60,7 +60,8 @@ public class MoviesController extends Controller {
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Object getAllMovies(
-      @ApiParam(value = "(query) (optional) The term used to search Movie name") @RequestParam("q")
+      @ApiParam(value = "(query) (optional) The term used to search Movie name")
+      @RequestParam("q")
           final Optional<String> query,
       @ApiParam(
           value = "(optional) Movies of a genre (Action)")
@@ -69,15 +70,25 @@ public class MoviesController extends Controller {
       @ApiParam(
               value = "(optional) Get movies by year (2005)",
               defaultValue = "0")
-          @RequestParam
+      @RequestParam
           final Optional<String> year,
-      @ApiParam(value = "1 based page index", defaultValue = "1") @RequestParam
+      @ApiParam(
+          value = "(optional) Get movies with a rating >= rating (8.5)",
+          defaultValue = "0")
+      @RequestParam
+      final Optional<String> rating,
+      @ApiParam(
+          value = "(optional) Get movies with a rating >= rating (8.5)",
+          defaultValue = "0")
+      @RequestParam
+      final Optional<String> actorId,
+      @ApiParam(value = "(optional) Get movies by Actor Id (nm0000704)") @RequestParam
           Optional<String> pageNumber,
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam
           Optional<String> pageSize) {
 
     try {
-      return getAll(query, genre, year, pageNumber, pageSize, moviesDao);
+      return getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao);
     } catch (Exception ex) {
       logger.error("MovieControllerException " + ex.getMessage());
       return new ResponseEntity<>(

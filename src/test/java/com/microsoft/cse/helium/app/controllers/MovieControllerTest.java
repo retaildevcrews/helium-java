@@ -264,6 +264,107 @@ public class MovieControllerTest {
         .expectBody(String.class).isEqualTo("Invalid Year parameter");
   }
 
+  @Test
+  public void testMoviesWithValidRating_1() {
+    webClient.get().uri("/api/movies?rating=8")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class).consumeWith(movies ->
+        Assert.assertEquals(movies.getResponseBody().get(0).getRating(), 8.0, 0.0));
+  }
+
+  @Test
+  public void testMoviesWithBadRating_1(){
+    webClient.get().uri("/api/movies?rating=foo")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Rating parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadRating_2(){
+    webClient.get().uri("/api/movies?rating=-1")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Rating parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadRating_3(){
+    webClient.get().uri("/api/movies?rating=10.1")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Rating parameter");
+  }
+
+  @Test
+  public void testMoviesWithValidActorId_1() {
+    webClient.get().uri("/api/movies?actorId=nm0000246")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class).consumeWith(movies ->
+        Assert.assertEquals(movies.getResponseBody().get(0).getRoles().get(0).getActorId() , "nm0000246"));
+  }
+
+  @Test
+  public void testMoviesWithBadActorId_1(){
+    webClient.get().uri("/api/movies?actorId=nm123")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Actor ID parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadActorId_2(){
+    webClient.get().uri("/api/movies?actorId=ab12345")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Actor ID parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadActorId_3(){
+    webClient.get().uri("/api/movies?actorId=tt12345")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Actor ID parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadActorId_4(){
+    webClient.get().uri("/api/movies?actorId=NM12345")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Actor ID parameter");
+  }
+
+  @Test
+  public void testMoviesWithBadActorId_5(){
+    webClient.get().uri("/api/movies?actorId=nm12345")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectBodyList(Movie.class).hasSize(0);
+  }
+
 
 }
 

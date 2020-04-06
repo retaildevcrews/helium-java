@@ -6,6 +6,7 @@ import com.microsoft.cse.helium.app.models.Movie;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +42,18 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
             .read()
             .flatMap(
                 cosmosItemResponse -> {
-                  return Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Movie.class));
+                  return Mono.justOrEmpty(cosmosItemResponse.properties()
+                      .toObject(Movie.class));
                 })
-            .onErrorResume(throwable -> findAPIExceptionHandler("Failed to find item", throwable));
+            .onErrorResume(throwable ->
+                findAPIExceptionHandler("Failed to find item", throwable));
     return movie;
   }
 
-  /** getAllMovies. */
+  /** getAll. */
   public Flux<Movie> getAll(
-      String query, String genre, Integer year, Integer pageNumber, Integer pageSize) {
+      String query, String genre, Integer year,
+      Integer rating, String actorId, Integer pageNumber, Integer pageSize) {
     StringBuilder formedQuery = new StringBuilder(movieSelect);
 
     String contains = "";
@@ -62,6 +66,18 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
     if (year > 0) {
       yearSelect = " and m.year = " + year;
       formedQuery.append(yearSelect);
+    }
+
+    String ratingSelect = "";
+    if (rating > 0) {
+      ratingSelect = " and m.rating >= " + rating;
+      formedQuery.append(ratingSelect);
+    }
+
+    String actorSelect = "";
+    if (!StringUtils.isEmpty(actorId)) {
+      actorSelect = " and array_contains(m.roles, { actorId: '" + actorId + "' }, true) ";
+      formedQuery.append(actorSelect);
     }
 
     String moviesQuery =
@@ -77,6 +93,6 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
   }
 
   public Flux<?> getAll(String query, Integer pageNumber, Integer pageSize) {
-    throw new NotImplementedException("Not Implemented");
+    throw new NotImplementedException("Operation Not Supported");
   }
 }
