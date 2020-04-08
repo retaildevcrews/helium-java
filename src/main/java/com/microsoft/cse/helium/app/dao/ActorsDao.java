@@ -93,7 +93,7 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
     String query = null;
 
     if (queryParams.containsKey("q")) { 
-      query = queryParams.get("q");
+      query = queryParams.get("q").toString();
     }
 
     if (query != null) {

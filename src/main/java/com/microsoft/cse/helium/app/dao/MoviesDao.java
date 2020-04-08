@@ -102,7 +102,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
   * @param pageSize used to specify the number of results per page
   * @return Flux/<T/> is returned to contains results for the specific entity type
   */
-  public Flux<?> getAll(Map<String, String> queryParams, Integer pageNumber, Integer pageSize) {
+  public Flux<?> getAll(Map<String, Object> queryParams, Integer pageNumber, Integer pageSize) {
     StringBuilder formedQuery = new StringBuilder(movieSelect);
     
     String contains = "";
@@ -113,7 +113,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
     String yearSelect = "";
     if (queryParams.containsKey("year")) { 
-      Integer year = queryParams.get("year");
+      Integer year = (Integer) queryParams.get("year");
       if (year > 0) {
         yearSelect = " and m.year = " + year;
         formedQuery.append(yearSelect);
@@ -122,7 +122,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
     String ratingSelect = "";
     if (queryParams.containsKey("ratingSelect")) {
-      Integer rating = queryParams.get("ratingSelect");
+      Integer rating = (Integer) queryParams.get("ratingSelect");
       if (rating > 0) {
         ratingSelect = " and m.rating >= " + rating;
         formedQuery.append(ratingSelect);
@@ -131,7 +131,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
     String actorSelect = "";
     if (queryParams.containsKey("actorSelect")) {
-      String actorId = queryParams.get("actorSelect");
+      String actorId = queryParams.get("actorSelect").toString();
       if (!StringUtils.isEmpty(actorId)) {
         actorSelect = " and array_contains(m.roles, { actorId: '" + actorId + "' }, true) ";
         formedQuery.append(actorSelect);

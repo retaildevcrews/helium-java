@@ -35,11 +35,11 @@ public class Controller {
       Optional<String> pageSize,
       IDao dataObject) {
 
-    String q = null;
+    Map<String,Object> queryParams = new HashMap<String, Object>();
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
-        q = query.get().trim().toLowerCase().replace("'", "''");
+        queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
         logger.error("Invalid q (search) parameter");
         HttpHeaders headers = new HttpHeaders();
@@ -74,9 +74,6 @@ public class Controller {
         pageSz = Integer.parseInt(pageSize.get());
       }
     }
-
-    Map<String,Object> queryParams = new HashMap<String, Object>();
-    queryParams.put("q",q);
 
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
 
