@@ -49,36 +49,6 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
     return actor;
   }
 
-  /*
-  public Flux<?> getAll(String query, Integer pageNumber, Integer pageSize) {
-
-    String contains = "";
-
-    if (query != null) {
-      contains = String.format(actorContains, query);
-    }
-
-    String actorQuery =
-        actorSelect + contains + actorOrderBy + String.format(actorOffset, pageNumber, pageSize);
-
-    logger.info("actorQuery " + actorQuery);
-    Flux<Actor> queryResult = super.getAll(Actor.class, actorQuery);
-    return queryResult;
-  }
-  */
-
-  /*
-  public Flux<Actor> getAll(String query,
-                            String genre,
-                            Integer year,
-                            Integer rating,
-                            String actorId,
-                            Integer pageNumber,
-                            Integer pageSize) {
-    throw new NotImplementedException("Operation Not Supported");
-  }
-  */
-
   /**
    * This method is responsible for checking for expected values in the queryParams dictionary
    * validating them, building the query, and then passing to the base getAll() implementation.

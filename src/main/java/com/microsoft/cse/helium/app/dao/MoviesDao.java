@@ -50,49 +50,6 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
     return movie;
   }
 
-  /*
-  public Flux<Movie> getAll(
-      String query, String genre, Integer year,
-      Integer rating, String actorId, Integer pageNumber, Integer pageSize) {
-    StringBuilder formedQuery = new StringBuilder(movieSelect);
-
-    String contains = "";
-    if (query != null) {
-      contains = String.format(movieContains, query);
-      formedQuery.append(contains);
-    }
-
-    String yearSelect = "";
-    if (year > 0) {
-      yearSelect = " and m.year = " + year;
-      formedQuery.append(yearSelect);
-    }
-
-    String ratingSelect = "";
-    if (rating > 0) {
-      ratingSelect = " and m.rating >= " + rating;
-      formedQuery.append(ratingSelect);
-    }
-
-    String actorSelect = "";
-    if (!StringUtils.isEmpty(actorId)) {
-      actorSelect = " and array_contains(m.roles, { actorId: '" + actorId + "' }, true) ";
-      formedQuery.append(actorSelect);
-    }
-
-    String moviesQuery =
-        formedQuery
-            .append(movieOrderBy)
-            .append(String.format(movieOffset, pageNumber, pageSize))
-            .toString();
-
-    logger.info("Movies query = " + moviesQuery);
-
-    Flux<Movie> queryResult = super.getAll(Movie.class, moviesQuery);
-    return queryResult;
-  }
-  */
-  
   /**
   * This method is responsible for checking for expected values in the queryParams dictionary
   * validating them, building the query, and then passing to the base getAll() implementation.
