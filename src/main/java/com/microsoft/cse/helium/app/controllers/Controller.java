@@ -5,6 +5,8 @@ import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.IDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,9 +75,12 @@ public class Controller {
       }
     }
 
+    Map<String,Object> queryParams = new HashMap<String, Object>();
+    queryParams.put("q",q);
+
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
 
-    return dataObject.getAll(q, pageNo * pageSz, pageSz);
+    return dataObject.getAll(queryParams, pageNo * pageSz, pageSz);
   }
 
 
@@ -99,11 +104,13 @@ public class Controller {
       Optional<String> pageSize,
       IDao dataObject) {
 
+    Map<String,Object> queryParams = new HashMap<String, Object>();
     String q = null;
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
         q = query.get().trim().toLowerCase().replace("'", "''");
+        queryParams.put("q",q);
       } else {
         logger.error("Invalid q (search) parameter");
         HttpHeaders headers = new HttpHeaders();
@@ -149,6 +156,7 @@ public class Controller {
             ResponseEntity<>("Invalid Genre parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieGenre = genre.get();
+        queryParams.put("genre", movieGenre);
       }
     }
 
@@ -162,6 +170,7 @@ public class Controller {
             ResponseEntity<>("Invalid Year parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieYear = Integer.parseInt(year.get());
+        queryParams.put("year", movieYear);
       }
     }
 
@@ -175,6 +184,7 @@ public class Controller {
             ResponseEntity<>("Invalid Rating parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieRating = Integer.parseInt(rating.get());
+        queryParams.put("ratingSelect", movieRating);
       }
     }
 
@@ -188,12 +198,12 @@ public class Controller {
             "Invalid Actor ID parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieActorId = actorId.get();
+        queryParams.put("actorSelect", movieActorId);
       }
     }
 
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
 
-    return dataObject.getAll(q, movieGenre, movieYear,
-        movieRating, movieActorId,pageNo * pageSz, pageSz);
+    return dataObject.getAll(queryParams, pageNo * pageSz, pageSz);
   }
 }
