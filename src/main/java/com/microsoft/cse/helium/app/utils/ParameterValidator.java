@@ -128,7 +128,7 @@ public class ParameterValidator {
   public Boolean isValidRating(String rating) {
     if (!StringUtils.isEmpty(rating)) {
       try {
-        Integer movieRating = Integer.parseInt(rating);
+        Double movieRating = Double.parseDouble(rating);
         if (movieRating < 0 || movieRating > 10) {
           return false;
         }

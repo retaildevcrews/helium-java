@@ -171,7 +171,7 @@ public class Controller {
       }
     }
 
-    Integer movieRating = 0;
+    Double movieRating = 0.0;
     if (rating.isPresent()) {
       if (!validator.isValidRating(rating.get())) {
         logger.error("Invalid Rating parameter");
@@ -180,7 +180,7 @@ public class Controller {
         return new
             ResponseEntity<>("Invalid Rating parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
-        movieRating = Integer.parseInt(rating.get());
+        movieRating = Double.parseDouble(rating.get());
         queryParams.put("ratingSelect", movieRating);
       }
     }

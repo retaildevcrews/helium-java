@@ -25,7 +25,7 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
           + "m.textSearch, m.movies from m where m.type = 'Actor' ";
 
   private static String actorContains = "and contains(m.textSearch, \"%s\") ";
-  private static String actorOrderBy = " order by m.textSearch ";
+  private static String actorOrderBy = " order by m.textSearch, m.actorId ";
   private static String actorOffset = " offset %d limit %d ";
 
   /** ActorsDao. */

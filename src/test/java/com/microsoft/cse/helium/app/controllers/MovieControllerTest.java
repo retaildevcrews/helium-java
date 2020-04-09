@@ -365,6 +365,62 @@ public class MovieControllerTest {
         .expectBodyList(Movie.class).hasSize(0);
   }
 
+  @Test
+  public void testMoviesWithValidGenre_1() {
+    webClient.get().uri("/api/movies?genre=action")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class).consumeWith(movies ->
+        Assert.assertEquals(movies.getResponseBody().get(0).getGenres().get(0), "Action" ));
+  }
+
+  @Test
+  public void testMoviesWithValidGenre_2() {
+    webClient.get().uri("/api/movies?genre=mystery&year=1993")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class).consumeWith(movies ->
+        Assert.assertEquals(movies.getResponseBody().size(), 7 ));
+  }
+
+
+  @Test
+  public void testMoviesWithValidGenre_3() {
+    webClient.get().uri("/api/movies?genre=sci-fi")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isOk()
+        .expectBodyList(Movie.class).consumeWith(movies ->
+        Assert.assertEquals(movies.getResponseBody().get(0).getGenres().contains("Sci-Fi"), true ));
+  }
+
+
+  @Test
+  public void testMoviesWithBadGenre_1(){
+    webClient.get().uri("/api/movies?genre=ab")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Genre parameter");
+  }
+
+
+  @Test
+  public void testMoviesWithBadGenre_2(){
+    webClient.get().uri("/api/movies?genre=123456789012345678901")
+        .header(HttpHeaders.ACCEPT, "application/json")
+        .exchange()
+        .expectHeader().contentType(MediaType.TEXT_PLAIN)
+        .expectStatus().isBadRequest()
+        .expectBody(String.class).isEqualTo("Invalid Genre parameter");
+  }
+
 
 }
 
