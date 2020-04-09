@@ -43,27 +43,14 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 
 ### Dependency Vulnerability
 
-### Warnings
-
-Any dependencies?  Here's the npm one:
-There is a known dependency on deprecated @opentelemetry/types package. This is due to a dependency on a few Azure SDK packages, tracked by [this issue](https://github.com/Azure/azure-sdk-for-js/issues/7079).
+Any dependencies?  
 
 ## Setup
 
-- Fork this repo and clone to your local machine
-  - All instructions assume starting from the root of the repo
-
-Build the container using Docker
-
-Commands from Sanjeev or ??
-
-docker build -t helium-java -f Dockerfile
-
-Run the application locally
-
 The application requires Key Vault and Cosmos DB to be setup per the Helium readme
 
-Once you are done with the above, you should be able to build and test locally with one of the following commands
+- Fork this repo and clone to your local machine
+  - All instructions assume starting from the root of the repo
 
 ```bash
 # run locally with unit tests
@@ -73,10 +60,14 @@ mvn clean package
 mvn clean package -DskipTests
 
 mvn clean spring-boot:run
+Could we use mvn clean spring-boot:start here to run in the background?
+Then we could shut it down cleaner with a mvn spring-boot:stop
 
 # test the application
 # the application takes about 10 seconds to start
 curl http://localhost:8080/healthz
+
+# Stop the application by typing Ctrl-C in the terminal window
 
 Run the application as a local container instead
 
@@ -84,29 +75,20 @@ Run the application as a local container instead
 
 # make sure you are in the root of the repo
 # docker-dev builds an alpine image with Azure CLI installed in the container
-docker build -t helium-java -f Dockerfile
 
-# run the container
-# mount your ~/.azure directory to container root/.azure directory
-# you can also run the container and run az login from a bash shell
-# $He_Name is set to the name of your key vault
-
-# option using command line args - Sanjeev
-docker run -d -p 4120:4120 --name helium-java -v ~/.azure:/root/.azure helium-java "xxx" "start" "--"  "--keyvault-name" "${He_Name}" "--auth-type" "CLI"
-
-# option using environment variables
-docker run -d -p 4120:4120 -e KEYVAULT_NAME=$He_Name -e AUTH_TYPE=CLI --name helium-java -v ~/.azure:/root/.azure helium-java "xxx" "start"
+docker build -t myimage_name .
+docker run  -p8080:8080 --env KEYVAULT_NAME=devshop-gelatodev-kv wr-java:latest
 
 # check the logs
 # re-run until the application started message appears
-docker logs helium-java
+docker logs myimage_name
 
 # curl the health check endpoint
 curl http://localhost:4120/healthz
 
 # Stop and remove the container
-docker stop helium-java
-docker rm helium-java
+docker stop myimage_name
+docker rm myimage_name
 
 ```
 
