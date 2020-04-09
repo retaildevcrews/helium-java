@@ -39,6 +39,7 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 - Docker CLI ([download](https://docs.docker.com/install/))
 - Java 8 above ([download](https://nodejs.org/en/download/)) 
 - JQ ([download](https://stedolan.github.io/jq/download/))
+- Completion of the Key Vault, ACR, Azure Monitor and Cosmos DB setup in the Helium [readme](https://github.com/retaildevcrews/helium)
 - Visual Studio Code (optional) ([download](https://code.visualstudio.com/download))
 
 ### Dependency Vulnerability
@@ -47,9 +48,11 @@ Any dependencies?
 
 ## Setup
 
-The application requires Key Vault and Cosmos DB to be setup per the Helium readme
+The application requires Key Vault and Cosmos DB to be setup per the Helium [readme](https://github.com/retaildevcrews/helium)
 
-- Fork this repo and clone to your local machine
+### Run locally on your machine
+
+- Fork this repo and clone to your local machine  https://github.com/retaildevcrews/helium-java.git 
   - All instructions assume starting from the root of the repo
 
 ```bash
@@ -61,32 +64,36 @@ mvn clean package -DskipTests
 
 mvn clean spring-boot:run
 Could we use mvn clean spring-boot:start here to run in the background?
-Then we could shut it down cleaner with a mvn spring-boot:stop
+Then we could shut it down more cleanly with a mvn spring-boot:stop
 
-# test the application
-# the application takes about 10 seconds to start
+# test the application (takes about 10 seconds to start)
 curl http://localhost:8080/healthz
 
 # Stop the application by typing Ctrl-C in the terminal window
+Or :::::
+mvn spring-boot:stop
 
-Run the application as a local container instead
+### Run application as a local container instead
 
 ```bash
 
-# make sure you are in the root of the repo
-# docker-dev builds an alpine image with Azure CLI installed in the container
-
+# Make sure you are in the root of the repo
+# Build the container first 
+## Run this docker-dev command to build an alpine image with Azure CLI installed in the container OR run the docker build command
+docker build . -t docker-dev
 docker build -t myimage_name .
-docker run  -p8080:8080 --env KEYVAULT_NAME=devshop-gelatodev-kv wr-java:latest
 
-# check the logs
-# re-run until the application started message appears
+# Then run the container
+docker run  -p8080:8080 --env KEYVAULT_NAME=devshop-gelatodev-kv myimage_name:latest
+
+# Check the logs to ensure the container is properly running
+# Re-run until the application started message appears
 docker logs myimage_name
 
-# curl the health check endpoint
+# Ensure the endpoint is up and running with:
 curl http://localhost:4120/healthz
 
-# Stop and remove the container
+# Clean up  - stop and remove the container
 docker stop myimage_name
 docker rm myimage_name
 
