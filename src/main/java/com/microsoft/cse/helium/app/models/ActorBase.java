@@ -22,6 +22,7 @@ public class ActorBase {
   @SuppressFBWarnings("UUF_UNUSED_FIELD")
   private String name;
 
+  @JsonInclude(Include.NON_DEFAULT)
   @SuppressFBWarnings("UUF_UNUSED_FIELD")
   private int birthYear;
 
