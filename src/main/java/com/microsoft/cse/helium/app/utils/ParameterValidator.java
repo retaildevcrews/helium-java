@@ -48,15 +48,11 @@ public class ParameterValidator {
         || id.length() < 7 
         || id.length() > 11 
         || !id.substring(0, 2).equals(prefixToMatch) 
-        || !isInteger(id.substring(2))) {
+        || !isInteger(id.substring(2))
+        || Integer.parseInt(id.substring(2)) <= 0) {
       retValue = false;
     } else {
-      // No out params, so checking value of digits in id 
-      if (Integer.parseInt(id.substring(2)) <= 0) {
-        retValue = false;
-      } else {
-        retValue = true;
-      }
+      retValue = true;
     }
     return retValue;
   }
