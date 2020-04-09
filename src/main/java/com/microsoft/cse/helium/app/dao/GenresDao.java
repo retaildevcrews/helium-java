@@ -17,6 +17,9 @@ public class GenresDao extends BaseCosmosDbDao {
   private static String genreQuery =
       "select m.genre from m where m.type = 'Genre' order by m.genre ";
 
+  private static String genreQueryById = "select m.genre from m where m.type = 'Genre' and m.id = ";
+
+
   public GenresDao(IConfigurationService configService) {
     super(configService);
   }
@@ -44,6 +47,22 @@ public class GenresDao extends BaseCosmosDbDao {
             .collectList();
 
     return selectedGenres;
+  }
+
+  /** getGenreByKey. */
+  public Flux<String> getGenreByKey(String genreKey) {
+
+    String genreQuery = genreQueryById + "'" + genreKey + "'";
+    Flux<String> genreFlux =
+        getContainer()
+            .queryItems(genreQuery, this.feedOptions)
+            .flatMap(
+                cosmosItemResponse -> {
+                  return Flux.fromIterable(cosmosItemResponse.results());
+                })
+            .map(cosmosItemProperties -> cosmosItemProperties.toObject(Genre.class))
+            .map(selectedGenre -> selectedGenre.getGenre());
+    return genreFlux;
   }
 
 

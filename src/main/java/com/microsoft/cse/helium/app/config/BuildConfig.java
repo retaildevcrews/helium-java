@@ -37,7 +37,7 @@ public class BuildConfig {
 
     logger.info("version" + context.getBean(BuildProperties.class)
         .getTime() + "." + formattedDateTime);
-    return major + "." + formattedDateTime;
+    return major + "+" + formattedDateTime;
 
   }
 }

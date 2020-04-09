@@ -12,6 +12,6 @@ public class RobotsController {
   @RequestMapping(value = "/robots*.txt")
   public Mono<String> robots(ServerHttpResponse response) {
     response.setStatusCode(HttpStatus.OK);
-    return Mono.just("User-agent: *\nDisallow: /\n");
+    return Mono.just("# Prevent indexing\r\nUser-agent: *\r\nDisallow: /\r\n");
   }
 }

@@ -26,7 +26,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
           + "m.rating, m.votes, m.totalScore, m.genres, m.roles from m where m.type = 'Movie'  ";
 
   private static String movieContains = "and contains(m.textSearch, \"%s\") ";
-  private static String movieOrderBy = " order by m.textSearch ";
+  private static String movieOrderBy = " order by m.textSearch, m.movieId ";
   private static String movieOffset = " offset %d limit %d ";
 
   /** MoviesDao. */
@@ -61,7 +61,8 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
   */
   public Flux<?> getAll(Map<String, Object> queryParams, Integer pageNumber, Integer pageSize) {
     StringBuilder formedQuery = new StringBuilder(movieSelect);
-    
+
+
     String contains = "";
     if (queryParams.containsKey("q")) { 
       contains = String.format(movieContains, queryParams.get("q"));
@@ -79,8 +80,8 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
     String ratingSelect = "";
     if (queryParams.containsKey("ratingSelect")) {
-      Integer rating = (Integer) queryParams.get("ratingSelect");
-      if (rating > 0) {
+      Double rating = (Double) queryParams.get("ratingSelect");
+      if (rating > 0.0) {
         ratingSelect = " and m.rating >= " + rating;
         formedQuery.append(ratingSelect);
       }
@@ -95,6 +96,14 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
       }
     }
 
+    //special genre call to support webflux chain
+    if (queryParams.containsKey("genre")) {
+      String genre = queryParams.get("genre").toString();
+      if (!StringUtils.isEmpty(genre)) {
+        return filterByGenre(genre, formedQuery.toString(), pageNumber, pageSize);
+      }
+    }
+
     String moviesQuery =
         formedQuery
             .append(movieOrderBy)
@@ -106,5 +115,26 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
     Flux<Movie> queryResult = super.getAll(Movie.class, moviesQuery);
     return queryResult;
   }
-  
+
+  /** filterByGenre. */
+  public Flux<Movie> filterByGenre(String genreKey, String query, Integer pageNumber,
+                                   Integer pageSize) {
+    return
+        genresDao
+            .getGenreByKey(genreKey)
+            .collectList()
+            .flatMapMany(selectedGenre -> {
+              String genreSelect = " and array_contains(m.genres,'" + selectedGenre.get(0) + "')";
+              StringBuilder movieQuery =
+                  new StringBuilder(query)
+                      .append(genreSelect)
+                      .append(movieOrderBy)
+                      .append(String.format(movieOffset, pageNumber, pageSize));
+
+              logger.info("Movies query = " + movieQuery.toString());
+
+              return super.getAll(Movie.class, movieQuery.toString());
+            });
+  }
+
 }
