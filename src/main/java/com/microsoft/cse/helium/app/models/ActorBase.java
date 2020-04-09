@@ -1,5 +1,7 @@
 package com.microsoft.cse.helium.app.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -20,11 +22,13 @@ public class ActorBase {
   @SuppressFBWarnings("UUF_UNUSED_FIELD")
   private String name;
 
+  @JsonInclude(Include.NON_DEFAULT)
   @SuppressFBWarnings("UUF_UNUSED_FIELD")
   private int birthYear;
 
   @SuppressFBWarnings("UUF_UNUSED_FIELD")
   @JsonIgnore
+  @JsonInclude(Include.NON_DEFAULT)
   public int deathYear;
 
   /**
