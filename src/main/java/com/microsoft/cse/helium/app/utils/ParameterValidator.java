@@ -1,7 +1,6 @@
 package com.microsoft.cse.helium.app.utils;
 
 import java.time.OffsetDateTime;
-import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -9,24 +8,57 @@ import org.springframework.util.StringUtils;
 @Component
 public class ParameterValidator {
 
-  /* Valid input: starts with 'nm' (case sensitive)
-      followed by 5-9 digits
-      parses to int > 0
-  */
-  private static final String validActorRegex = "[nm]{2}[0-9]{5,9}";
+  /**
+   * This method will return true if input is int and false otherwise.
+   * @param s input string to test as an int
+   * @return boolean
+   */
+  public static boolean isInteger(String s) {
+    boolean isValidInteger = false;
+    try {
+      Integer.parseInt(s);
+      isValidInteger = true;
+    } catch (NumberFormatException ex) {
+      isValidInteger = false;
+    }
 
-  private static final String validMovieRegex = "[tt]{2}[0-9]{5,9}";
+    return isValidInteger;
+  }
 
   /** isValidActorId. */
   public Boolean isValidActorId(String actorId) {
-    Pattern p = Pattern.compile(validActorRegex);
-    return p.matcher(actorId).matches();
+    return isValidId(actorId, "nm");
   }
 
   /** isValidMovieId. */
   public Boolean isValidMovieId(String movieId) {
-    Pattern p = Pattern.compile(validMovieRegex);
-    return p.matcher(movieId).matches();
+    return isValidId(movieId, "tt");
+  }
+
+  /**
+   * Used to check for valid ID input.
+   * @param id id which is checked not nul 7 <= id <= 11
+   * @param prefixToMatch first two characters of id must match
+   * @return boolean
+   */
+  public Boolean isValidId(String id, String prefixToMatch) {
+    boolean retValue = false;
+    if (id == null 
+        || id.isEmpty() 
+        || id.length() < 7 
+        || id.length() > 11 
+        || !id.substring(0, 2).equals(prefixToMatch) 
+        || !isInteger(id.substring(2))) {
+      retValue = false;
+    } else {
+      // No out params, so checking value of digits in id 
+      if (Integer.parseInt(id.substring(2)) <= 0) {
+        retValue = false;
+      } else {
+        retValue = true;
+      }
+    }
+    return retValue;
   }
 
   /** isValidSearchQuery. */
