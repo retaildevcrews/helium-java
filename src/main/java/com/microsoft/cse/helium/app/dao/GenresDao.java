@@ -52,7 +52,9 @@ public class GenresDao extends BaseCosmosDbDao {
   /** getGenreByKey. */
   public Flux<String> getGenreByKey(String genreKey) {
 
-    String genreQuery = genreQueryById + "'" + genreKey + "'";
+    String genreQuery = genreQueryById + "'" + genreKey.toLowerCase() + "'";
+    logger.info("genreQuery " + genreQuery);
+
     Flux<String> genreFlux =
         getContainer()
             .queryItems(genreQuery, this.feedOptions)
