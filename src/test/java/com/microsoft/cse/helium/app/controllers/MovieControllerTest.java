@@ -367,7 +367,7 @@ public class MovieControllerTest {
 
   @Test
   public void testMoviesWithValidGenre_1() {
-    webClient.get().uri("/api/movies?genre=action")
+    webClient.get().uri("/api/movies?genre=Action")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
         .expectHeader().contentType(MediaType.APPLICATION_JSON)
