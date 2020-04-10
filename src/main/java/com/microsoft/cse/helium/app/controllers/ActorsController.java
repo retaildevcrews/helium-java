@@ -37,22 +37,23 @@ public class ActorsController extends Controller {
       value = "/{id}",
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<ResponseEntity<Actor>> getActor(
+  @SuppressWarnings("raw")
+  public Mono<ResponseEntity<?>> getActor(
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
       @PathVariable("id")
           String actorId) {
     if (validator.isValidActorId(actorId)) {
-      return actorsDao
-          .getActorById(actorId)
-          .map(savedActor -> ResponseEntity.ok(savedActor))
-          .defaultIfEmpty(ResponseEntity.notFound().build());
+      Mono<Actor> actorResponse = actorsDao.getActorById(actorId);
+      Mono<ResponseEntity<?>> response = 
+          actorResponse.map(actor -> new ResponseEntity<>(actor, HttpStatus.OK));
+      return response;
     } else {
       logger.error("Invalid Actor ID parameter " + actorId);
       return Mono.justOrEmpty(
           ResponseEntity.badRequest()
               .contentType(MediaType.TEXT_PLAIN)
-              .header("Invalid Actor ID parameter")
-              .build());
+              .body("Invalid Actor ID parameter")
+              );
     }
   }
 
