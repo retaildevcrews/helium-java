@@ -22,6 +22,7 @@ public final class Constants {
   public static final String USE_MSI_APPSVC = "MSI_APPSVC";
   public static final String USE_CLI = "CLI";
   public static final String USE_VS = "VS";
+  public static final String APP_INSIGHTS_KEY = "AppInsightsKey";
   public static final String ACTOR_CONTROLLER_EXCEPTION = "ActorControllerException";
   public static final String MOVIE_CONTROLLER_EXCEPTION = "MovieControllerException";
 
