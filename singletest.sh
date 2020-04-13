@@ -1,1 +1,0 @@
-mvn -Dtest=KeyVaultServiceTest#TestEmptyEnvironmentFlag test
