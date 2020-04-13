@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 /** ActorController. */
@@ -38,22 +39,20 @@ public class ActorsController extends Controller {
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
   @SuppressWarnings("raw")
-  public Mono<ResponseEntity<?>> getActor(
+  public Mono<ResponseEntity<Actor>> getActor(
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
       @PathVariable("id")
           String actorId) {
     if (validator.isValidActorId(actorId)) {
-      Mono<Actor> actorResponse = actorsDao.getActorById(actorId);
-      Mono<ResponseEntity<?>> response = 
-          actorResponse.map(actor -> new ResponseEntity<>(actor, HttpStatus.OK));
-      return response;
+      return actorsDao
+          .getActorById(actorId)
+          .map(savedActor -> ResponseEntity.ok(savedActor))
+          .switchIfEmpty(Mono.defer(() -> Mono.just(ResponseEntity.notFound().build())));
     } else {
       logger.error("Invalid Actor ID parameter " + actorId);
-      return Mono.justOrEmpty(
-          ResponseEntity.badRequest()
-              .contentType(MediaType.TEXT_PLAIN)
-              .body("Invalid Actor ID parameter")
-              );
+
+      return Mono.error(new ResponseStatusException(
+        HttpStatus.BAD_REQUEST, "Invalid Actor ID parameter"));
     }
   }
 
