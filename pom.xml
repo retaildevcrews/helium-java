@@ -19,7 +19,7 @@
 </reporting>
 <groupId>com.microsoft.cse</groupId>
     <artifactId>helium</artifactId>
-    <version>0.1</version>
+    <version>0.1.0</version>
     <name>helium-java</name>
     <description>Helium Java with Spring Boot</description>
     <properties>
@@ -71,12 +71,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>

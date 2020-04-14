@@ -5,7 +5,7 @@ import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExcepti
 import com.microsoft.cse.helium.app.models.Movie;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
-import org.apache.commons.lang3.NotImplementedException;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
           + "m.rating, m.votes, m.totalScore, m.genres, m.roles from m where m.type = 'Movie'  ";
 
   private static String movieContains = "and contains(m.textSearch, \"%s\") ";
-  private static String movieOrderBy = " order by m.textSearch ";
+  private static String movieOrderBy = " order by m.textSearch, m.movieId ";
   private static String movieOffset = " offset %d limit %d ";
 
   /** MoviesDao. */
@@ -50,34 +50,58 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
     return movie;
   }
 
-  /** getAll. */
-  public Flux<Movie> getAll(
-      String query, String genre, Integer year,
-      Integer rating, String actorId, Integer pageNumber, Integer pageSize) {
+  /**
+  * This method is responsible for checking for expected values in the queryParams dictionary
+  * validating them, building the query, and then passing to the base getAll() implementation.
+  *
+  * @param queryParams dictionary my contain "q", "year", "ratingSelect", and "actorSelect"
+  * @param pageNumber used to specify which page of the paginated results to return
+  * @param pageSize used to specify the number of results per page
+  * @return Flux/<T/> is returned to contains results for the specific entity type
+  */
+  public Flux<?> getAll(Map<String, Object> queryParams, Integer pageNumber, Integer pageSize) {
     StringBuilder formedQuery = new StringBuilder(movieSelect);
 
+
     String contains = "";
-    if (query != null) {
-      contains = String.format(movieContains, query);
+    if (queryParams.containsKey("q")) { 
+      contains = String.format(movieContains, queryParams.get("q"));
       formedQuery.append(contains);
     }
 
     String yearSelect = "";
-    if (year > 0) {
-      yearSelect = " and m.year = " + year;
-      formedQuery.append(yearSelect);
+    if (queryParams.containsKey("year")) { 
+      Integer year = (Integer) queryParams.get("year");
+      if (year > 0) {
+        yearSelect = " and m.year = " + year;
+        formedQuery.append(yearSelect);
+      }
     }
 
     String ratingSelect = "";
-    if (rating > 0) {
-      ratingSelect = " and m.rating >= " + rating;
-      formedQuery.append(ratingSelect);
+    if (queryParams.containsKey("ratingSelect")) {
+      Double rating = (Double) queryParams.get("ratingSelect");
+      if (rating > 0.0) {
+        ratingSelect = " and m.rating >= " + rating;
+        formedQuery.append(ratingSelect);
+      }
     }
 
     String actorSelect = "";
-    if (!StringUtils.isEmpty(actorId)) {
-      actorSelect = " and array_contains(m.roles, { actorId: '" + actorId + "' }, true) ";
-      formedQuery.append(actorSelect);
+    if (queryParams.containsKey("actorSelect")) {
+      String actorId = queryParams.get("actorSelect").toString();
+      if (!StringUtils.isEmpty(actorId)) {
+        actorSelect = " and array_contains(m.roles, { actorId: '" + actorId + "' }, true) ";
+        formedQuery.append(actorSelect);
+      }
+    }
+
+    //special genre call to support webflux chain
+    if (queryParams.containsKey("genre")) {
+      String genre = queryParams.get("genre").toString();
+      if (!StringUtils.isEmpty(genre)) {
+        return filterByGenre(genre, formedQuery.toString(), pageNumber, pageSize);
+      }
     }
 
     String moviesQuery =
@@ -92,7 +116,25 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
     return queryResult;
   }
 
-  public Flux<?> getAll(String query, Integer pageNumber, Integer pageSize) {
-    throw new NotImplementedException("Operation Not Supported");
+  /** filterByGenre. */
+  public Flux<Movie> filterByGenre(String genreKey, String query, Integer pageNumber,
+                                   Integer pageSize) {
+    return
+        genresDao
+            .getGenreByKey(genreKey)
+            .collectList()
+            .flatMapMany(selectedGenre -> {
+              String genreSelect = " and array_contains(m.genres,'" + selectedGenre.get(0) + "')";
+              StringBuilder movieQuery =
+                  new StringBuilder(query)
+                      .append(genreSelect)
+                      .append(movieOrderBy)
+                      .append(String.format(movieOffset, pageNumber, pageSize));
+
+              logger.info("Movies query = " + movieQuery.toString());
+
+              return super.getAll(Movie.class, movieQuery.toString());
+            });
   }
+
 }

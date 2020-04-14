@@ -37,6 +37,7 @@ public class ConfigurationService implements IConfigurationService {
       Map<String, String> secrets = keyVaultService.getSecretsSync();
       logger.info("Secrets are " + (secrets == null ? "NULL" : "NOT NULL"));
       configEntries = secrets;
+
     } catch (Exception ex) {
       logger.error(ex.getMessage());
       throw ex;

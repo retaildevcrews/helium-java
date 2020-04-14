@@ -5,6 +5,8 @@ import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.IDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,15 +35,16 @@ public class Controller {
       Optional<String> pageSize,
       IDao dataObject) {
 
-    String q = null;
+    Map<String,Object> queryParams = new HashMap<String, Object>();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_PLAIN);
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
-        q = query.get().trim().toLowerCase().replace("'", "''");
+        queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
         logger.error("Invalid q (search) parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid q (search) parameter", headers, HttpStatus.BAD_REQUEST);
       }
@@ -51,8 +54,7 @@ public class Controller {
     if (pageNumber.isPresent()) {
       if (!validator.isValidPageNumber(pageNumber.get())) {
         logger.error("Invalid PageNumber parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid PageNumber parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -64,8 +66,7 @@ public class Controller {
     if (pageSize.isPresent()) {
       if (!validator.isValidPageSize(pageSize.get())) {
         logger.error("Invalid PageSize parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -75,7 +76,7 @@ public class Controller {
 
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
 
-    return dataObject.getAll(q, pageNo * pageSz, pageSz);
+    return dataObject.getAll(queryParams, pageNo * pageSz, pageSz);
   }
 
 
@@ -99,15 +100,18 @@ public class Controller {
       Optional<String> pageSize,
       IDao dataObject) {
 
+    Map<String,Object> queryParams = new HashMap<String, Object>();
     String q = null;
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_PLAIN);
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
         q = query.get().trim().toLowerCase().replace("'", "''");
+        queryParams.put("q",q);
       } else {
         logger.error("Invalid q (search) parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid q (search) parameter", headers, HttpStatus.BAD_REQUEST);
       }
@@ -117,8 +121,7 @@ public class Controller {
     if (pageNumber.isPresent()) {
       if (!validator.isValidPageNumber(pageNumber.get())) {
         logger.error("Invalid PageNumber parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid PageNumber parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -130,8 +133,7 @@ public class Controller {
     if (pageSize.isPresent()) {
       if (!validator.isValidPageSize(pageSize.get())) {
         logger.error("Invalid PageSize parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -143,12 +145,12 @@ public class Controller {
     if (genre.isPresent()) {
       if (!validator.isValidGenre(genre.get())) {
         logger.error("Invalid Genre parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid Genre parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieGenre = genre.get();
+        queryParams.put("genre", movieGenre);
       }
     }
 
@@ -156,25 +158,25 @@ public class Controller {
     if (year.isPresent()) {
       if (!validator.isValidYear(year.get())) {
         logger.error("Invalid Year parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid Year parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieYear = Integer.parseInt(year.get());
+        queryParams.put("year", movieYear);
       }
     }
 
-    Integer movieRating = 0;
+    Double movieRating = 0.0;
     if (rating.isPresent()) {
       if (!validator.isValidRating(rating.get())) {
         logger.error("Invalid Rating parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid Rating parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
-        movieRating = Integer.parseInt(rating.get());
+        movieRating = Double.parseDouble(rating.get());
+        queryParams.put("ratingSelect", movieRating);
       }
     }
 
@@ -182,18 +184,17 @@ public class Controller {
     if (actorId.isPresent()) {
       if (!validator.isValidActorId(actorId.get())) {
         logger.error("Invalid Actor ID parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid Actor ID parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
         movieActorId = actorId.get();
+        queryParams.put("actorSelect", movieActorId);
       }
     }
 
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
 
-    return dataObject.getAll(q, movieGenre, movieYear,
-        movieRating, movieActorId,pageNo * pageSz, pageSz);
+    return dataObject.getAll(queryParams, pageNo * pageSz, pageSz);
   }
 }

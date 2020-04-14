@@ -5,7 +5,7 @@ import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExcepti
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
-import org.apache.commons.lang3.NotImplementedException;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
           + "m.textSearch, m.movies from m where m.type = 'Actor' ";
 
   private static String actorContains = "and contains(m.textSearch, \"%s\") ";
-  private static String actorOrderBy = " order by m.textSearch ";
+  private static String actorOrderBy = " order by m.textSearch, m.actorId ";
   private static String actorOffset = " offset %d limit %d ";
 
   /** ActorsDao. */
@@ -49,10 +49,22 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
     return actor;
   }
 
-  /** getActors. */
-  public Flux<?> getAll(String query, Integer pageNumber, Integer pageSize) {
-
+  /**
+   * This method is responsible for checking for expected values in the queryParams dictionary
+   * validating them, building the query, and then passing to the base getAll() implementation.
+   *
+   * @param queryParams for actors this is a single query value stored in the key "q"
+   * @param pageNumber used to specify which page of the paginated results to return
+   * @param pageSize used to specify the number of results per page
+   * @return Flux/<T/> is returned to contains results for the specific entity type
+   */
+  public Flux<?> getAll(Map<String, Object> queryParams, Integer pageNumber, Integer pageSize) {
     String contains = "";
+    String query = null;
+
+    if (queryParams.containsKey("q")) { 
+      query = queryParams.get("q").toString();
+    }
 
     if (query != null) {
       contains = String.format(actorContains, query);
@@ -64,15 +76,5 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
     logger.info("actorQuery " + actorQuery);
     Flux<Actor> queryResult = super.getAll(Actor.class, actorQuery);
     return queryResult;
-  }
-
-  public Flux<Actor> getAll(String query,
-                            String genre,
-                            Integer year,
-                            Integer rating,
-                            String actorId,
-                            Integer pageNumber,
-                            Integer pageSize) {
-    throw new NotImplementedException("Operation Not Supported");
   }
 }
