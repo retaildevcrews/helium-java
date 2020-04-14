@@ -57,19 +57,18 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
 
 ```bash
 # run locally with unit tests
-mvn clean package
+mvn test 
 
-# run locally without unit tests
+# run locally without unit tests (use first or second command below - they both run)
 mvn clean package -DskipTests
+mvn test -DskipTests
 
-mvn clean spring-boot:run
-Could we use mvn clean spring-boot:start here to run in the background?
-Then we could shut it down more cleanly with a mvn spring-boot:stop
+mvn clean spring-boot:start 
 
 # test the application (takes about 10 seconds to start)
 curl http://localhost:8080/healthz
 
-# Stop the application by typing Ctrl-C in the terminal window
+# Stop the application by typing Ctrl-C in the Azure CLI terminal window
 Or :::::
 mvn spring-boot:stop
 
@@ -79,23 +78,23 @@ mvn spring-boot:stop
 
 # Make sure you are in the root of the repo
 # Build the container first 
-## Run this docker-dev command to build an alpine image with Azure CLI installed in the container OR run the docker build command
-docker build . -t docker-dev
-docker build -t myimage_name .
+## Run this command to build an image in the container OR run the docker build command
+
+docker build -t helium-dev .
 
 # Then run the container
 docker run  -p8080:8080 --env KEYVAULT_NAME=devshop-gelatodev-kv myimage_name:latest
 
 # Check the logs to ensure the container is properly running
 # Re-run until the application started message appears
-docker logs myimage_name
+docker logs container_id
 
 # Ensure the endpoint is up and running with:
 curl http://localhost:4120/healthz
 
 # Clean up  - stop and remove the container
-docker stop myimage_name
-docker rm myimage_name
+docker stop container_id
+docker rm container_id
 
 ```
 
