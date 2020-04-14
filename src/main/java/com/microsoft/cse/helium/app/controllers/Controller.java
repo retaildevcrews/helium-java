@@ -36,14 +36,15 @@ public class Controller {
       IDao dataObject) {
 
     Map<String,Object> queryParams = new HashMap<String, Object>();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_PLAIN);
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
         queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
         logger.error("Invalid q (search) parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid q (search) parameter", headers, HttpStatus.BAD_REQUEST);
       }
@@ -53,8 +54,7 @@ public class Controller {
     if (pageNumber.isPresent()) {
       if (!validator.isValidPageNumber(pageNumber.get())) {
         logger.error("Invalid PageNumber parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid PageNumber parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -66,8 +66,7 @@ public class Controller {
     if (pageSize.isPresent()) {
       if (!validator.isValidPageSize(pageSize.get())) {
         logger.error("Invalid PageSize parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -103,6 +102,8 @@ public class Controller {
 
     Map<String,Object> queryParams = new HashMap<String, Object>();
     String q = null;
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_PLAIN);
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
@@ -110,8 +111,7 @@ public class Controller {
         queryParams.put("q",q);
       } else {
         logger.error("Invalid q (search) parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid q (search) parameter", headers, HttpStatus.BAD_REQUEST);
       }
@@ -121,8 +121,7 @@ public class Controller {
     if (pageNumber.isPresent()) {
       if (!validator.isValidPageNumber(pageNumber.get())) {
         logger.error("Invalid PageNumber parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid PageNumber parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -134,8 +133,7 @@ public class Controller {
     if (pageSize.isPresent()) {
       if (!validator.isValidPageSize(pageSize.get())) {
         logger.error("Invalid PageSize parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -147,8 +145,7 @@ public class Controller {
     if (genre.isPresent()) {
       if (!validator.isValidGenre(genre.get())) {
         logger.error("Invalid Genre parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid Genre parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -161,8 +158,7 @@ public class Controller {
     if (year.isPresent()) {
       if (!validator.isValidYear(year.get())) {
         logger.error("Invalid Year parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid Year parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -175,8 +171,7 @@ public class Controller {
     if (rating.isPresent()) {
       if (!validator.isValidRating(rating.get())) {
         logger.error("Invalid Rating parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new
             ResponseEntity<>("Invalid Rating parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
@@ -189,8 +184,7 @@ public class Controller {
     if (actorId.isPresent()) {
       if (!validator.isValidActorId(actorId.get())) {
         logger.error("Invalid Actor ID parameter");
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
+
         return new ResponseEntity<>(
             "Invalid Actor ID parameter", headers, HttpStatus.BAD_REQUEST);
       } else {
