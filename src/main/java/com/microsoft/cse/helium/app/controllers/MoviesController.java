@@ -44,7 +44,8 @@ public class MoviesController extends Controller {
       return moviesDao
           .getMovieById(movieId)
           .map(savedMovie -> ResponseEntity.ok(savedMovie))
-          .switchIfEmpty(Mono.defer(() -> Mono.just(ResponseEntity.notFound().build())));
+          .switchIfEmpty(Mono.defer(() -> 
+            Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"))));
     } else {
       logger.error("Invalid Movie ID parameter" + movieId);
 
