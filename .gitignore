@@ -76,3 +76,5 @@ application-dev.properties.orig
 google_checks.xml
 intellij-java-google-style.xml
 pmdcheck.sh
+drun.sh
+singletest.sh
