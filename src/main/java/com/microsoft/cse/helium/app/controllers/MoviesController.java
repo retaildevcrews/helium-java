@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 /** MovieController. */
@@ -43,14 +44,13 @@ public class MoviesController extends Controller {
       return moviesDao
           .getMovieById(movieId)
           .map(savedMovie -> ResponseEntity.ok(savedMovie))
-          .defaultIfEmpty(ResponseEntity.notFound().build());
+          .switchIfEmpty(Mono.defer(() -> 
+            Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"))));
     } else {
       logger.error("Invalid Movie ID parameter" + movieId);
-      return Mono.justOrEmpty(
-          ResponseEntity.badRequest()
-              .contentType(MediaType.TEXT_PLAIN)
-              .header("Invalid Movie ID parameter")
-              .build());
+
+      return Mono.error(new ResponseStatusException(
+        HttpStatus.BAD_REQUEST, "Invalid Movie ID parameter"));
     }
   }
 
