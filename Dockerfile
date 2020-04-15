@@ -4,6 +4,7 @@ ENV HOME=/app
 WORKDIR $HOME
 ADD pom.xml $HOME
 
+# Pull the app insights jar into the docker image as it is still in public preview
 RUN  wget -O /app/applicationinsights-agent-3.0.0-PREVIEW.2.jar https://github.com/microsoft/ApplicationInsights-Java/releases/download/3.0.0-PREVIEW.2/applicationinsights-agent-3.0.0-PREVIEW.2.jar
 
 #
