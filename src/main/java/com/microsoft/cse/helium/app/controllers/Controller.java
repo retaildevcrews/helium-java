@@ -35,6 +35,9 @@ public class Controller {
       Optional<String> pageSize,
       IDao dataObject) {
 
+    logger.info("controller::getAll (query=%s, pageNumber=%s, pageSize=%s)",
+        query, pageNumber, pageSize);
+
     Map<String,Object> queryParams = new HashMap<String, Object>();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
@@ -104,6 +107,10 @@ public class Controller {
     String q = null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
+    
+    logger.info(String.format("controller::getAll (query=%s, genre=%s, year=%s, rating=%s, "
+        + "actorId=%s, pageNumber=%s, pageSize=%s)", 
+        query, genre, year, rating, actorId, pageNumber, pageSize));
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {

@@ -43,6 +43,8 @@ public class ActorsController extends Controller {
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
       @PathVariable("id")
           String actorId) {
+    logger.info(String.format("getActor (actorId=%s)",actorId));
+
     if (validator.isValidActorId(actorId)) {
       return actorsDao
           .getActorById(actorId)
@@ -71,6 +73,9 @@ public class ActorsController extends Controller {
           Optional<String> pageSize) {
 
     try {
+      logger.info(String.format("getAllActors (query=%s, pageNumber=%s, pageSize=%s)",
+          query, pageNumber, pageSize));
+
       return getAll(query,pageNumber, pageSize, actorsDao);
 
     } catch (Exception ex) {

@@ -9,6 +9,8 @@ import com.microsoft.azure.spring.data.cosmosdb.config.CosmosDBConfig;
 import com.microsoft.azure.spring.data.cosmosdb.repository.config.EnableCosmosRepositories;
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +20,12 @@ import org.springframework.context.annotation.Primary;
 @EnableCosmosRepositories(basePackages = "com.microsoft.azure.helium.app.*")
 public class CosmosDbConfig extends AbstractCosmosConfiguration {
 
+  private static final Logger logger = LoggerFactory.getLogger(CosmosDbConfig.class);
+
   protected IConfigurationService configurationService;
 
   protected final RequestOptions requestOptions = new RequestOptions();
-
+  
   /**
    * CosmosDBConfig.
    */
@@ -39,16 +43,24 @@ public class CosmosDbConfig extends AbstractCosmosConfiguration {
   @Bean
   @Primary
   public CosmosDBConfig buildCosmosDbConfig() {
-    String uri = configurationService.getConfigEntries().get(Constants.COSMOS_URL_KEYNAME);
-    String key = configurationService.getConfigEntries().get(Constants.COSMOS_KEY_KEYNAME);
-    String dbName = configurationService.getConfigEntries().get(Constants.COSMOS_DATABASE_KEYNAME);
+    try {
 
-    ConnectionPolicy policy = new ConnectionPolicy();
-    RetryOptions retryOptions = new RetryOptions();
-    retryOptions.maxRetryWaitTimeInSeconds(60);
-    policy.retryOptions(retryOptions);
-    return CosmosDBConfig.builder(uri, key, dbName)
+      String uri = configurationService.getConfigEntries().get(Constants.COSMOS_URL_KEYNAME);
+      String key = configurationService.getConfigEntries().get(Constants.COSMOS_KEY_KEYNAME);
+      String dbName = configurationService.getConfigEntries()
+          .get(Constants.COSMOS_DATABASE_KEYNAME);
+
+      ConnectionPolicy policy = new ConnectionPolicy();
+      RetryOptions retryOptions = new RetryOptions();
+      retryOptions.maxRetryWaitTimeInSeconds(60);
+      policy.retryOptions(retryOptions);
+
+      return CosmosDBConfig.builder(uri, key, dbName)
         .requestOptions(requestOptions).connectionPolicy(policy)
         .build();
+    } catch (Exception ex) {
+      logger.error("buildCosmosDbConfig failed with error: " + ex.getMessage());
+      return null;
+    }
   }
 }
