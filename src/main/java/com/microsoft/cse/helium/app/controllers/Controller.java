@@ -5,6 +5,7 @@ import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.IDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -35,8 +36,8 @@ public class Controller {
       Optional<String> pageSize,
       IDao dataObject) {
 
-    logger.info("controller::getAll (query=%s, pageNumber=%s, pageSize=%s)",
-        query, pageNumber, pageSize);
+    logger.info(MessageFormat.format("controller::getAll (query={0}, pageNumber={1}, pageSize={2})",
+        query, pageNumber, pageSize));
 
     Map<String,Object> queryParams = new HashMap<String, Object>();
     HttpHeaders headers = new HttpHeaders();
@@ -108,8 +109,8 @@ public class Controller {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
     
-    logger.info(String.format("controller::getAll (query=%s, genre=%s, year=%s, rating=%s, "
-        + "actorId=%s, pageNumber=%s, pageSize=%s)", 
+    logger.info(MessageFormat.format("controller::getAll (query={0}, genre={1}, year={2}, "
+        + "rating={3}, actorId={4}, pageNumber={5}, pageSize={6})", 
         query, genre, year, rating, actorId, pageNumber, pageSize));
 
     if (query.isPresent()) {

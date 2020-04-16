@@ -60,7 +60,7 @@ public class CosmosDbConfig extends AbstractCosmosConfiguration {
         .build();
     } catch (Exception ex) {
       logger.error("buildCosmosDbConfig failed with error: " + ex.getMessage());
-      return null;
+      throw ex;
     }
   }
 }

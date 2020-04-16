@@ -6,6 +6,7 @@ import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+import java.text.MessageFormat;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class ActorsController extends Controller {
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
       @PathVariable("id")
           String actorId) {
-    logger.info(String.format("getActor (actorId=%s)",actorId));
+    logger.info(MessageFormat.format("getActor (actorId={0})",actorId));
 
     if (validator.isValidActorId(actorId)) {
       return actorsDao
@@ -73,7 +74,7 @@ public class ActorsController extends Controller {
           Optional<String> pageSize) {
 
     try {
-      logger.info(String.format("getAllActors (query=%s, pageNumber=%s, pageSize=%s)",
+      logger.info(MessageFormat.format("getAllActors (query={0}, pageNumber={1}, pageSize={2})",
           query, pageNumber, pageSize));
 
       return getAll(query,pageNumber, pageSize, actorsDao);
