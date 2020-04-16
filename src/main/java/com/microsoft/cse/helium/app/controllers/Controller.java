@@ -5,6 +5,7 @@ import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.IDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +35,9 @@ public class Controller {
       Optional<String> pageNumber,
       Optional<String> pageSize,
       IDao dataObject) {
+
+    logger.info(MessageFormat.format("controller::getAll (query={0}, pageNumber={1}, pageSize={2})",
+        query, pageNumber, pageSize));
 
     Map<String,Object> queryParams = new HashMap<String, Object>();
     HttpHeaders headers = new HttpHeaders();
@@ -104,6 +108,10 @@ public class Controller {
     String q = null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
+    
+    logger.info(MessageFormat.format("controller::getAll (query={0}, genre={1}, year={2}, "
+        + "rating={3}, actorId={4}, pageNumber={5}, pageSize={6})", 
+        query, genre, year, rating, actorId, pageNumber, pageSize));
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
