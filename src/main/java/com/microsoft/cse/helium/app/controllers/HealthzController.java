@@ -1,28 +1,33 @@
 package com.microsoft.cse.helium.app.controllers;
 
 import com.azure.data.cosmos.CosmosClientException;
-import com.microsoft.cse.helium.app.Constants;
-import com.microsoft.cse.helium.app.config.BuildConfig;
+//import com.microsoft.cse.helium.app.Constants;
+//import com.microsoft.cse.helium.app.config.BuildConfig;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.GenresDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
-import com.microsoft.cse.helium.app.health.ietf.IeTfStatus;
-import java.util.ArrayList;
-import java.util.Date;
+//import com.microsoft.cse.helium.app.health.ietf.IeTfStatus;
+//import com.microsoft.cse.helium.app.models.Actor;
+//import java.lang.*;
+//import java.util.ArrayList;
+//import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+//import java.util.LinkedHashMap;
+//import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+//import org.springframework.http.HttpHeaders;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "/healthz")
@@ -30,7 +35,7 @@ public class HealthzController {
 
   private static final Logger logger = LoggerFactory.getLogger(HealthzController.class);
 
-  @Autowired private BuildConfig buildConfig;
+  //@Autowired private BuildConfig buildConfig;
 
   @Autowired Environment environment;
 
@@ -40,11 +45,12 @@ public class HealthzController {
 
   @Autowired ActorsDao actorsDao;
 
-  /**
+  /*
    * healthCheck.
    *
    * @return
    */
+  /*
   @GetMapping(value = "", produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity healthCheck() throws CosmosClientException {
     logger.info("healthz endpoint");
@@ -62,26 +68,60 @@ public class HealthzController {
         new ResponseEntity<String>(status, responseHeaders, HttpStatus.valueOf(resCode));
     return output;
   }
-
+  */
+  
   /**
    * ietfhealthCheck.
    *
    * @return
    */
   @GetMapping(value = "/ietf", produces = "application/health+json")
-  public ResponseEntity<HashMap<String, Object>> ietfHealthCheck() throws CosmosClientException {
+  public Object ietfHealthCheck() throws CosmosClientException {
     logger.info("healthz ietf endpoint");
-    HashMap<String, Object> healthCheckResult = runHealthChecks();
+    long startMilliSeconds = System.currentTimeMillis();
+    Map<String, String> resultsDict = new HashMap<String, String>();
+
+    Mono<String> genreMono = genresDao.getGenres()
+        .doOnSuccess(result -> {
+          long genreMs = System.currentTimeMillis() - startMilliSeconds;
+          resultsDict.put("genre", Long.toString(genreMs));
+        })
+        .map(genre -> "test");
+
+    Mono<String> actorMono = actorsDao.getActorById("nm0000173")
+        .doOnSuccess(result -> {
+          long actorByIdMs = System.currentTimeMillis() - startMilliSeconds;
+          resultsDict.put("actorById", Long.toString(actorByIdMs));
+        })
+        .map(actor -> "test");
+
+    return genreMono.concatWith(actorMono).flatMap(value -> {
+      return Flux.just(ResponseEntity.ok()
+        .header("Content-Type", "application/health+json")
+        .body(resultsDict)); });
+    /*
+    Mono<Void> all = Mono.when(genreMono, actorMono);
+    return  all.doOnSuccess()
+      .when(genreMono, actorMono)
+      .just(ResponseEntity.ok()
+      .header("Content-Type", "application/health+json")
+      .body(resultsDict));
+    */
+   
+    //return new ResponseEntity<HashMap<String, Object>>
+    //(resultsDict, responseHeaders, HttpStatus.OK);
+    /*HashMap<String, Object> healthCheckResult = runHealthChecks();
     int resCode =
         healthCheckResult.get("status").equals(IeTfStatus.fail.name())
             ? HttpStatus.SERVICE_UNAVAILABLE.value()
             : HttpStatus.OK.value();
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.set("Content-Type", "application/health+json");
-    return new ResponseEntity<HashMap<String, Object>>(
-        healthCheckResult, responseHeaders, HttpStatus.valueOf(resCode));
+    */
+   
   }
 
+  /*
   private HashMap<String, Object> runHealthChecks() throws CosmosClientException {
 
     String webInstanceRole = environment.getProperty(Constants.webInstanceRole);
@@ -157,8 +197,6 @@ public class HealthzController {
     try {
       if (endpoint.equalsIgnoreCase("/api/genres")) {
         genresDao.getGenres();
-
-
       } else if (endpoint.equalsIgnoreCase("/api/actors/nm0000173")) {
         String[] parts = endpoint.split("/");
         actorsDao.getActorById(parts[3]);
@@ -200,4 +238,5 @@ public class HealthzController {
     }
     return healthCheckResult;
   }
+  */
 }
