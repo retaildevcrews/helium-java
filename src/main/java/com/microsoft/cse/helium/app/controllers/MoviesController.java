@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /** MovieController. */
@@ -94,11 +95,11 @@ public class MoviesController extends Controller {
             + " pageNumber=%s, pageSize=%s)", 
             query, genre, year, rating, actorId, pageNumber, pageSize));
 
-      return getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao);
+      return super.getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao);
     } catch (Exception ex) {
       logger.error("MovieControllerException " + ex.getMessage());
-      return new ResponseEntity<>(
-          Constants.MOVIE_CONTROLLER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+      return Flux.error(new ResponseStatusException(
+        HttpStatus.INTERNAL_SERVER_ERROR, Constants.MOVIE_CONTROLLER_EXCEPTION));
     }
   }
 }
