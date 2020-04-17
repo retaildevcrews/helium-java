@@ -93,10 +93,6 @@ public class HealthzController {
     //ArrayList<Object> resultList = new ArrayList<Object>();
 
     Mono<Map<String,String>> genreMono = genresDao.getGenres()
-        .doOnSuccess(result -> {
-          //long genreMs = System.currentTimeMillis() - startMilliSeconds;
-          //resultsDict.put("genre", Long.toString(genreMs));
-        })
         .map(genre -> {
           Long elapsed = System.currentTimeMillis() - startMilliSeconds;
           String passStatus = "fail";
@@ -119,10 +115,6 @@ public class HealthzController {
         });
 
     Mono<Map<String,String>> actorMono = actorsDao.getActorById("nm0000173")
-        .doOnSuccess(result -> {
-          //long actorByIdMs = System.currentTimeMillis() - startMilliSeconds;
-          //resultsDict.put("actorById", Long.toString(actorByIdMs));
-        })
         .map(actor -> {
           Long elapsed = System.currentTimeMillis() - startMilliSeconds;
           String passStatus = "fail";
