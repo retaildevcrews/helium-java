@@ -95,47 +95,15 @@ public class HealthzController {
     Mono<Map<String,String>> genreMono = genresDao.getGenres()
         .map(genre -> {
           Long elapsed = System.currentTimeMillis() - startMilliSeconds;
-          String passStatus = "fail";
-          if (elapsed <= 400) {
-            passStatus = "pass";
-          }
-          else {
-            passStatus = "degraded";
-          }
-          Map<String, String> resultsDict = new HashMap<String, String>();
-          resultsDict.put("status", passStatus);
-          resultsDict.put("componentId", "getGenres");
-          resultsDict.put("componentType", "datastore");
-          resultsDict.put("observedUnit", "ms");
-          resultsDict.put("observedValue", 
-              Long.toString(System.currentTimeMillis() - startMilliSeconds));
-          resultsDict.put("targetValue", "400");
-          resultsDict.put("time",  new Date().toInstant().toString());
-          return resultsDict;
+
+          return buildResultsDictionary ("getGenres", elapsed, 400L);
         });
 
     Mono<Map<String,String>> actorMono = actorsDao.getActorById("nm0000173")
         .map(actor -> {
           Long elapsed = System.currentTimeMillis() - startMilliSeconds;
-          String passStatus = "fail";
-          if (elapsed <= 250) {
-            passStatus = "pass";
-          }
-          else {
-            passStatus = "degraded";
-          }
 
-          Map<String, String> resultsDict = new HashMap<String, String>();
-          resultsDict.put("status", passStatus);
-          resultsDict.put("componentId", "getActorById");
-          resultsDict.put("componentType", "datastore");
-          resultsDict.put("observedUnit", "ms");
-          resultsDict.put("observedValue", 
-              Long.toString(System.currentTimeMillis() - startMilliSeconds));
-          resultsDict.put("targetValue", "250");
-          resultsDict.put("time",  new Date().toInstant().toString());
-          return resultsDict;
-          //"test"
+          return buildResultsDictionary ("getActorById", elapsed, 250L);
         });
       
     Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono).collectList();
@@ -144,6 +112,30 @@ public class HealthzController {
       ieTfResult.put("results",data);
       return ieTfResult;
     }).map(result -> ResponseEntity.ok().body(result));
+  }
+  
+    /** buildResultsDictionary */
+  Map<String, String> buildResultsDictionary (String componentId, Long duration, Long expectedDuration) {
+
+    String passStatus = "fail";
+    if (duration <= expectedDuration) {
+      passStatus = "pass";
+    }
+    else {
+      passStatus = "degraded";
+    }
+
+    Map<String, String> resultsDict = new HashMap<String, String>();
+    resultsDict.put("status", passStatus);
+    resultsDict.put("componentId", componentId);
+    resultsDict.put("componentType", "datastore");
+    resultsDict.put("observedUnit", "ms");
+    resultsDict.put("observedValue", Long.toString(duration));
+    resultsDict.put("targetValue", Long.toString(expectedDuration));
+    resultsDict.put("time",  new Date().toInstant().toString());
+
+    return resultsDict;
+  }
     /*
     for (Map<String, String> item : resultList) {
       resultsArray.add(item);
@@ -191,9 +183,7 @@ public class HealthzController {
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.set("Content-Type", "application/health+json");
     */
-   
-  }
-
+  
   /*
   private HashMap<String, Object> runHealthChecks() throws CosmosClientException {
 
