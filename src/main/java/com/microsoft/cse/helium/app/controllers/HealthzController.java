@@ -143,53 +143,6 @@ public class HealthzController {
 
     return resultsDict;
   }
-    /*
-    for (Map<String, String> item : resultList) {
-      resultsArray.add(item);
-    }
-    ieTfResult.put("results", resultsArray);
-        
-    return Mono.just(ResponseEntity.ok()
-      .header("Content-Type", "application/health+json")
-      .body(ieTfResult));
-    */
-      /*
-      return genreMono.concatWith(actorMono).collectList()
-          .flatMap(results -> resultList.add(results))
-          .thenReturn(ResponseEntity.ok()
-          .header("Content-Type", "application/health+json")
-          .body(ieTfResult));
-      */
-      /*
-      return genreMono.concatWith(actorMono).flatMap(value -> {
-        return Flux.just(ResponseEntity.ok()
-          .header("Content-Type", "application/health+json")
-          .body(resultsDict)); });
-      */
-      /*
-      return Flux.just(ResponseEntity.ok()
-        .header("Content-Type", "application/health+json")
-        .body(resultsDict)); });
-      */
-    /*
-    Mono<Void> all = Mono.when(genreMono, actorMono);
-    return  all.doOnSuccess()
-      .when(genreMono, actorMono)
-      .just(ResponseEntity.ok()
-      .header("Content-Type", "application/health+json")
-      .body(resultsDict));
-    */
-   
-    //return new ResponseEntity<HashMap<String, Object>>
-    //(resultsDict, responseHeaders, HttpStatus.OK);
-    /*HashMap<String, Object> healthCheckResult = runHealthChecks();
-    int resCode =
-        healthCheckResult.get("status").equals(IeTfStatus.fail.name())
-            ? HttpStatus.SERVICE_UNAVAILABLE.value()
-            : HttpStatus.OK.value();
-    HttpHeaders responseHeaders = new HttpHeaders();
-    responseHeaders.set("Content-Type", "application/health+json");
-    */
   
   /*
   private HashMap<String, Object> runHealthChecks() throws CosmosClientException {
