@@ -2,17 +2,19 @@ package com.microsoft.cse.helium.app.controllers;
 
 import com.azure.data.cosmos.CosmosClientException;
 //import com.microsoft.cse.helium.app.Constants;
-//import com.microsoft.cse.helium.app.config.BuildConfig;
+import com.microsoft.cse.helium.app.config.BuildConfig;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.GenresDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
+
 //import com.microsoft.cse.helium.app.health.ietf.IeTfStatus;
 //import com.microsoft.cse.helium.app.models.Actor;
 //import java.lang.*;
 //import java.util.ArrayList;
-//import java.util.Date;
+import java.util.Date;
 import java.util.HashMap;
-//import java.util.LinkedHashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 //import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -26,7 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
+//import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -35,7 +37,7 @@ public class HealthzController {
 
   private static final Logger logger = LoggerFactory.getLogger(HealthzController.class);
 
-  //@Autowired private BuildConfig buildConfig;
+  @Autowired private BuildConfig buildConfig;
 
   @Autowired Environment environment;
 
@@ -79,26 +81,108 @@ public class HealthzController {
   public Object ietfHealthCheck() throws CosmosClientException {
     logger.info("healthz ietf endpoint");
     long startMilliSeconds = System.currentTimeMillis();
-    Map<String, String> resultsDict = new HashMap<String, String>();
+    //Map<String, String> resultsDict = new HashMap<String, String>();
 
-    Mono<String> genreMono = genresDao.getGenres()
+    LinkedHashMap<String, Object> ieTfResult = new LinkedHashMap<>();
+    //ieTfResult.put("status", IeTfStatus.pass.name());
+    ieTfResult.put("serviceId", "helium-java");
+    ieTfResult.put("description", "Helium Java Health Check");
+    //ieTfResult.put("instance", webInstanceRole);
+    ieTfResult.put("version", buildConfig.getBuildVersion());
+
+    //ArrayList<Object> resultList = new ArrayList<Object>();
+
+    Mono<Map<String,String>> genreMono = genresDao.getGenres()
         .doOnSuccess(result -> {
-          long genreMs = System.currentTimeMillis() - startMilliSeconds;
-          resultsDict.put("genre", Long.toString(genreMs));
+          //long genreMs = System.currentTimeMillis() - startMilliSeconds;
+          //resultsDict.put("genre", Long.toString(genreMs));
         })
-        .map(genre -> "test");
+        .map(genre -> {
+          Long elapsed = System.currentTimeMillis() - startMilliSeconds;
+          String passStatus = "fail";
+          if (elapsed <= 400) {
+            passStatus = "pass";
+          }
+          else {
+            passStatus = "degraded";
+          }
+          Map<String, String> resultsDict = new HashMap<String, String>();
+          resultsDict.put("status", passStatus);
+          resultsDict.put("componentId", "getGenres");
+          resultsDict.put("componentType", "datastore");
+          resultsDict.put("observedUnit", "ms");
+          resultsDict.put("observedValue", 
+              Long.toString(System.currentTimeMillis() - startMilliSeconds));
+          resultsDict.put("targetValue", "400");
+          resultsDict.put("time",  new Date().toInstant().toString());
+          return resultsDict;
+        });
 
-    Mono<String> actorMono = actorsDao.getActorById("nm0000173")
+    Mono<Map<String,String>> actorMono = actorsDao.getActorById("nm0000173")
         .doOnSuccess(result -> {
-          long actorByIdMs = System.currentTimeMillis() - startMilliSeconds;
-          resultsDict.put("actorById", Long.toString(actorByIdMs));
+          //long actorByIdMs = System.currentTimeMillis() - startMilliSeconds;
+          //resultsDict.put("actorById", Long.toString(actorByIdMs));
         })
-        .map(actor -> "test");
+        .map(actor -> {
+          Long elapsed = System.currentTimeMillis() - startMilliSeconds;
+          String passStatus = "fail";
+          if (elapsed <= 250) {
+            passStatus = "pass";
+          }
+          else {
+            passStatus = "degraded";
+          }
 
-    return genreMono.concatWith(actorMono).flatMap(value -> {
+          Map<String, String> resultsDict = new HashMap<String, String>();
+          resultsDict.put("status", passStatus);
+          resultsDict.put("componentId", "getActorById");
+          resultsDict.put("componentType", "datastore");
+          resultsDict.put("observedUnit", "ms");
+          resultsDict.put("observedValue", 
+              Long.toString(System.currentTimeMillis() - startMilliSeconds));
+          resultsDict.put("targetValue", "250");
+          resultsDict.put("time",  new Date().toInstant().toString());
+          return resultsDict;
+          //"test"
+        });
+      
+    //ArrayList<Map<String, String>> resultsArray = new ArrayList<Map<String, String>>();
+    //(ArrayList<Map<String, String>>) ieTfResult.get("results");
+    Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono).collectList();
+    //Iterable<Map<String, String>> resultList =  genreMono.zip(actorMono);
+
+    return resultFlux.map(data -> {
+      ieTfResult.put("results",data);
+      return ieTfResult;
+    }).map(result -> ResponseEntity.ok().body(result));
+    /*
+    for (Map<String, String> item : resultList) {
+      resultsArray.add(item);
+    }
+    ieTfResult.put("results", resultsArray);
+        
+    return Mono.just(ResponseEntity.ok()
+      .header("Content-Type", "application/health+json")
+      .body(ieTfResult));
+    */
+      /*
+      return genreMono.concatWith(actorMono).collectList()
+          .flatMap(results -> resultList.add(results))
+          .thenReturn(ResponseEntity.ok()
+          .header("Content-Type", "application/health+json")
+          .body(ieTfResult));
+      */
+      /*
+      return genreMono.concatWith(actorMono).flatMap(value -> {
+        return Flux.just(ResponseEntity.ok()
+          .header("Content-Type", "application/health+json")
+          .body(resultsDict)); });
+      */
+      /*
       return Flux.just(ResponseEntity.ok()
         .header("Content-Type", "application/health+json")
         .body(resultsDict)); });
+      */
     /*
     Mono<Void> all = Mono.when(genreMono, actorMono);
     return  all.doOnSuccess()
