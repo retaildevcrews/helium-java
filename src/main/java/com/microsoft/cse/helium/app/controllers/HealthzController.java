@@ -146,10 +146,7 @@ public class HealthzController {
           //"test"
         });
       
-    //ArrayList<Map<String, String>> resultsArray = new ArrayList<Map<String, String>>();
-    //(ArrayList<Map<String, String>>) ieTfResult.get("results");
     Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono).collectList();
-    //Iterable<Map<String, String>> resultList =  genreMono.zip(actorMono);
 
     return resultFlux.map(data -> {
       ieTfResult.put("results",data);
