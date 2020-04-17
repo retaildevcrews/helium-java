@@ -8,9 +8,6 @@ import com.microsoft.cse.helium.app.dao.GenresDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
 
 //import com.microsoft.cse.helium.app.health.ietf.IeTfStatus;
-//import com.microsoft.cse.helium.app.models.Actor;
-//import java.lang.*;
-//import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -90,8 +87,7 @@ public class HealthzController {
     //ieTfResult.put("instance", webInstanceRole);
     ieTfResult.put("version", buildConfig.getBuildVersion());
 
-    //ArrayList<Object> resultList = new ArrayList<Object>();
-
+    /*** build discrete API calls ***/
     Mono<Map<String,String>> genreMono = genresDao.getGenres()
         .map(genre -> {
           Long elapsed = System.currentTimeMillis() - startMilliSeconds;
@@ -105,7 +101,8 @@ public class HealthzController {
 
           return buildResultsDictionary ("getActorById", elapsed, 250L);
         });
-      
+    
+    /*** chain the discrete calls together ***/
     Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono).collectList();
 
     return resultFlux.map(data -> {
@@ -113,7 +110,7 @@ public class HealthzController {
       return ieTfResult;
     }).map(result -> ResponseEntity.ok().body(result));
   }
-  
+
     /** buildResultsDictionary */
   Map<String, String> buildResultsDictionary (String componentId, Long duration, Long expectedDuration) {
 
