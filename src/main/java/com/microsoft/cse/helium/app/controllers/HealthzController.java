@@ -25,7 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-//import reactor.core.publisher.Flux;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -101,9 +101,19 @@ public class HealthzController {
 
           return buildResultsDictionary ("getActorById", elapsed, 250L);
         });
-    
+
+    Map<String, Object> moviesQueryParams = new HashMap<>();
+    moviesQueryParams.put("q", "ring");
+    Flux<Map<String, String>> moviesQueryFlux = 
+      moviesDao.getAll(moviesQueryParams, 1, 100)
+      .flatMap(results -> {
+        Long elapsed = System.currentTimeMillis() - startMilliSeconds;
+
+        return Flux.just(buildResultsDictionary ("searchMovies", elapsed, 250L));
+      });
+
     /*** chain the discrete calls together ***/
-    Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono).collectList();
+    Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono).concatWith(moviesQueryFlux).collectList();
 
     return resultFlux.map(data -> {
       ieTfResult.put("results",data);
