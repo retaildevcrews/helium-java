@@ -1,7 +1,7 @@
 package com.microsoft.cse.helium.app.controllers;
 
 import com.azure.data.cosmos.CosmosClientException;
-//import com.microsoft.cse.helium.app.Constants;
+import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.config.BuildConfig;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.GenresDao;
@@ -76,18 +76,24 @@ public class HealthzController {
   @GetMapping(value = "/ietf", produces = "application/health+json")
   public Object ietfHealthCheck() throws CosmosClientException {
     logger.info("healthz ietf endpoint");
-    long startMilliSeconds = System.currentTimeMillis();
     //Map<String, String> resultsDict = new HashMap<String, String>();
     // Used to update start time to calculate duration.
     // Using a list, because the variable must be final when used in the map.
     final List<Long> timeList = new ArrayList<Long>();
 
     LinkedHashMap<String, Object> ieTfResult = new LinkedHashMap<>();
+
+    String webInstanceRole = environment.getProperty(Constants.webInstanceRole);
+    if (webInstanceRole == null || webInstanceRole.isEmpty()) {
+      webInstanceRole = "unknown";
+    }
+
     //ieTfResult.put("status", IeTfStatus.pass.name());
     ieTfResult.put("serviceId", "helium-java");
     ieTfResult.put("description", "Helium Java Health Check");
-    //ieTfResult.put("instance", webInstanceRole);
+    ieTfResult.put("instance", webInstanceRole);
     ieTfResult.put("version", buildConfig.getBuildVersion());
+    Long startMilliSeconds = System.currentTimeMillis();
 
     /*  build discrete API calls   */
     Mono<Map<String,String>> genreMono = genresDao.getGenres()
@@ -97,7 +103,7 @@ public class HealthzController {
           return buildResultsDictionary("getGenres", elapsed, 400L);
         });
 
-    Mono<Map<String,String>> actorMono = actorsDao.getActorById("nm0000173")
+    Mono<Map<String,String>> actorByIdMono = actorsDao.getActorById("nm0000173")
         .map(actor -> {
           //Need to retrieve updated start time from list
           Long start = timeList.get(timeList.size() - 1);
@@ -106,29 +112,61 @@ public class HealthzController {
           return buildResultsDictionary("getActorById", elapsed, 250L);
         });
 
-    Map<String, Object> moviesQueryParams = new HashMap<>();
-    moviesQueryParams.put("q", "ring");
-    //Flux<Map<String, String>> moviesQueryFlux = 
-    Mono<Map<String, String>> moviesQueryFlux = 
-        moviesDao.getAll(moviesQueryParams, 1, 100)
-        .collectList()
-        .map(results -> {
-          //Long elapsed = System.currentTimeMillis() - startMilliSeconds;
-
+    Mono<Map<String, String>> movieByIdMono = moviesDao.getMovieById("tt0133093")
+        .map(movie -> {
+          //Need to retrieve updated start time from list
           Long start = timeList.get(timeList.size() - 1);
           Long elapsed = System.currentTimeMillis() - start;
           timeList.add(System.currentTimeMillis());
-          return buildResultsDictionary("searchMovies", elapsed, 250L);
+          return buildResultsDictionary("getMovieById", elapsed, 250L);
+        });    
+
+    Map<String, Object> moviesQueryParams = new HashMap<>();
+    moviesQueryParams.put("q", "ring");
+    Mono<Map<String, String>> moviesQueryMono = 
+        moviesDao.getAll(moviesQueryParams, 1, 100)
+        .collectList()
+        .map(results -> {
+          Long start = timeList.get(timeList.size() - 1);
+          Long elapsed = System.currentTimeMillis() - start;
+          timeList.add(System.currentTimeMillis());
+          return buildResultsDictionary("searchMovies", elapsed, 400L);
         });
 
+    Map<String, Object> actorsQueryParams = new HashMap<>();
+    actorsQueryParams.put("q", "nicole");
+    Mono<Map<String,String>> actorsQueryMono =
+        actorsDao.getAll(actorsQueryParams, 1, 100)
+        .collectList()
+        .map(results -> {
+          Long start = timeList.get(timeList.size() - 1);
+          Long elapsed = System.currentTimeMillis() - start;
+          timeList.add(System.currentTimeMillis());
+          return buildResultsDictionary("searchActors", elapsed, 400L);
+        });
     /*   chain the discrete calls together   */
-    Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono)
-        .concatWith(moviesQueryFlux).collectList();
+    Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorByIdMono)
+        .concatWith(movieByIdMono)    
+        .concatWith(moviesQueryMono)
+        .concatWith(actorsQueryMono).collectList();
 
     return resultFlux.map(data -> {
-      ieTfResult.put("results",data);
+      Map<String, Object> resultsDictionary = convertResultsListToDictionary(data);
+
+      ieTfResult.put("checks", resultsDictionary);
       return ieTfResult;
     }).map(result -> ResponseEntity.ok().body(result));
+  }
+
+  Map<String, Object> convertResultsListToDictionary(List<Map<String, String>> resultsList) {
+    Map<String, Object> returnDict = new HashMap<String, Object>();
+
+    resultsList.forEach(resultItem -> {
+      String keyName = resultItem.get("componentId") + ":responseTime";
+      returnDict.put(keyName,resultItem);
+    });
+
+    return returnDict;
   }
 
   /*   buildResultsDictionary   */
@@ -143,11 +181,11 @@ public class HealthzController {
     }
 
     Map<String, String> resultsDict = new HashMap<String, String>();
-    resultsDict.put("status", passStatus);
     resultsDict.put("componentId", componentId);
     resultsDict.put("componentType", "datastore");
     resultsDict.put("observedUnit", "ms");
     resultsDict.put("observedValue", Long.toString(duration));
+    resultsDict.put("status", passStatus);
     resultsDict.put("targetValue", Long.toString(expectedDuration));
     resultsDict.put("time",  new Date().toInstant().toString());
 
