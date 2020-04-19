@@ -6,6 +6,7 @@ import com.microsoft.cse.helium.app.config.BuildConfig;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.GenresDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
+//import com.microsoft.cse.helium.app.health.ietf.IeTfStatus;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,17 +44,28 @@ public class HealthzController {
 
   @Autowired ActorsDao actorsDao;
 
+  // Used to update start time to calculate duration.
+  // Using a list, because the variable must be final when used in the map.
+  final List<Long> timeList = new ArrayList<Long>();
   /*
    * healthCheck.
    *
    * @return
    */
   /*
-  @GetMapping(value = "", produces = MediaType.TEXT_PLAIN_VALUE)
+   @GetMapping(value = "", produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity healthCheck() throws CosmosClientException {
     logger.info("healthz endpoint");
 
-    HashMap<String, Object> healthCheckResult = runHealthChecks();
+    Mono<List<Map<String, String>>> resultsMono = buildHealthCheckChain();
+
+    return resultsMono.map(data -> {
+      String healthStatus = getOverallHealthStatus(data);
+
+      ieTfResult.put("checks", resultsDictionary);
+      return ieTfResult;
+    }).map(result -> ResponseEntity.ok().body(result));
+
     int resCode =
         healthCheckResult.get("status").equals(IeTfStatus.fail.name())
             ? HttpStatus.SERVICE_UNAVAILABLE.value()
@@ -69,17 +81,17 @@ public class HealthzController {
   */
   
   /**
-   * ietfhealthCheck.
+   * ietfhealthCheck runs several checks and returs and overall status and results for
+   *    the discrete calls that are made.  
    *
-   * @return
+   *    @return Mono{@literal <}ResponseEntity{@literal <}LinkedHashMap{@literal <}String, 
+   *        Object{@literal <}{@literal <}{@literal <}
+   *        returned with status information for overall execution and discrete calls.
    */
   @GetMapping(value = "/ietf", produces = "application/health+json")
-  public Object ietfHealthCheck() throws CosmosClientException {
+  public Mono<ResponseEntity<LinkedHashMap<String, Object>>>  ietfHealthCheck() 
+      throws CosmosClientException {
     logger.info("healthz ietf endpoint");
-    //Map<String, String> resultsDict = new HashMap<String, String>();
-    // Used to update start time to calculate duration.
-    // Using a list, because the variable must be final when used in the map.
-    final List<Long> timeList = new ArrayList<Long>();
 
     LinkedHashMap<String, Object> ieTfResult = new LinkedHashMap<>();
 
@@ -88,37 +100,40 @@ public class HealthzController {
       webInstanceRole = "unknown";
     }
 
-    //ieTfResult.put("status", IeTfStatus.pass.name());
     ieTfResult.put("serviceId", "helium-java");
     ieTfResult.put("description", "Helium Java Health Check");
     ieTfResult.put("instance", webInstanceRole);
     ieTfResult.put("version", buildConfig.getBuildVersion());
-    Long startMilliSeconds = System.currentTimeMillis();
 
+    Mono<List<Map<String, String>>> resultsMono = buildHealthCheckChain();
+
+    return resultsMono.map(data -> {
+      ieTfResult.put("status", getOverallHealthStatus(data));
+      Map<String, Object> resultsDictionary = convertResultsListToDictionary(data);
+
+      ieTfResult.put("checks", resultsDictionary);
+      return ieTfResult;
+    }).map(result -> ResponseEntity.ok().body(result));
+  }
+
+  /** buildHelthCheckChain build the chain of calls using concatWith. */
+  Mono<List<Map<String, String>>> buildHealthCheckChain() {
+    timeList.add(System.currentTimeMillis());
     /*  build discrete API calls   */
     Mono<Map<String,String>> genreMono = genresDao.getGenres()
         .map(genre -> {
-          Long elapsed = System.currentTimeMillis() - startMilliSeconds;
-          timeList.add(System.currentTimeMillis());
-          return buildResultsDictionary("getGenres", elapsed, 400L);
+          //seed the time list
+          return buildResultsDictionary("getGenres", getElapsedAndUpdateStart(), 400L);
         });
 
     Mono<Map<String,String>> actorByIdMono = actorsDao.getActorById("nm0000173")
         .map(actor -> {
-          //Need to retrieve updated start time from list
-          Long start = timeList.get(timeList.size() - 1);
-          Long elapsed = System.currentTimeMillis() - start;
-          timeList.add(System.currentTimeMillis());
-          return buildResultsDictionary("getActorById", elapsed, 250L);
+          return buildResultsDictionary("getActorById", getElapsedAndUpdateStart(), 250L);
         });
 
     Mono<Map<String, String>> movieByIdMono = moviesDao.getMovieById("tt0133093")
         .map(movie -> {
-          //Need to retrieve updated start time from list
-          Long start = timeList.get(timeList.size() - 1);
-          Long elapsed = System.currentTimeMillis() - start;
-          timeList.add(System.currentTimeMillis());
-          return buildResultsDictionary("getMovieById", elapsed, 250L);
+          return buildResultsDictionary("getMovieById", getElapsedAndUpdateStart(), 250L);
         });    
 
     Map<String, Object> moviesQueryParams = new HashMap<>();
@@ -127,10 +142,7 @@ public class HealthzController {
         moviesDao.getAll(moviesQueryParams, 1, 100)
         .collectList()
         .map(results -> {
-          Long start = timeList.get(timeList.size() - 1);
-          Long elapsed = System.currentTimeMillis() - start;
-          timeList.add(System.currentTimeMillis());
-          return buildResultsDictionary("searchMovies", elapsed, 400L);
+          return buildResultsDictionary("searchMovies", getElapsedAndUpdateStart(), 400L);
         });
 
     Map<String, Object> actorsQueryParams = new HashMap<>();
@@ -139,25 +151,40 @@ public class HealthzController {
         actorsDao.getAll(actorsQueryParams, 1, 100)
         .collectList()
         .map(results -> {
-          Long start = timeList.get(timeList.size() - 1);
-          Long elapsed = System.currentTimeMillis() - start;
-          timeList.add(System.currentTimeMillis());
-          return buildResultsDictionary("searchActors", elapsed, 400L);
+          return buildResultsDictionary("searchActors", getElapsedAndUpdateStart(), 400L);
         });
     /*   chain the discrete calls together   */
-    Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorByIdMono)
+    Mono<List<Map<String, String>>> resultsMono =  genreMono.concatWith(actorByIdMono)
         .concatWith(movieByIdMono)    
         .concatWith(moviesQueryMono)
         .concatWith(actorsQueryMono).collectList();
 
-    return resultFlux.map(data -> {
-      Map<String, Object> resultsDictionary = convertResultsListToDictionary(data);
-
-      ieTfResult.put("checks", resultsDictionary);
-      return ieTfResult;
-    }).map(result -> ResponseEntity.ok().body(result));
+    return resultsMono;
   }
 
+  Long getElapsedAndUpdateStart() {
+    Long start = timeList.get(timeList.size() - 1);
+    Long elapsed = System.currentTimeMillis() - start;
+    timeList.add(System.currentTimeMillis());
+    return elapsed;
+  }
+
+  String getOverallHealthStatus(List<Map<String, String>> resultsList) {
+    String returnStatus = "pass";
+
+    for (Map<String, String> resultItem : resultsList) {
+      if (!resultItem.get("status").toLowerCase().equals("pass")) {
+        returnStatus = resultItem.get("status");
+        if (returnStatus.equals("fail")) {
+          // if we hit a fail then break otherwise loop to end
+          break;
+        }
+      } 
+    }
+    return returnStatus;
+  }
+  
+  /** convertResultsListToDictionary converts the list from the chain to a dictionary. */
   Map<String, Object> convertResultsListToDictionary(List<Map<String, String>> resultsList) {
     Map<String, Object> returnDict = new HashMap<String, Object>();
 
@@ -169,15 +196,15 @@ public class HealthzController {
     return returnDict;
   }
 
-  /*   buildResultsDictionary   */
+  /** buildResultsDictionary used to create the discrete results for each call in the chain. */
   Map<String, String> buildResultsDictionary(String componentId, 
       Long duration, Long expectedDuration) {
-
+    //TODO: Convert to use ietf status enum
     String passStatus = "fail";
     if (duration <= expectedDuration) {
       passStatus = "pass";
     } else {
-      passStatus = "degraded";
+      passStatus = "warn";
     }
 
     Map<String, String> resultsDict = new HashMap<String, String>();
