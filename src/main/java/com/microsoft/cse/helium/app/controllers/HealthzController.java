@@ -6,8 +6,7 @@ import com.microsoft.cse.helium.app.config.BuildConfig;
 import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.GenresDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
-
-//import com.microsoft.cse.helium.app.health.ietf.IeTfStatus;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,7 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
+//import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -79,6 +78,9 @@ public class HealthzController {
     logger.info("healthz ietf endpoint");
     long startMilliSeconds = System.currentTimeMillis();
     //Map<String, String> resultsDict = new HashMap<String, String>();
+    // Used to update start time to calculate duration.
+    // Using a list, because the variable must be final when used in the map.
+    final List<Long> timeList = new ArrayList<Long>();
 
     LinkedHashMap<String, Object> ieTfResult = new LinkedHashMap<>();
     //ieTfResult.put("status", IeTfStatus.pass.name());
@@ -87,33 +89,41 @@ public class HealthzController {
     //ieTfResult.put("instance", webInstanceRole);
     ieTfResult.put("version", buildConfig.getBuildVersion());
 
-    /*** build discrete API calls ***/
+    /*  build discrete API calls   */
     Mono<Map<String,String>> genreMono = genresDao.getGenres()
         .map(genre -> {
           Long elapsed = System.currentTimeMillis() - startMilliSeconds;
-
-          return buildResultsDictionary ("getGenres", elapsed, 400L);
+          timeList.add(System.currentTimeMillis());
+          return buildResultsDictionary("getGenres", elapsed, 400L);
         });
 
     Mono<Map<String,String>> actorMono = actorsDao.getActorById("nm0000173")
         .map(actor -> {
-          Long elapsed = System.currentTimeMillis() - startMilliSeconds;
-
-          return buildResultsDictionary ("getActorById", elapsed, 250L);
+          //Need to retrieve updated start time from list
+          Long start = timeList.get(timeList.size() - 1);
+          Long elapsed = System.currentTimeMillis() - start;
+          timeList.add(System.currentTimeMillis());
+          return buildResultsDictionary("getActorById", elapsed, 250L);
         });
 
     Map<String, Object> moviesQueryParams = new HashMap<>();
     moviesQueryParams.put("q", "ring");
-    Flux<Map<String, String>> moviesQueryFlux = 
-      moviesDao.getAll(moviesQueryParams, 1, 100)
-      .flatMap(results -> {
-        Long elapsed = System.currentTimeMillis() - startMilliSeconds;
+    //Flux<Map<String, String>> moviesQueryFlux = 
+    Mono<Map<String, String>> moviesQueryFlux = 
+        moviesDao.getAll(moviesQueryParams, 1, 100)
+        .collectList()
+        .map(results -> {
+          //Long elapsed = System.currentTimeMillis() - startMilliSeconds;
 
-        return Flux.just(buildResultsDictionary ("searchMovies", elapsed, 250L));
-      });
+          Long start = timeList.get(timeList.size() - 1);
+          Long elapsed = System.currentTimeMillis() - start;
+          timeList.add(System.currentTimeMillis());
+          return buildResultsDictionary("searchMovies", elapsed, 250L);
+        });
 
-    /*** chain the discrete calls together ***/
-    Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono).concatWith(moviesQueryFlux).collectList();
+    /*   chain the discrete calls together   */
+    Mono<List<Map<String, String>>> resultFlux =  genreMono.concatWith(actorMono)
+        .concatWith(moviesQueryFlux).collectList();
 
     return resultFlux.map(data -> {
       ieTfResult.put("results",data);
@@ -121,14 +131,14 @@ public class HealthzController {
     }).map(result -> ResponseEntity.ok().body(result));
   }
 
-    /** buildResultsDictionary */
-  Map<String, String> buildResultsDictionary (String componentId, Long duration, Long expectedDuration) {
+  /*   buildResultsDictionary   */
+  Map<String, String> buildResultsDictionary(String componentId, 
+      Long duration, Long expectedDuration) {
 
     String passStatus = "fail";
     if (duration <= expectedDuration) {
       passStatus = "pass";
-    }
-    else {
+    } else {
       passStatus = "degraded";
     }
 
