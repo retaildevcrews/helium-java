@@ -36,6 +36,7 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
 
   /** getActorByIdSingleRead. */
   public Mono<Actor> getActorById(String actorId) {
+    logger.info("Call to getActorById (" + actorId + ")");
     Mono<Actor> actor =
         getContainer()
             .getItem(actorId, utils.getPartitionKey(actorId))
