@@ -5,6 +5,7 @@ import com.microsoft.cse.helium.app.dao.ActorsDao;
 import com.microsoft.cse.helium.app.dao.IDao;
 import com.microsoft.cse.helium.app.dao.MoviesDao;
 import com.microsoft.cse.helium.app.utils.ParameterValidator;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -14,8 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 
 @Component
 public class Controller {
@@ -29,11 +31,14 @@ public class Controller {
 
   /** commonControllerUtilAll. */
   @SuppressWarnings("CPD-START")
-  protected Object getAll(
+  public Object getAll(
       Optional<String> query,
       Optional<String> pageNumber,
       Optional<String> pageSize,
       IDao dataObject) {
+
+    logger.info(MessageFormat.format("controller::getAll (query={0}, pageNumber={1}, pageSize={2})",
+        query, pageNumber, pageSize));
 
     Map<String,Object> queryParams = new HashMap<String, Object>();
     HttpHeaders headers = new HttpHeaders();
@@ -45,8 +50,8 @@ public class Controller {
       } else {
         logger.error("Invalid q (search) parameter");
 
-        return new ResponseEntity<>(
-            "Invalid q (search) parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid q (search) parameter"));
       }
     }
 
@@ -55,8 +60,8 @@ public class Controller {
       if (!validator.isValidPageNumber(pageNumber.get())) {
         logger.error("Invalid PageNumber parameter");
 
-        return new ResponseEntity<>(
-            "Invalid PageNumber parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid PageNumber parameter"));
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -67,13 +72,13 @@ public class Controller {
       if (!validator.isValidPageSize(pageSize.get())) {
         logger.error("Invalid PageSize parameter");
 
-        return new
-            ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid PageSize parameter"));
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
     }
-
+    
     pageNo = pageNo > 1 ? pageNo - 1 : 0;
 
     return dataObject.getAll(queryParams, pageNo * pageSz, pageSz);
@@ -90,7 +95,7 @@ public class Controller {
    * @param pageSize A variable of type String.
    */
 
-  protected Object getAll(
+  public Object getAll(
       Optional<String> query,
       Optional<String> genre,
       Optional<String> year,
@@ -104,6 +109,10 @@ public class Controller {
     String q = null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
+    
+    logger.info(MessageFormat.format("controller::getAll (query={0}, genre={1}, year={2}, "
+        + "rating={3}, actorId={4}, pageNumber={5}, pageSize={6})", 
+        query, genre, year, rating, actorId, pageNumber, pageSize));
 
     if (query.isPresent()) {
       if (validator.isValidSearchQuery(query.get())) {
@@ -112,8 +121,8 @@ public class Controller {
       } else {
         logger.error("Invalid q (search) parameter");
 
-        return new ResponseEntity<>(
-            "Invalid q (search) parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid q (search) parameter"));
       }
     }
 
@@ -122,8 +131,8 @@ public class Controller {
       if (!validator.isValidPageNumber(pageNumber.get())) {
         logger.error("Invalid PageNumber parameter");
 
-        return new ResponseEntity<>(
-            "Invalid PageNumber parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid PageNumber parameter"));
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -134,8 +143,8 @@ public class Controller {
       if (!validator.isValidPageSize(pageSize.get())) {
         logger.error("Invalid PageSize parameter");
 
-        return new
-            ResponseEntity<>("Invalid PageSize parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid PageSize parameter"));
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -146,8 +155,8 @@ public class Controller {
       if (!validator.isValidGenre(genre.get())) {
         logger.error("Invalid Genre parameter");
 
-        return new
-            ResponseEntity<>("Invalid Genre parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid Genre parameter"));
       } else {
         movieGenre = genre.get();
         queryParams.put("genre", movieGenre);
@@ -159,8 +168,8 @@ public class Controller {
       if (!validator.isValidYear(year.get())) {
         logger.error("Invalid Year parameter");
 
-        return new
-            ResponseEntity<>("Invalid Year parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid Year parameter"));
       } else {
         movieYear = Integer.parseInt(year.get());
         queryParams.put("year", movieYear);
@@ -172,8 +181,8 @@ public class Controller {
       if (!validator.isValidRating(rating.get())) {
         logger.error("Invalid Rating parameter");
 
-        return new
-            ResponseEntity<>("Invalid Rating parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid Rating parameter"));
       } else {
         movieRating = Double.parseDouble(rating.get());
         queryParams.put("ratingSelect", movieRating);
@@ -185,8 +194,8 @@ public class Controller {
       if (!validator.isValidActorId(actorId.get())) {
         logger.error("Invalid Actor ID parameter");
 
-        return new ResponseEntity<>(
-            "Invalid Actor ID parameter", headers, HttpStatus.BAD_REQUEST);
+        return Flux.error(new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Invalid Actor ID parameter"));
       } else {
         movieActorId = actorId.get();
         queryParams.put("actorSelect", movieActorId);

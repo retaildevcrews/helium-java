@@ -51,81 +51,72 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?q=a")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid q (search) parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadQueryMovies_2(){
     webClient.get().uri("/api/movies?q=123456789012345678901")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid q (search) parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadPageSize_1(){
     webClient.get().uri("/api/movies?pageSize=0")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadPageSize_2(){
     webClient.get().uri("/api/movies?pageSize=-1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadPageSize_3(){
     webClient.get().uri("/api/movies?pageSize=1001")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadPageSize_4(){
     webClient.get().uri("/api/movies?pageSize=foo")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadPageSize_5(){
     webClient.get().uri("/api/movies?pageSize=10.1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadPageNumber_1(){
     webClient.get().uri("/api/movies?pageNumber=0")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadPageNumber_2(){
     webClient.get().uri("/api/movies?pageNumber=-1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -133,9 +124,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageNumber=10001")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -143,18 +133,16 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageNumber=foo")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
   @Test
   public void testBadPageNumber_5(){
     webClient.get().uri("/api/movies?pageNumber=10.1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -199,9 +187,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=foo")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -209,9 +196,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=-1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -219,9 +205,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=0")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -229,9 +214,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -239,9 +223,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=1873")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -249,9 +232,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=2026")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -259,9 +241,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=2020.1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Year parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -280,9 +261,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?rating=foo")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Rating parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -290,9 +270,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?rating=-1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Rating parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -300,9 +279,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?rating=10.1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Rating parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -321,9 +299,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=nm123")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Actor ID parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -331,9 +308,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=ab12345")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Actor ID parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -341,9 +317,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=tt12345")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Actor ID parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -351,9 +326,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=NM12345")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Actor ID parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
   @Test
@@ -405,9 +379,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?genre=ab")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Genre parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
 
@@ -416,9 +389,8 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?genre=123456789012345678901")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentType(MediaType.TEXT_PLAIN)
-        .expectStatus().isBadRequest()
-        .expectBody(String.class).isEqualTo("Invalid Genre parameter");
+        .expectHeader().contentType(MediaType.APPLICATION_JSON)
+        .expectStatus().isBadRequest();
   }
 
 

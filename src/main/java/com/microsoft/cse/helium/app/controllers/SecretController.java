@@ -1,5 +1,5 @@
 package com.microsoft.cse.helium.app.controllers;
-
+       
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
 import org.slf4j.Logger;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -37,8 +38,9 @@ public class SecretController {
           .map(ResponseEntity::ok)
           .onErrorReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
     } catch (Exception ex) {
-      logger.error("Error:SecretController:" + ex.getMessage());
-      return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+      logger.error("Error recieved in SecretController", ex);
+      return Mono.error(new ResponseStatusException(
+        HttpStatus.INTERNAL_SERVER_ERROR, "secret Error"));
     }
   }
 
