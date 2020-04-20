@@ -58,81 +58,72 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?q=a")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid q (search) parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadQueryActors_2(){
         webClient.get().uri("/api/actors?q=123456789012345678901")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid q (search) parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadPageSize_1(){
         webClient.get().uri("/api/actors?pageSize=0")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadPageSize_2(){
         webClient.get().uri("/api/actors?pageSize=-1")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadPageSize_3(){
         webClient.get().uri("/api/actors?pageSize=1001")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadPageSize_4(){
         webClient.get().uri("/api/actors?pageSize=foo")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadPageSize_5(){
         webClient.get().uri("/api/actors?pageSize=10.1")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageSize parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadPageNumber_1(){
         webClient.get().uri("/api/actors?pageNumber=0")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadPageNumber_2(){
         webClient.get().uri("/api/actors?pageNumber=-1")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
 
     @Test
@@ -140,9 +131,8 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageNumber=10001")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
 
     @Test
@@ -150,18 +140,16 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageNumber=foo")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
     @Test
     public void testBadPageNumber_5(){
         webClient.get().uri("/api/actors?pageNumber=10.1")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.TEXT_PLAIN)
-                .expectStatus().isBadRequest()
-                .expectBody(String.class).isEqualTo("Invalid PageNumber parameter");
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectStatus().isBadRequest();
     }
 }
 

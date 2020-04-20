@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /** MovieController. */
@@ -41,6 +42,7 @@ public class MoviesController extends Controller {
       @ApiParam(value = "The ID of the movie to look for", example = "tt0000002", required = true)
           @PathVariable("id")
           String movieId) {
+
     logger.info(MessageFormat.format("getMovie (movieId={0})", movieId));
 
     if (validator.isValidMovieId(movieId)) {
@@ -91,6 +93,7 @@ public class MoviesController extends Controller {
           Optional<String> pageSize) {
 
     try {
+
       logger.info(MessageFormat.format("getAllMovies (query={0}, genre={1}, year={2}, rating={3}, "
             + " actorId={4}, pageNumber={5}, pageSize={6})", 
             query, genre, year, rating, actorId, pageNumber, pageSize));
@@ -98,8 +101,8 @@ public class MoviesController extends Controller {
       return getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao);
     } catch (Exception ex) {
       logger.error("MovieControllerException " + ex.getMessage());
-      return new ResponseEntity<>(
-          Constants.MOVIE_CONTROLLER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+      return Flux.error(new ResponseStatusException(
+        HttpStatus.INTERNAL_SERVER_ERROR, Constants.MOVIE_CONTROLLER_EXCEPTION));
     }
   }
 }

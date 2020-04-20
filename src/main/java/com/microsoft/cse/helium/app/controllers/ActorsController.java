@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /** ActorController. */
@@ -44,11 +45,13 @@ public class ActorsController extends Controller {
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
       @PathVariable("id")
           String actorId) {
+
     logger.info(MessageFormat.format("getActor (actorId={0})",actorId));
 
     if (validator.isValidActorId(actorId)) {
       return actorsDao
           .getActorById(actorId)
+          .doOnSuccess(value -> logger.info("!!!!! completed actorsDao call!!!!"))
           .map(savedActor -> ResponseEntity.ok(savedActor))
           .switchIfEmpty(Mono.defer(() -> 
             Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found"))));
@@ -77,12 +80,11 @@ public class ActorsController extends Controller {
       logger.info(MessageFormat.format("getAllActors (query={0}, pageNumber={1}, pageSize={2})",
           query, pageNumber, pageSize));
 
-      return getAll(query,pageNumber, pageSize, actorsDao);
-
+      return super.getAll(query,pageNumber, pageSize, actorsDao);
     } catch (Exception ex) {
       logger.error("ActorControllerException " + ex.getMessage());
-      return new ResponseEntity<>(
-          Constants.ACTOR_CONTROLLER_EXCEPTION, HttpStatus.INTERNAL_SERVER_ERROR);
+      return Flux.error(new ResponseStatusException(
+          HttpStatus.INTERNAL_SERVER_ERROR, Constants.ACTOR_CONTROLLER_EXCEPTION));
     }
   }
 }
