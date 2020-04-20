@@ -54,7 +54,7 @@ public class HealthzController {
   public Mono<ResponseEntity<String>> healthCheck() throws CosmosClientException {
     logger.info("healthz endpoint");
 
-    Mono<List<Map<String, String>>> resultsMono = buildHealthCheckChain();
+    Mono<List<Map<String, Object>>> resultsMono = buildHealthCheckChain();
 
     return resultsMono.map(data -> {
       String healthStatus = getOverallHealthStatus(data);
@@ -92,7 +92,7 @@ public class HealthzController {
     ieTfResult.put("instance", webInstanceRole);
     ieTfResult.put("version", buildConfig.getBuildVersion());
 
-    Mono<List<Map<String, String>>> resultsMono = buildHealthCheckChain();
+    Mono<List<Map<String, Object>>> resultsMono = buildHealthCheckChain();
 
     return resultsMono.map(data -> {
       ieTfResult.put("status", getOverallHealthStatus(data));
@@ -104,28 +104,28 @@ public class HealthzController {
   }
 
   /** buildHelthCheckChain build the chain of calls using concatWith. */
-  Mono<List<Map<String, String>>> buildHealthCheckChain() {
+  Mono<List<Map<String, Object>>> buildHealthCheckChain() {
     timeList.add(System.currentTimeMillis());
     /*  build discrete API calls   */
-    Mono<Map<String,String>> genreMono = genresDao.getGenres()
+    Mono<Map<String,Object>> genreMono = genresDao.getGenres()
         .map(genre -> {
           //seed the time list
           return buildResultsDictionary("getGenres", getElapsedAndUpdateStart(), 400L);
         });
 
-    Mono<Map<String,String>> actorByIdMono = actorsDao.getActorById("nm0000173")
+    Mono<Map<String,Object>> actorByIdMono = actorsDao.getActorById("nm0000173")
         .map(actor -> {
           return buildResultsDictionary("getActorById", getElapsedAndUpdateStart(), 250L);
         });
 
-    Mono<Map<String, String>> movieByIdMono = moviesDao.getMovieById("tt0133093")
+    Mono<Map<String, Object>> movieByIdMono = moviesDao.getMovieById("tt0133093")
         .map(movie -> {
           return buildResultsDictionary("getMovieById", getElapsedAndUpdateStart(), 250L);
         });    
 
     Map<String, Object> moviesQueryParams = new HashMap<>();
     moviesQueryParams.put("q", "ring");
-    Mono<Map<String, String>> moviesQueryMono = 
+    Mono<Map<String, Object>> moviesQueryMono = 
         moviesDao.getAll(moviesQueryParams, 1, 100)
         .collectList()
         .map(results -> {
@@ -134,14 +134,14 @@ public class HealthzController {
 
     Map<String, Object> actorsQueryParams = new HashMap<>();
     actorsQueryParams.put("q", "nicole");
-    Mono<Map<String,String>> actorsQueryMono =
+    Mono<Map<String,Object>> actorsQueryMono =
         actorsDao.getAll(actorsQueryParams, 1, 100)
         .collectList()
         .map(results -> {
           return buildResultsDictionary("searchActors", getElapsedAndUpdateStart(), 400L);
         });
     /*   chain the discrete calls together   */
-    Mono<List<Map<String, String>>> resultsMono =  genreMono.concatWith(actorByIdMono)
+    Mono<List<Map<String, Object>>> resultsMono =  genreMono.concatWith(actorByIdMono)
         .concatWith(movieByIdMono)    
         .concatWith(moviesQueryMono)
         .concatWith(actorsQueryMono).collectList();
@@ -156,12 +156,12 @@ public class HealthzController {
     return elapsed;
   }
 
-  String getOverallHealthStatus(List<Map<String, String>> resultsList) {
+  String getOverallHealthStatus(List<Map<String, Object>> resultsList) {
     String returnStatus = IeTfStatus.pass.name();
 
-    for (Map<String, String> resultItem : resultsList) {
-      if (!resultItem.get("status").toLowerCase().equals(IeTfStatus.pass.name())) {
-        returnStatus = resultItem.get("status");
+    for (Map<String, Object> resultItem : resultsList) {
+      if (!resultItem.get("status").toString().toLowerCase().equals(IeTfStatus.pass.name())) {
+        returnStatus = resultItem.get("status").toString();
         if (returnStatus.equals(IeTfStatus.fail.name())) {
           // if we hit a fail then break otherwise loop to end
           break;
@@ -172,7 +172,7 @@ public class HealthzController {
   }
   
   /** convertResultsListToDictionary converts the list from the chain to a dictionary. */
-  Map<String, Object> convertResultsListToDictionary(List<Map<String, String>> resultsList) {
+  Map<String, Object> convertResultsListToDictionary(List<Map<String, Object>> resultsList) {
     Map<String, Object> returnDict = new HashMap<String, Object>();
 
     resultsList.forEach(resultItem -> {
@@ -184,7 +184,7 @@ public class HealthzController {
   }
 
   /** buildResultsDictionary used to create the discrete results for each call in the chain. */
-  Map<String, String> buildResultsDictionary(String componentId, 
+  Map<String, Object> buildResultsDictionary(String componentId, 
       Long duration, Long expectedDuration) {
     String passStatus = IeTfStatus.fail.name();
     if (duration <= expectedDuration) {
@@ -193,13 +193,13 @@ public class HealthzController {
       passStatus = IeTfStatus.warn.name();
     }
 
-    Map<String, String> resultsDict = new HashMap<String, String>();
+    Map<String, Object> resultsDict = new HashMap<String, Object>();
     resultsDict.put("componentId", componentId);
     resultsDict.put("componentType", "datastore");
     resultsDict.put("observedUnit", "ms");
-    resultsDict.put("observedValue", Long.toString(duration));
+    resultsDict.put("observedValue", duration);
     resultsDict.put("status", passStatus);
-    resultsDict.put("targetValue", Long.toString(expectedDuration));
+    resultsDict.put("targetValue", expectedDuration);
     resultsDict.put("time",  new Date().toInstant().toString());
 
     return resultsDict;
