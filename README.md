@@ -87,6 +87,13 @@ mvn spring-boot:stop
 
 #Start here and create or send the newcome to the Helium-aks steps like node.js
 
+# To run helium-java from within a container in debug mode, in case you have made any changes to Docker container
+### $docker run -p5005:5005/tcp -p8080:8080 --env KEYVAULT_NAME=<keyvault-name> --env AUTH_TYPE=<CLI|MSI> -kv myimage:latest
+
+ 
+
+# To set the app insights key within docker
+### docker run -p8080:8080 --env AUTH_TYPE=MSI --env KEYVAULT_NAME=devshop-gelatodev-kv --env APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=<App insights key> myimage:latest
 docker build -t helium-dev .
 
 # Then run the container.  First decide on the AUTH_TYPE and set with this command:
