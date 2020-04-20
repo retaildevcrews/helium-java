@@ -10,10 +10,9 @@ public class WebfluxConfig implements WebFluxConfigurer {
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-    registry.addResourceHandler("/swagger-ui.html**")
-        .addResourceLocations("classpath:/META-INF/resources/");
-
-    registry.addResourceHandler("/webjars/**")
-        .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    // force all static file requests into the /static folder where we have added all the
+    // files needed for swagger statically from the swagger-dist.
+    registry.addResourceHandler("/**")
+        .addResourceLocations("classpath:/static/");
   }
 }
