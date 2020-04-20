@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-//import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -158,12 +157,12 @@ public class HealthzController {
   }
 
   String getOverallHealthStatus(List<Map<String, String>> resultsList) {
-    String returnStatus = "pass";
+    String returnStatus = IeTfStatus.pass.name();
 
     for (Map<String, String> resultItem : resultsList) {
-      if (!resultItem.get("status").toLowerCase().equals("pass")) {
+      if (!resultItem.get("status").toLowerCase().equals(IeTfStatus.pass.name())) {
         returnStatus = resultItem.get("status");
-        if (returnStatus.equals("fail")) {
+        if (returnStatus.equals(IeTfStatus.fail.name())) {
           // if we hit a fail then break otherwise loop to end
           break;
         }
@@ -187,12 +186,11 @@ public class HealthzController {
   /** buildResultsDictionary used to create the discrete results for each call in the chain. */
   Map<String, String> buildResultsDictionary(String componentId, 
       Long duration, Long expectedDuration) {
-    //TODO: Convert to use ietf status enum
-    String passStatus = "fail";
+    String passStatus = IeTfStatus.fail.name();
     if (duration <= expectedDuration) {
-      passStatus = "pass";
+      passStatus = IeTfStatus.pass.name();
     } else {
-      passStatus = "warn";
+      passStatus = IeTfStatus.warn.name();
     }
 
     Map<String, String> resultsDict = new HashMap<String, String>();
