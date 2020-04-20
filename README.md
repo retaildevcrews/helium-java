@@ -81,12 +81,16 @@ mvn spring-boot:stop
 
 # Make sure you are in the root of the repo
 # Build the container first 
-## Run this command to build an image in the container OR run the docker build command
+## Run this command to build an image in the container OR run the docker build command.  But first run the command below to stop the previous instance and free up port 8080:
+
+mvn spring-boot:stop 
+
+#Start here and create or send the newcome to the Helium-aks steps like node.js
 
 docker build -t helium-dev .
 
 # Then run the container.  First decide on the AUTH_TYPE and set with this command:
-docker run  -p8080:8080 --env KEYVAULT_NAME=devshop-gelatodev-kv --env AUTH_TYPE=<CLI or MSI> myimage_name:latest
+docker run  -p8080:8080 --env KEYVAULT_NAME=devshop-gelatodev-kv --env AUTH_TYPE=<CLI or MSI> helium-dev:latest
 
 # Check the logs to ensure the container is properly running
 # Re-run until the application started message appears
