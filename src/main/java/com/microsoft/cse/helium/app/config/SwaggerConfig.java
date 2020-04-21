@@ -1,8 +1,11 @@
 package com.microsoft.cse.helium.app.config;
 
+import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import springfox.documentation.PathProvider;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -25,12 +28,61 @@ public class SwaggerConfig {
    */
   @Bean
   public Docket api() {
+    // return new Docket(DocumentationType.SWAGGER_2).host("localhost").pathProvider(new PathProvider() {
+    //   private final String ROOT = "/";
+
+    //   @Override
+    //   public String getOperationPath(String operationPath) {
+    //     return operationPath.replace(ROOT, "");
+    //     // return "";
+    //   }
+
+    //   @Override
+    //   public String getResourceListingPath(String groupName, String apiDeclaration) {
+    //     return "/static";
+    //   }
+    // });
+
+
+    // String host = environment.getRequiredProperty("application.apiBaseFullPath");
+    // if (host.contains("://")) {
+    //  host = host.substring(host.indexOf("://") + 3, host.length());
+    // }
+    // return new Docket(DocumentationType.SWAGGER_2)
+    //   //.host(host)
+    //   .pathProvider(new CustomPathProvider())
+    //   .select()
+    //   .apis(RequestHandlerSelectors.any())
+    //   .paths(PathSelectors.any())
+    //   .build();
+
+
+        // .select()
+        // .apis(RequestHandlerSelectors.any())
+        // .paths(PathSelectors.any())
+        // .build()
+        // .apiInfo(apiInfo()).useDefaultResponseMessages(false);
+
     return new Docket(DocumentationType.SWAGGER_2)
         .select()
         .apis(RequestHandlerSelectors.any())
         .paths(PathSelectors.any())
         .build()
         .apiInfo(apiInfo()).useDefaultResponseMessages(false);
+
+
+  //}
+
+  // private class CustomPathProvider extends AbstractPathProvider {
+  //   @Override
+  //   protected String applicationPath() {
+  //     return "/";
+  //   }
+
+  //   @Override
+  //   protected String getDocumentationPath() {
+  //     return "/swagger.json";
+  //   }
   }
 
   private ApiInfo apiInfo() {

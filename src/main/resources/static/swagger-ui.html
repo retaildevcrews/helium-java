@@ -3,11 +3,14 @@
                 <head>
                     <meta charset="UTF-8">
                     <title>Swagger UI</title>
-                    <link rel="stylesheet" type="text/css" href="swagger-ui.css" >
+                    <link rel="stylesheet" type="text/css" href="webjars/springfox-swagger-ui/springfox.css?v=3.0.0-SNAPSHOT" >
+                    <link rel="stylesheet" type="text/css" href="webjars/springfox-swagger-ui/swagger-ui.css?v=3.0.0-SNAPSHOT" >
+                    <link rel="icon" type="image/png" href="webjars/springfox-swagger-ui/favicon-32x32.png?v=3.0.0-SNAPSHOT" sizes="32x32" />
+                    <link rel="icon" type="image/png" href="webjars/springfox-swagger-ui/favicon-16x16.png?v=3.0.0-SNAPSHOT" sizes="16x16" />
                     <link rel="icon" type="image/png"
-                    href="/favicon-32x32.png" sizes="32x32" />
+                    href="/webjars/favicon-32x32.png" sizes="32x32" />
                     <link rel="icon" type="image/png"
-                    href="/favicon-16x16.png" sizes="16x16" />
+                    href="/webjars/favicon-16x16.png" sizes="16x16" />
                     <style>
                     html
                     {
@@ -34,8 +37,10 @@
                 <body>
                     <div id="swagger-ui"></div>
 
-                    <script src="/swagger-ui-bundle.js"> </script>
-                    <script src="/swagger-ui-standalone-preset.js"> </script>
+
+                    <script src="webjars/springfox-swagger-ui/swagger-ui-bundle.js?v=3.0.0-SNAPSHOT"> </script>
+                    <script src="webjars/springfox-swagger-ui/swagger-ui-standalone-preset.js?v=3.0.0-SNAPSHOT"> </script>
+                    <script src="webjars/springfox-swagger-ui/springfox.js?v=3.0.0-SNAPSHOT"> </script>
                     <script>
                     window.onload = function() {
                         // begin Swagger UI call region
