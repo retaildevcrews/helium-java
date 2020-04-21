@@ -16,12 +16,12 @@ public class WebfluxConfig implements WebFluxConfigurer {
     //     .addResourceLocations("classpath:/META-INF/resources/webjars/");
 
 
-      registry.addResourceHandler("/webjars/**")
-          .addResourceLocations("classpath:/META-INF/resources/webjars/");
-      registry.addResourceHandler("/swagger-ui.html**")
-          .addResourceLocations("classpath:/static/");
-      registry.addResourceHandler("/swagger.json**")
-          .addResourceLocations("classpath:/static/");
+    registry.addResourceHandler("/webjars/**")
+        .addResourceLocations("classpath:/META-INF/resources/webjars/");
+    registry.addResourceHandler("/swagger-ui.html**")
+        .addResourceLocations("classpath:/static/");
+    registry.addResourceHandler("/swagger.json**")
+        .addResourceLocations("classpath:/static/");
 
   }
 }

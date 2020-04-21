@@ -1,11 +1,8 @@
 package com.microsoft.cse.helium.app.config;
 
-import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import springfox.documentation.PathProvider;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -28,7 +25,8 @@ public class SwaggerConfig {
    */
   @Bean
   public Docket api() {
-    // return new Docket(DocumentationType.SWAGGER_2).host("localhost").pathProvider(new PathProvider() {
+    // return new Docket(DocumentationType.SWAGGER_2)
+    //.host("localhost").pathProvider(new PathProvider() {
     //   private final String ROOT = "/";
 
     //   @Override
@@ -57,11 +55,11 @@ public class SwaggerConfig {
     //   .build();
 
 
-        // .select()
-        // .apis(RequestHandlerSelectors.any())
-        // .paths(PathSelectors.any())
-        // .build()
-        // .apiInfo(apiInfo()).useDefaultResponseMessages(false);
+    // .select()
+    // .apis(RequestHandlerSelectors.any())
+    // .paths(PathSelectors.any())
+    // .build()
+    // .apiInfo(apiInfo()).useDefaultResponseMessages(false);
 
     return new Docket(DocumentationType.SWAGGER_2)
         .select()
@@ -71,18 +69,18 @@ public class SwaggerConfig {
         .apiInfo(apiInfo()).useDefaultResponseMessages(false);
 
 
-  //}
+    //}
 
-  // private class CustomPathProvider extends AbstractPathProvider {
-  //   @Override
-  //   protected String applicationPath() {
-  //     return "/";
-  //   }
+    // private class CustomPathProvider extends AbstractPathProvider {
+    //   @Override
+    //   protected String applicationPath() {
+    //     return "/";
+    //   }
 
-  //   @Override
-  //   protected String getDocumentationPath() {
-  //     return "/swagger.json";
-  //   }
+    //   @Override
+    //   protected String getDocumentationPath() {
+    //     return "/swagger.json";
+    //   }
   }
 
   private ApiInfo apiInfo() {
