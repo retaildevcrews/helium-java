@@ -26,7 +26,7 @@ public class GenreControllerTest {
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
                 .expectStatus().isOk()
-            .expectBodyList(String.class);
+                .expectBodyList(String.class);
 
     }
 
