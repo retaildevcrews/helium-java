@@ -5,6 +5,7 @@ import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExcepti
 import com.microsoft.cse.helium.app.models.Actor;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.cse.helium.app.utils.CommonUtils;
+import java.text.MessageFormat;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +25,9 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
           + "m.name, m.birthYear, m.deathYear, m.profession, "
           + "m.textSearch, m.movies from m where m.type = 'Actor' ";
 
-  private static String actorContains = "and contains(m.textSearch, \"%s\") ";
+  private static String actorContains = "and contains(m.textSearch, \"{0}\") ";
   private static String actorOrderBy = " order by m.textSearch, m.actorId ";
-  private static String actorOffset = " offset %d limit %d ";
+  private static String actorOffset = " offset {0} limit {1} ";
 
   /** ActorsDao. */
   public ActorsDao(IConfigurationService configService) {
@@ -35,6 +36,7 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
 
   /** getActorByIdSingleRead. */
   public Mono<Actor> getActorById(String actorId) {
+    logger.info("Call to getActorById (" + actorId + ")");
     Mono<Actor> actor =
         getContainer()
             .getItem(actorId, utils.getPartitionKey(actorId))
@@ -67,11 +69,12 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
     }
 
     if (query != null) {
-      contains = String.format(actorContains, query);
+      contains = MessageFormat.format(actorContains, query);
     }
 
     String actorQuery =
-        actorSelect + contains + actorOrderBy + String.format(actorOffset, pageNumber, pageSize);
+        actorSelect + contains + actorOrderBy 
+        + MessageFormat.format(actorOffset, pageNumber, pageSize);
 
     logger.info("actorQuery " + actorQuery);
     Flux<Actor> queryResult = super.getAll(Actor.class, actorQuery);
