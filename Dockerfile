@@ -20,9 +20,12 @@ FROM  openjdk:8-jre-alpine AS release
 ARG build_ver
 ENV HOME=/app
 WORKDIR $HOME
+
 # Create a user
 RUN addgroup -g 4120 -S helium && \
-    adduser -u 4120 -S helium -G helium
+    adduser -u 4120 -S helium -G helium && \
+    mkdir -p /home/helium && \
+    chown -R helium:helium /home/helium
 USER helium
 
 #Note: Every time we update helium version, we must update the jar version below
