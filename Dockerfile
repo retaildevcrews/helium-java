@@ -20,14 +20,17 @@ FROM  openjdk:8-jre-alpine AS release
 ARG build_ver
 ENV HOME=/app
 WORKDIR $HOME
+
 # Create a user
 RUN addgroup -g 4120 -S helium && \
-    adduser -u 4120 -S helium -G helium
+    adduser -u 4120 -S helium -G helium && \
+    mkdir -p /home/helium && \
+    chown -R helium:helium /home/helium
 USER helium
 
 #Note: Every time we update helium version, we must update the jar version below
 
 COPY --from=dependencies /app/target/helium-0.1.0.jar app.jar
 COPY --from=dependencies /app/applicationinsights-agent-3.0.0-PREVIEW.2.jar applicationinsights-agent-3.0.0-PREVIEW.2.jar
-EXPOSE 8080
+EXPOSE 4120
 CMD ["java", "-javaagent:./applicationinsights-agent-3.0.0-PREVIEW.2.jar", "-jar", "./app.jar"]
