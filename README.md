@@ -57,15 +57,16 @@ docker build -t helium-dev .
 # Make sure you are in the root of the repo
 
 export AUTH_TYPE=CLI
-export KEYVAULT_NAME="devshop-gelatodev-kv"
+export KEYVAULT_NAME="YOUR_KEYVAULT_NAME"
 
-Takes about 3-5 minutes:
+This command takes about 3-5 minutes:
 
 mvn clean package 
 
 mvn spring-boot:run
 
-# When the previous command shows 'Netty started on port(s): 8080 - test the application (takes about 10 seconds to start) in a new window
+# When the previous command shows 'Netty started on port(s): 8080' 
+# test the application (takes about 10 seconds to start) in a new window
 
 curl http://localhost:8080/healthz
 
@@ -90,24 +91,22 @@ mvn spring-boot:stop
 #
 # make sure you are in the root of the repo
 
-# Java Team - is the below line correct or should it be KEYVAULT_NAME?
-# $He_Name is set to the name of your key vault
 # this will use Azure CLI cached credentials
 
 # build the image
 
-docker build . -t helium-dev .
+docker build -t helium-dev .
 
-# run the container
+# Then run the container.  
 
-# mount your ~/.azure directory to container root/.azure directory
-# you can also run the container and run az login from a bash shell
+# First obtain APPLICATIONINSIGHTS_CONNECTION_STRING using the following link:
+#TEST THIS
+https://docs.microsoft.com/en-us/azure/azure-monitor/app/java-get-started?tabs=maven
 
-# Then run the container.  First decide on the AUTH_TYPE and set with this command:
-docker run  -p8080:8080 --env KEYVAULT_NAME=devshop-gelatodev-kv --env AUTH_TYPE=CLI helium-dev:latest
+export APP_INSIGHTS_CONNECTION_STRING=<KEY_FROM_ABOVE_LINK>
 
-# Java team - the above command throws this error:
- # Caused by: java.io.FileNotFoundException: /home/helium/.azure/azureProfile.json (No such file or directory) 
+docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME --env APPLICATIONINSIGHTS_CONNECTION_STRING=$APP_INSIGHTS_CONNECTION_STRING -v ~/.azure:/home/helium/.azure helium-dev:latest
+
 # Check the logs to ensure the container is properly running
 # Re-run until the application started message appears
 docker ps -a (container id on left)
