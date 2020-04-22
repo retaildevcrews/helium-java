@@ -29,5 +29,5 @@ USER helium
 
 COPY --from=dependencies /app/target/helium-0.1.0.jar app.jar
 COPY --from=dependencies /app/applicationinsights-agent-3.0.0-PREVIEW.2.jar applicationinsights-agent-3.0.0-PREVIEW.2.jar
-EXPOSE 8080
+EXPOSE 4120
 CMD ["java", "-javaagent:./applicationinsights-agent-3.0.0-PREVIEW.2.jar", "-jar", "./app.jar"]
