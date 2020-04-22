@@ -17,7 +17,7 @@
         </plugin>
     </plugins>
 </reporting>
-<groupId>com.microsoft.cse</groupId>
+<groupId>com.cse</groupId>
     <artifactId>helium</artifactId>
     <version>0.1.0</version>
     <name>helium-java</name>
@@ -166,7 +166,7 @@
                 <archive>
                     <manifest>
                     <addClasspath>true</addClasspath>
-                    <mainClass>com.microsoft.cse.helium.app.HeliumJavaApplication</mainClass>
+                    <mainClass>com.cse.helium.app.HeliumJavaApplication</mainClass>
                     <addDefaultImplementationEntries>false</addDefaultImplementationEntries>
                     </manifest>
                     <manifestEntries>
