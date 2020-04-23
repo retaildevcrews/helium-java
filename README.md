@@ -1,7 +1,6 @@
-# Build a Docker containerized Web API reference application via a Java Web API application using Managed Identity, Key Vault, and Cosmos DB that is designed to be deployed to Azure App Service or AKS
+# Build a Web API reference application via a Java Web API application using Managed Identity, Key Vault, and Cosmos DB that is designed to be deployed to Azure App Service or AKS
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Docker Image Build](https://github.com/retaildevcrews/helium-typescript/workflows/Docker%20Image%20Build/badge.svg)
 
 This is a Java Spring Boot Web API reference application designed to "fork and code" with the following features:
 
@@ -20,7 +19,7 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 - Bash shell (tested on Mac, Ubuntu, Windows with WSL2)
   - Will not work in Cloud Shell unless you have a remote dockerd
   - Will not work in WSL1
-- Azure CLI latest ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
+- Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
 - Java 8 above ([download](https://www.java.com/en/download/manual.jsp/)) 
 - JQ ([download](https://stedolan.github.io/jq/download/))
@@ -36,7 +35,7 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
   - cd to the base directory of the repo
   - All instructions assume starting from the root of the repo
 
-- Build the container using Docker
+### Build the container using Docker
 - The unit tests run as part of the Docker build process. You can also run the unit tests manually.
 - For instructions on building the container with ACR, please see the Helium [readme](https://github.com/retaildevcrews/helium)
 
