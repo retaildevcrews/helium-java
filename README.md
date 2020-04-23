@@ -19,10 +19,12 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
   - Resource Groups, Service Principals, Keyvault, CosmosDB, App Service, Azure Container Registry, Azure Monitor
 - Bash shell (tested on Mac, Ubuntu, Windows with WSL2)
   - Will not work in Cloud Shell unless you have a remote dockerd
-- Azure CLI 2.0.72+ ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
+  - Will not work in WSL1
+- Azure CLI latest ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
-- Java 8 above ([download](https://nodejs.org/en/download/)) 
+- Java 8 above ([download](https://www.java.com/en/download/manual.jsp/)) 
 - JQ ([download](https://stedolan.github.io/jq/download/))
+- Maven ([download](https://maven.apache.org/download.cgi))
 - Completion of the Key Vault, ACR, Azure Monitor and Cosmos DB setup in the Helium [readme](https://github.com/retaildevcrews/helium)
 - Visual Studio Code (optional) ([download](https://code.visualstudio.com/download))
 
@@ -103,15 +105,21 @@ mvn spring-boot:stop
 
 docker build -t helium-dev .
 
-# Obtain APPLICATIONINSIGHTS_CONNECTION_STRING using the following link:
+# Then run the container without Appinsights.  To run with Appinsights see next command.  
+
+docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure helium-dev:latest
+
+# To run with the App-insights instrumentation key first btain APPLICATIONINSIGHTS_CONNECTION_STRING using the following link:
 
 https://docs.microsoft.com/en-us/azure/azure-monitor/app/java-get-started?tabs=maven
 
-export APP_INSIGHTS_CONNECTION_STRING=<KEY_FROM_ABOVE_LINK>
+# Set the env variable for the instrumentation key 
 
-# Then run the container.  
+export APP_INSIGHTS_CONNECTION_STRING="$(az monitor app-insights component show --app inst2-appinsights --resource-group wsrtf-app-rg --output yaml|grep instrumentationKey|awk '{print $2}')"
 
-docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME --env APPLICATIONINSIGHTS_CONNECTION_STRING=$APP_INSIGHTS_CONNECTION_STRING -v ~/.azure:/home/helium/.azure helium-dev:latest
+# The run the container with Appinsights
+
+docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME --env APPLICATIONINSIGHTS_CONNECTION_STRING=$APP_INSIGHTS_CONNECTION_STRING -v ~/.azure:/home/helium/.azure helium-dev:latest
 
 # Check the logs to ensure the container is properly running
 # Re-run until the application started message appears
@@ -124,6 +132,7 @@ curl http://localhost:4120/healthz
 
 # Clean up  - stop and remove the container
 docker stop container_id
+docker rm container_id
 
 ```
 
