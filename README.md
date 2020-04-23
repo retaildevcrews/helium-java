@@ -1,4 +1,4 @@
-# Build a Web API reference application via a Java Web API application using Managed Identity, Key Vault, and Cosmos DB that is designed to be deployed to Azure App Service or AKS
+### Build a Web API reference application via a Java Web API application using Managed Identity, Key Vault, and Cosmos DB that is designed to be deployed to Azure App Service or AKS
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -92,7 +92,7 @@ mvn spring-boot:stop
 
 mvn spring-boot:stop 
 
-# You can also hit Ctrl-C from the az cli window
+# You can also hit Ctrl-C from the shell window
 
 # Build the image and run the container using Docker 
 
@@ -106,7 +106,7 @@ docker build -t helium-dev .
 
 # Then run the container without Appinsights.  To run with Appinsights see next command.  
 
-docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure helium-dev:latest
+docker run -p4120:4120 --name helium-dev --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure helium-dev:latest
 
 # To run with the App-insights instrumentation key first btain APPLICATIONINSIGHTS_CONNECTION_STRING using the following link:
 
@@ -122,16 +122,16 @@ docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME --
 
 # Check the logs to ensure the container is properly running
 # Re-run until the application started message appears
-docker ps -a 
-docker logs container_id
+
+docker logs helium-dev
 
 # test the application
 # the application takes about 10 seconds to start and you may have to run the below command more than once
 curl http://localhost:4120/healthz
 
 # Clean up  - stop and remove the container
-docker stop container_id
-docker rm container_id
+docker stop helium-dev
+docker rm helium-dev
 
 ```
 
