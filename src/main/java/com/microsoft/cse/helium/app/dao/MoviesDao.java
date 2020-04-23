@@ -7,8 +7,8 @@ import com.microsoft.cse.helium.app.services.configuration.IConfigurationService
 import com.microsoft.cse.helium.app.utils.CommonUtils;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class MoviesDao extends BaseCosmosDbDao implements IDao {
-  private static final Logger logger = LoggerFactory.getLogger(MoviesDao.class);
+  private static final Logger logger =   LogManager.getLogger(MoviesDao.class);
 
   @Autowired CommonUtils utils;
   @Autowired GenresDao genresDao;
@@ -64,13 +64,13 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
 
     String contains = "";
-    if (queryParams.containsKey("q")) { 
+    if (queryParams.containsKey("q")) {
       contains = String.format(movieContains, queryParams.get("q"));
       formedQuery.append(contains);
     }
 
     String yearSelect = "";
-    if (queryParams.containsKey("year")) { 
+    if (queryParams.containsKey("year")) {
       Integer year = (Integer) queryParams.get("year");
       if (year > 0) {
         yearSelect = " and m.year = " + year;

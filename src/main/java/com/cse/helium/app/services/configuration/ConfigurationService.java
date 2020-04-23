@@ -1,11 +1,11 @@
-package com.microsoft.cse.helium.app.services.configuration;
+package com.cse.helium.app.services.configuration;
 
-import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
+import com.cse.helium.app.services.keyvault.IKeyVaultService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

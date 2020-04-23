@@ -1,8 +1,8 @@
 package com.microsoft.cse.helium.app.controllers;
 
 import com.microsoft.cse.helium.app.config.BuildConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class VersionController {
-  private static final Logger logger = LoggerFactory.getLogger(VersionController.class);
+  private static final Logger logger =   LogManager.getLogger(VersionController.class);
 
   @Autowired
   ApplicationContext context;
@@ -31,7 +31,7 @@ public class VersionController {
       value = "/version",
       produces = MediaType.TEXT_PLAIN_VALUE)
   public Mono<String> version(ServerHttpResponse response) {
-    try { 
+    try {
       response.setStatusCode(HttpStatus.OK);
       return Mono.just(context.getBean(BuildConfig.class).getBuildVersion());
     } catch (Exception ex) {

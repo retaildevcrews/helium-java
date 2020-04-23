@@ -8,8 +8,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import java.text.MessageFormat;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,7 +31,7 @@ public class MoviesController extends Controller {
   @Autowired MoviesDao moviesDao;
   @Autowired ParameterValidator validator;
 
-  private static final Logger logger = LoggerFactory.getLogger(MoviesController.class);
+  private static final Logger logger =   LogManager.getLogger(MoviesController.class);
 
   /** getMovie. */
   @RequestMapping(
@@ -49,7 +49,7 @@ public class MoviesController extends Controller {
       return moviesDao
           .getMovieById(movieId)
           .map(savedMovie -> ResponseEntity.ok(savedMovie))
-          .switchIfEmpty(Mono.defer(() -> 
+          .switchIfEmpty(Mono.defer(() ->
             Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"))));
     } else {
       logger.error("Invalid Movie ID parameter" + movieId);
@@ -95,7 +95,7 @@ public class MoviesController extends Controller {
     try {
 
       logger.info(MessageFormat.format("getAllMovies (query={0}, genre={1}, year={2}, rating={3}, "
-            + " actorId={4}, pageNumber={5}, pageSize={6})", 
+            + " actorId={4}, pageNumber={5}, pageSize={6})",
             query, genre, year, rating, actorId, pageNumber, pageSize));
 
       return getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao);

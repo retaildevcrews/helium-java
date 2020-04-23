@@ -79,3 +79,4 @@ pmdcheck.sh
 drun.sh
 singletest.sh
 run_with_appinsights.sh
+druncli.sh

@@ -9,8 +9,8 @@ import com.microsoft.azure.spring.data.cosmosdb.config.CosmosDBConfig;
 import com.microsoft.azure.spring.data.cosmosdb.repository.config.EnableCosmosRepositories;
 import com.microsoft.cse.helium.app.Constants;
 import com.microsoft.cse.helium.app.services.configuration.IConfigurationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +20,12 @@ import org.springframework.context.annotation.Primary;
 @EnableCosmosRepositories(basePackages = "com.microsoft.azure.helium.app.*")
 public class CosmosDbConfig extends AbstractCosmosConfiguration {
 
-  private static final Logger logger = LoggerFactory.getLogger(CosmosDbConfig.class);
+  private static final Logger logger =   LogManager.getLogger(CosmosDbConfig.class);
 
   protected IConfigurationService configurationService;
 
   protected final RequestOptions requestOptions = new RequestOptions();
-  
+
   /**
    * CosmosDBConfig.
    */

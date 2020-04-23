@@ -1,16 +1,14 @@
-package com.microsoft.cse.helium.app.utils;
+package com.cse.helium.app.utils;
 
-import com.microsoft.cse.helium.app.Constants;
-import com.microsoft.cse.helium.app.config.BuildConfig;
-import com.microsoft.cse.helium.app.services.keyvault.IEnvironmentReader;
-import com.microsoft.cse.helium.app.services.keyvault.IKeyVaultService;
+import com.cse.helium.app.Constants;
+import com.cse.helium.app.config.BuildConfig;
+import com.cse.helium.app.services.keyvault.IEnvironmentReader;
+import com.cse.helium.app.services.keyvault.IKeyVaultService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -36,13 +34,14 @@ public class DryRunProcessor {
   @Autowired
   IEnvironmentReader environmentReader;
 
-  private static final Logger logger = LogManager.getLogger(DryRunProcessor.class);
+  private static final Logger logger =   LogManager.getLogger(DryRunProcessor.class);
 
   /**
    * onApplicationEvent.
    */
   @EventListener
   public void onApplicationEvent(ContextRefreshedEvent event) {
+
     logger.info("Application Context has been fully started up");
     logger.info("All beans are now instantiated and ready to go!");
     if (applicationArguments != null) {

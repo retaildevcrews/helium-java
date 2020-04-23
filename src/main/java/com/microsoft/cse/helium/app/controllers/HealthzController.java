@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping(path = "/healthz")
 public class HealthzController {
 
-  private static final Logger logger = LoggerFactory.getLogger(HealthzController.class);
+  private static final Logger logger =   LogManager.getLogger(HealthzController.class);
 
   @Autowired private BuildConfig buildConfig;
 
@@ -61,22 +61,22 @@ public class HealthzController {
       int resCode = healthStatus.equals(IeTfStatus.fail.name())
           ? HttpStatus.SERVICE_UNAVAILABLE.value()
           : HttpStatus.OK.value();
-      return new ResponseEntity<String>(healthStatus, 
+      return new ResponseEntity<String>(healthStatus,
           null,
           HttpStatus.valueOf(resCode));
     });
   }
-  
+
   /**
    * ietfhealthCheck runs several checks and returs and overall status and results for
-   *    the discrete calls that are made.  
+   *    the discrete calls that are made.
    *
-   *    @return Mono{@literal <}ResponseEntity{@literal <}LinkedHashMap{@literal <}String, 
+   *    @return Mono{@literal <}ResponseEntity{@literal <}LinkedHashMap{@literal <}String,
    *        Object{@literal <}{@literal <}{@literal <}
    *        returned with status information for overall execution and discrete calls.
    */
   @GetMapping(value = "/ietf", produces = "application/health+json")
-  public Mono<ResponseEntity<LinkedHashMap<String, Object>>>  ietfHealthCheck() 
+  public Mono<ResponseEntity<LinkedHashMap<String, Object>>>  ietfHealthCheck()
       throws CosmosClientException {
     logger.info("healthz ietf endpoint");
 
@@ -121,11 +121,11 @@ public class HealthzController {
     Mono<Map<String, Object>> movieByIdMono = moviesDao.getMovieById("tt0133093")
         .map(movie -> {
           return buildResultsDictionary("getMovieById", getElapsedAndUpdateStart(), 250L);
-        });    
+        });
 
     Map<String, Object> moviesQueryParams = new HashMap<>();
     moviesQueryParams.put("q", "ring");
-    Mono<Map<String, Object>> moviesQueryMono = 
+    Mono<Map<String, Object>> moviesQueryMono =
         moviesDao.getAll(moviesQueryParams, 1, 100)
         .collectList()
         .map(results -> {
@@ -142,7 +142,7 @@ public class HealthzController {
         });
     /*   chain the discrete calls together   */
     Mono<List<Map<String, Object>>> resultsMono =  genreMono.concatWith(actorByIdMono)
-        .concatWith(movieByIdMono)    
+        .concatWith(movieByIdMono)
         .concatWith(moviesQueryMono)
         .concatWith(actorsQueryMono).collectList();
 
@@ -166,11 +166,11 @@ public class HealthzController {
           // if we hit a fail then break otherwise loop to end
           break;
         }
-      } 
+      }
     }
     return returnStatus;
   }
-  
+
   /** convertResultsListToDictionary converts the list from the chain to a dictionary. */
   Map<String, Object> convertResultsListToDictionary(List<Map<String, Object>> resultsList) {
     Map<String, Object> returnDict = new HashMap<String, Object>();
@@ -184,7 +184,7 @@ public class HealthzController {
   }
 
   /** buildResultsDictionary used to create the discrete results for each call in the chain. */
-  Map<String, Object> buildResultsDictionary(String componentId, 
+  Map<String, Object> buildResultsDictionary(String componentId,
       Long duration, Long expectedDuration) {
     String passStatus = IeTfStatus.fail.name();
     if (duration <= expectedDuration) {
