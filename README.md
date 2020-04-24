@@ -44,6 +44,7 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
 # Build the image - this can take 3-5 minutes
 
 docker build -t helium-dev .
+
 ```
 
 - Run the application locally and clean previous packages and unit tests
@@ -71,10 +72,10 @@ mvn clean package
 
 mvn spring-boot:run
 
-# When the previous command shows 'Netty started on port(s): 8080' 
+# When the previous command shows 'Netty started on port(s): 4120' 
 # test the application (takes about 10 seconds to start) in a new window
 
-curl http://localhost:8080/healthz
+curl http://localhost:4120/healthz
 
 # Stop the application by typing Ctrl-C in the Azure CLI terminal window
 # Or :::::
@@ -88,7 +89,7 @@ mvn spring-boot:stop
 ```bash
 
 # Make sure you are in the root of the repo
-# Run the command below to stop the previous instance and free up port 8080:
+# Run the command below to stop the previous instance and free up port 4120:
 
 mvn spring-boot:stop 
 
@@ -108,17 +109,9 @@ docker build -t helium-dev .
 
 docker run -p4120:4120 --name helium-dev --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure helium-dev:latest
 
-# To run with the App-insights instrumentation key first btain APPLICATIONINSIGHTS_CONNECTION_STRING using the following link:
+# To run with the Appinsights use the command below:
 
-https://docs.microsoft.com/en-us/azure/azure-monitor/app/java-get-started?tabs=maven
-
-# Set the env variable for the instrumentation key 
-
-export APP_INSIGHTS_CONNECTION_STRING="$(az monitor app-insights component show --app inst2-appinsights --resource-group wsrtf-app-rg --output yaml|grep instrumentationKey|awk '{print $2}')"
-
-# The run the container with Appinsights
-
-docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME --env APPLICATIONINSIGHTS_CONNECTION_STRING=$APP_INSIGHTS_CONNECTION_STRING -v ~/.azure:/home/helium/.azure helium-dev:latest
+docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME --env APPLICATIONINSIGHTS_CONNECTION_STRING=$He_AppInsights_Key -v ~/.azure:/home/helium/.azure helium-dev:latest
 
 # Check the logs to ensure the container is properly running
 # Re-run until the application started message appears
