@@ -128,7 +128,8 @@ public class EnvironmentReader implements IEnvironmentReader {
     if (kvName == null) {
       System.out.println("Usage: mvn clean spring-boot:run  "
           + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-          + " -keyvault-name=<keyVaultName>\"");
+          + " -keyvault-name=<keyVaultName>"
+          + "--log-level=<trace|info|warn|error|fatal>\"");
       System.exit(-1);
     }
 
@@ -139,7 +140,8 @@ public class EnvironmentReader implements IEnvironmentReader {
           + "alphanumeric.  Check ${KEYVAULT_NAME} in your environment variables.");
       System.out.println("Usage: mvn clean spring-boot:run  "
           + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-          + " -keyvault-name=<keyVaultName>\"");
+          + " -keyvault-name=<keyVaultName>"
+          + "--log-level=<trace|info|warn|error|fatal>\"");
       System.exit(-1);
     }
 

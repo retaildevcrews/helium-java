@@ -3,7 +3,6 @@ package com.cse.helium.app;
 import java.util.Arrays;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
-//import org.apache.logging.log4j.core.config.Configurator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
