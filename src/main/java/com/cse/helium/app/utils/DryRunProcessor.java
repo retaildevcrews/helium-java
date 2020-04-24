@@ -7,8 +7,10 @@ import com.cse.helium.app.services.keyvault.IKeyVaultService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -34,14 +36,13 @@ public class DryRunProcessor {
   @Autowired
   IEnvironmentReader environmentReader;
 
-  private static final Logger logger =   LogManager.getLogger(DryRunProcessor.class);
+  private static final Logger logger = LogManager.getLogger(DryRunProcessor.class);
 
   /**
    * onApplicationEvent.
    */
   @EventListener
   public void onApplicationEvent(ContextRefreshedEvent event) {
-
     logger.info("Application Context has been fully started up");
     logger.info("All beans are now instantiated and ready to go!");
     if (applicationArguments != null) {

@@ -3,8 +3,8 @@ package com.cse.helium.app.services.keyvault;
 import com.cse.helium.app.Constants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
@@ -43,7 +43,8 @@ public class EnvironmentReader implements IEnvironmentReader {
         } else if (s.equals("h")) {
           System.out.println("Usage: mvn clean spring-boot:run  "
               + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-              + " -keyvault-name=<keyVaultName>\"");
+              + " -keyvault-name=<keyVaultName>"
+              + "--log-level=<trace|info|warn|error|fatal>\"");
           System.exit(0);
         }
       });
@@ -55,7 +56,8 @@ public class EnvironmentReader implements IEnvironmentReader {
     if (authType == null) {
       System.out.println("Usage: mvn clean spring-boot:run  "
           + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-          + " -keyvault-name=<keyVaultName>\"");
+          + " -keyvault-name=<keyVaultName>"
+          + "--log-level=<trace|info|warn|error|fatal>\"");
       System.exit(-1);
     }
 
@@ -71,7 +73,8 @@ public class EnvironmentReader implements IEnvironmentReader {
     } else {
       System.out.println("Usage: mvn clean spring-boot:run  "
           + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-          + " -keyvault-name=<keyVaultName>\"");
+          + " -keyvault-name=<keyVaultName>"
+          + "--log-level=<trace|info|warn|error|fatal>\"");
       System.exit(-1);
     }
   }
