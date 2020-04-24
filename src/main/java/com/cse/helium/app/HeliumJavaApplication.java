@@ -1,17 +1,14 @@
 package com.cse.helium.app;
 
 import java.util.Arrays;
-
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.springframework.boot.ApplicationArguments;
+//import org.apache.logging.log4j.core.config.Configurator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringBootApplication
 @EnableWebFlux
@@ -19,18 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ComponentScan("com.cse.helium")
 public class HeliumJavaApplication {
 
-  @Autowired
-  static ApplicationArguments applicationArguments;
-
+  /**
+  * main.
+  */
   public static void main(String[] args) {
-
-    if (applicationArguments != null) {
+    if (args != null) {
       SimpleCommandLinePropertySource commandLinePropertySource =
-          new SimpleCommandLinePropertySource(applicationArguments.getSourceArgs());
+          new SimpleCommandLinePropertySource(args);
       Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
         if (s.equals("log-level") || s.equals("l")) {
-          Configurator.setLevel("com.cse.helium",
+          org.apache.logging.log4j.core.config.Configurator.setLevel("com.cse.helium",
               setLogLevel(commandLinePropertySource.getProperty(s)));
+
+          //Logger.getRootLogger.setLevel(setLogLevel(commandLinePropertySource.getProperty(s)));
         }
       });
     }
@@ -39,8 +37,24 @@ public class HeliumJavaApplication {
   }
 
 
+  // @Override
+  // public void run(ApplicationArguments applicationArguments) throws Exception {
+
+  //   if (applicationArguments != null) {
+  //     SimpleCommandLinePropertySource commandLinePropertySource =
+  //         new SimpleCommandLinePropertySource(applicationArguments.getSourceArgs());
+  //     Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
+  //       if (s.equals("log-level") || s.equals("l")) {
+  //         Configurator.setLevel("com.cse.helium",
+  //             setLogLevel(commandLinePropertySource.getProperty(s)));
+  //       }
+  //     });
+  //   }
+  // }
+
+
   private static Level setLogLevel(String logLevel) {
-    switch(logLevel) {
+    switch (logLevel) {
       case "trace":
         return Level.TRACE;
       case "debug":
@@ -54,10 +68,10 @@ public class HeliumJavaApplication {
       case "fatal":
         return Level.FATAL;
       default:
-      System.out.println("Usage: mvn clean spring-boot:run  "
-      + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-      + " -keyvault-name=<keyVaultName>"
-      + "--log-level=<trace|info|warn|error|fatal>\"");
+        System.out.println("Usage: mvn clean spring-boot:run  "
+            + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
+            + " -keyvault-name=<keyVaultName>"
+            + "--log-level=<trace|info|warn|error|fatal>\"");
         System.exit(0);
         return null; // java compiler needs this to satisfy compilation errors
     }
