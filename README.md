@@ -105,13 +105,9 @@ mvn spring-boot:stop
 
 docker build -t helium-dev .
 
-# Then run the container without Appinsights.  To run with Appinsights see next command.  
+# Then run the container.  
 
 docker run -p4120:4120 --name helium-dev --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure helium-dev:latest
-
-# To run with the Appinsights use the command below:
-
-docker run -p4120:4120 --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME --env APPLICATIONINSIGHTS_CONNECTION_STRING=$He_AppInsights_Key -v ~/.azure:/home/helium/.azure helium-dev:latest
 
 # Check the logs to ensure the container is properly running
 # Re-run until the application started message appears
