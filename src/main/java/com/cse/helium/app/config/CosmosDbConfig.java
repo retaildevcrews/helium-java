@@ -9,8 +9,8 @@ import com.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.azure.spring.data.cosmosdb.config.AbstractCosmosConfiguration;
 import com.microsoft.azure.spring.data.cosmosdb.config.CosmosDBConfig;
 import com.microsoft.azure.spring.data.cosmosdb.repository.config.EnableCosmosRepositories;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Primary;
 @EnableCosmosRepositories(basePackages = "com.microsoft.azure.helium.app.*")
 public class CosmosDbConfig extends AbstractCosmosConfiguration {
 
-  private static final Logger logger = LoggerFactory.getLogger(CosmosDbConfig.class);
+  private static final Logger logger = LogManager.getLogger(CosmosDbConfig.class);
 
   protected IConfigurationService configurationService;
 
@@ -56,8 +56,8 @@ public class CosmosDbConfig extends AbstractCosmosConfiguration {
       policy.retryOptions(retryOptions);
 
       return CosmosDBConfig.builder(uri, key, dbName)
-        .requestOptions(requestOptions).connectionPolicy(policy)
-        .build();
+          .requestOptions(requestOptions).connectionPolicy(policy)
+          .build();
     } catch (Exception ex) {
       logger.error("buildCosmosDbConfig failed with error: " + ex.getMessage());
 

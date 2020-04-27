@@ -1,8 +1,9 @@
 package com.cse.helium.app.controllers;
 
+
 import com.cse.helium.app.config.BuildConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class VersionController {
-  private static final Logger logger = LoggerFactory.getLogger(VersionController.class);
+  private static final Logger logger =   LogManager.getLogger(VersionController.class);
 
   @Autowired
   ApplicationContext context;
