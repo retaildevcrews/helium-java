@@ -1,6 +1,7 @@
 package com.cse.helium.app.services.keyvault;
 
 import com.cse.helium.app.Constants;
+import com.cse.helium.app.utils.CommonUtils;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
@@ -41,10 +42,7 @@ public class EnvironmentReader implements IEnvironmentReader {
         } else if (s.equals("keyvault-name")) {
           setKeyVaultName(commandLinePropertySource.getProperty(s));
         } else if (s.equals("h")) {
-          System.out.println("Usage: mvn clean spring-boot:run  "
-              + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-              + " -keyvault-name=<keyVaultName>"
-              + "--log-level=<trace|info|warn|error|fatal>\"");
+          CommonUtils.printCmdLineHelp();
           System.exit(0);
         }
       });
@@ -54,10 +52,7 @@ public class EnvironmentReader implements IEnvironmentReader {
   @SuppressFBWarnings("DM_EXIT")
   private void setAuthType(String authType) {
     if (authType == null) {
-      System.out.println("Usage: mvn clean spring-boot:run  "
-          + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-          + " -keyvault-name=<keyVaultName>"
-          + "--log-level=<trace|info|warn|error|fatal>\"");
+      CommonUtils.printCmdLineHelp();
       System.exit(-1);
     }
 
@@ -71,10 +66,7 @@ public class EnvironmentReader implements IEnvironmentReader {
       System.out.println("VS Credentials are not yet supported in Java");
       System.exit(-1);
     } else {
-      System.out.println("Usage: mvn clean spring-boot:run  "
-          + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-          + " -keyvault-name=<keyVaultName>"
-          + "--log-level=<trace|info|warn|error|fatal>\"");
+      CommonUtils.printCmdLineHelp();
       System.exit(-1);
     }
   }
@@ -126,10 +118,7 @@ public class EnvironmentReader implements IEnvironmentReader {
   @SuppressFBWarnings("DM_EXIT")
   private void setKeyVaultName(String kvName) {
     if (kvName == null) {
-      System.out.println("Usage: mvn clean spring-boot:run  "
-          + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-          + " -keyvault-name=<keyVaultName>"
-          + "--log-level=<trace|info|warn|error|fatal>\"");
+      CommonUtils.printCmdLineHelp();
       System.exit(-1);
     }
 
@@ -138,10 +127,7 @@ public class EnvironmentReader implements IEnvironmentReader {
           + "' which does not meet the criteria must be 3-24 characters long, begin with a "
           + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
           + "alphanumeric.  Check ${KEYVAULT_NAME} in your environment variables.");
-      System.out.println("Usage: mvn clean spring-boot:run  "
-          + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-          + " -keyvault-name=<keyVaultName>"
-          + "--log-level=<trace|info|warn|error|fatal>\"");
+      CommonUtils.printCmdLineHelp();
       System.exit(-1);
     }
 

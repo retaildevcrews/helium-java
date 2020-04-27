@@ -18,4 +18,15 @@ public class CommonUtils {
     }
     throw new IllegalArgumentException("Invalid Partition Key");
   }
+
+  /**
+   * prints the command line help.
+   */
+  public static void printCmdLineHelp() {
+    System.out.println("Usage: mvn clean spring-boot:run  "
+        + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
+        + " -keyvault-name=<keyVaultName>"
+        + "--dry-run"
+        + "--log-level=<trace|info|warn|error|fatal>\"");
+  }
 }

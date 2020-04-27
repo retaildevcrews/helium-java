@@ -1,5 +1,6 @@
 package com.cse.helium.app;
 
+import com.cse.helium.app.utils.CommonUtils;
 import java.util.Arrays;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -20,6 +21,8 @@ public class HeliumJavaApplication {
   * main.
   */
   public static void main(String[] args) {
+    // Set the default log level to Warn unless it is overridden on the CLI
+    Configurator.setLevel("com.cse.helium",Level.WARN);
     if (args != null) {
       SimpleCommandLinePropertySource commandLinePropertySource =
           new SimpleCommandLinePropertySource(args);
@@ -49,11 +52,8 @@ public class HeliumJavaApplication {
       case "fatal":
         return Level.FATAL;
       default:
-        System.out.println("Usage: mvn clean spring-boot:run  "
-            + "-Dspring-boot.run.arguments=\"--h --auth-type=<CLI|MSI|VS>"
-            + " -keyvault-name=<keyVaultName>"
-            + "--log-level=<trace|info|warn|error|fatal>\"");
-        System.exit(0);
+        CommonUtils.printCmdLineHelp();
+        System.exit(-1);
         return null; // java compiler needs this to satisfy compilation errors
     }
   }
