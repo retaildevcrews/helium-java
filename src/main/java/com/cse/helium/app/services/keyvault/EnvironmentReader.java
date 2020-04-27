@@ -3,12 +3,10 @@ package com.cse.helium.app.services.keyvault;
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.utils.CommonUtils;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,24 +31,15 @@ public class EnvironmentReader implements IEnvironmentReader {
   @SuppressFBWarnings("DM_EXIT")
   @Autowired
   public EnvironmentReader(ApplicationArguments applicationArguments) {
-    if (applicationArguments != null) {
-      SimpleCommandLinePropertySource commandLinePropertySource =
-          new SimpleCommandLinePropertySource(applicationArguments.getSourceArgs());
-      Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
-        if (s.equals("auth-type")) {
-          setAuthType(commandLinePropertySource.getProperty(s));
-        } else if (s.equals("keyvault-name")) {
-          setKeyVaultName(commandLinePropertySource.getProperty(s));
-        } else if (s.equals("h")) {
-          CommonUtils.printCmdLineHelp();
-          System.exit(0);
-        }
-      });
-    }
+    CommonUtils.validateCliKeyvaultAndAuthTypeOption(applicationArguments, this);
   }
 
+  /**
+   * setAuthType.
+   * @param authType set the Auth type from env or cli.
+   */
   @SuppressFBWarnings("DM_EXIT")
-  private void setAuthType(String authType) {
+  public void setAuthType(String authType) {
     if (authType == null) {
       CommonUtils.printCmdLineHelp();
       System.exit(-1);
@@ -115,8 +104,12 @@ public class EnvironmentReader implements IEnvironmentReader {
     }
   }
 
+  /**
+   * setKeyVaultName.
+   * @param kvName set the key vault name from env or cli.
+   */
   @SuppressFBWarnings("DM_EXIT")
-  private void setKeyVaultName(String kvName) {
+  public void setKeyVaultName(String kvName) {
     if (kvName == null) {
       CommonUtils.printCmdLineHelp();
       System.exit(-1);

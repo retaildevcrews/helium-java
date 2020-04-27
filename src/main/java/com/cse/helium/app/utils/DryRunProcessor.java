@@ -1,19 +1,14 @@
 package com.cse.helium.app.utils;
 
-import com.cse.helium.app.Constants;
 import com.cse.helium.app.config.BuildConfig;
 import com.cse.helium.app.services.keyvault.IEnvironmentReader;
 import com.cse.helium.app.services.keyvault.IKeyVaultService;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.text.MessageFormat;
-import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.SimpleCommandLinePropertySource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,42 +38,8 @@ public class DryRunProcessor {
   public void onApplicationEvent(ContextRefreshedEvent event) {
     logger.info("Application Context has been fully started up");
     logger.info("All beans are now instantiated and ready to go!");
-    if (applicationArguments != null) {
-      SimpleCommandLinePropertySource commandLinePropertySource =
-          new SimpleCommandLinePropertySource(applicationArguments.getSourceArgs());
-      Arrays.stream(commandLinePropertySource.getPropertyNames()).forEach(s -> {
-        if (s.equals("dry-run") || s.equals("d")) {
-          printDryRunParameters();
-          System.exit(0);
-        }
-      });
-    }
+    CommonUtils.validateCliDryRunOption(applicationArguments,
+        keyVaultService, buildConfig, environmentReader);
   }
 
-  @SuppressFBWarnings({"NP_UNWRITTEN_FIELD", "UWF_UNWRITTEN_FIELD"})
-  void printDryRunParameters() {
-    System.out.println(MessageFormat.format("Version                    {0}",
-        buildConfig.getBuildVersion()));
-    System.out.println(MessageFormat.format("Auth Type                  {0}",
-        environmentReader.getAuthType()));
-    System.out.println(MessageFormat.format("Cosmos Server              {0}",
-        keyVaultService.getSecret(Constants.COSMOS_URL_KEYNAME).block()));
-
-    String cosmosKey = keyVaultService.getSecret(Constants.COSMOS_KEY_KEYNAME).block();
-
-    System.out.println(MessageFormat.format("Cosmos Key                 {0}",
-        cosmosKey == null || cosmosKey.isEmpty() ? "(not set)".length()
-        : cosmosKey.length()));
-
-    System.out.println(MessageFormat.format("Cosmos Database            {0}",
-        keyVaultService.getSecret(Constants.COSMOS_DATABASE_KEYNAME).block()));
-    System.out.println(MessageFormat.format("Cosmos Collection          {0}",
-        keyVaultService.getSecret(Constants.COSMOS_COLLECTION_KEYNAME).block()));
-
-    String appInsightsKey = keyVaultService.getSecret(Constants.APP_INSIGHTS_KEY).block();
-
-    System.out.println(MessageFormat.format("App Insights Key           {0}",
-        appInsightsKey == null || appInsightsKey.isEmpty() ? "(not set)".length()
-        : appInsightsKey.length()));
-  }
 }
