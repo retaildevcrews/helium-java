@@ -3,8 +3,8 @@ package com.cse.helium.app.config;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.ApplicationContext;
@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class BuildConfig {
 
-  private static final Logger logger = LoggerFactory.getLogger(BuildConfig.class);
+  private static final Logger logger =   LogManager.getLogger(BuildConfig.class);
 
   @Autowired
   ApplicationContext context;

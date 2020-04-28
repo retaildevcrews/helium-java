@@ -7,8 +7,8 @@ import com.cse.helium.app.services.configuration.IConfigurationService;
 import com.cse.helium.app.utils.CommonUtils;
 import java.text.MessageFormat;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class ActorsDao extends BaseCosmosDbDao implements IDao {
-  private static final Logger logger = LoggerFactory.getLogger(ActorsDao.class);
+  private static final Logger logger =   LogManager.getLogger(ActorsDao.class);
 
   @Autowired CommonUtils utils;
 

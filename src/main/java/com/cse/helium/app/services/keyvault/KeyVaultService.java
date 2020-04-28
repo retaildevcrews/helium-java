@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -29,7 +29,7 @@ public class KeyVaultService implements IKeyVaultService {
   private final KeyVaultClient keyVaultClient;
 
 
-  private static final Logger logger = LoggerFactory.getLogger(KeyVaultService.class);
+  private static final Logger logger =   LogManager.getLogger(KeyVaultService.class);
 
 
   /**

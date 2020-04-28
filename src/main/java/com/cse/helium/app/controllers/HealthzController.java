@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping(path = "/healthz")
 public class HealthzController {
 
-  private static final Logger logger = LoggerFactory.getLogger(HealthzController.class);
+  private static final Logger logger =   LogManager.getLogger(HealthzController.class);
 
   @Autowired private BuildConfig buildConfig;
 

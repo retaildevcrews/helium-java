@@ -1,9 +1,10 @@
+
 package com.cse.helium.app.controllers;
 
 import com.cse.helium.app.services.configuration.IConfigurationService;
 import com.cse.helium.app.services.keyvault.IKeyVaultService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(value = "api/secret")
 public class SecretController {
-  private static final Logger logger = LoggerFactory.getLogger(SecretController.class);
+  private static final Logger logger =   LogManager.getLogger(SecretController.class);
 
   @Autowired private IKeyVaultService keyVaultService;
 
