@@ -107,7 +107,7 @@ public class CommonUtils {
     System.out.println(MessageFormat.format("Cosmos Server              {0}",
         keyVaultService.getSecret(Constants.COSMOS_URL_KEYNAME).block()));
 
-    String cosmosKey = keyVaultService.getSecret(Constants.COSMOS_KEY_KEYNAME).block();
+    String cosmosKey = keyVaultService.getSecretValue(Constants.COSMOS_KEY_KEYNAME).block();
 
     System.out.println(MessageFormat.format("Cosmos Key                 {0}",
         cosmosKey == null || cosmosKey.isEmpty() ? "(not set)".length() : cosmosKey.length()));
@@ -117,7 +117,7 @@ public class CommonUtils {
     System.out.println(MessageFormat.format("Cosmos Collection          {0}",
         keyVaultService.getSecret(Constants.COSMOS_COLLECTION_KEYNAME).block()));
 
-    String appInsightsKey = keyVaultService.getSecret(Constants.APP_INSIGHTS_KEY).block();
+    String appInsightsKey = keyVaultService.getSecretValue(Constants.APP_INSIGHTS_KEY).block();
 
     System.out.println(MessageFormat.format("App Insights Key           {0}",
         appInsightsKey == null || appInsightsKey.isEmpty() ? "(not set)".length()
