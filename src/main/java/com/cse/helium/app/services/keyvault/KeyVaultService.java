@@ -17,6 +17,7 @@ import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.azure.security.keyvault.secrets.models.SecretProperties;
 import com.cse.helium.app.Constants;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -153,7 +154,11 @@ public class KeyVaultService implements IKeyVaultService {
   public List<SecretProperties> listSecretsSync() {
     List<SecretProperties> listSecretProps = new ArrayList<SecretProperties>();
     
-    secretClient.listPropertiesOfSecrets().forEach(secretProps -> {
+    Iterator<SecretProperties> secretPropsIterator = secretClient
+        .listPropertiesOfSecrets()
+        .iterator();
+        
+    secretPropsIterator.forEachRemaining(secretProps -> {
       listSecretProps.add(secretProps);
     });
 
