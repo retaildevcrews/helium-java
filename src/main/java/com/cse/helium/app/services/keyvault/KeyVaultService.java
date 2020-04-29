@@ -57,7 +57,6 @@ public class KeyVaultService implements IKeyVaultService {
           .excludeAzureCliCredential()
           .excludeSharedTokenCacheCredential()
           .build();
-      //azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
     } else if (this.authType.equals(Constants.USE_CLI)) {
       credential = new DefaultAzureCredentialBuilder()
         .excludeEnvironmentCredential()
@@ -71,7 +70,6 @@ public class KeyVaultService implements IKeyVaultService {
         .excludeAzureCliCredential()
         .excludeSharedTokenCacheCredential()
         .build();
-        //azureTokenCredentials = new AppServiceMSICredentials(AzureEnvironment.AZURE);
       } catch (final Exception ex) {
         logger.error(ex.getMessage());
         throw ex;
@@ -83,7 +81,6 @@ public class KeyVaultService implements IKeyVaultService {
       .excludeAzureCliCredential()
       .excludeSharedTokenCacheCredential()
       .build();
-      //azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
     }
 
     //build secret clients
@@ -109,8 +106,6 @@ public class KeyVaultService implements IKeyVaultService {
     .vaultUrl(getKeyVaultUri())
     .credential(credential)
     .buildAsyncClient();
-
-    //keyVaultClient = new KeyVaultClient(azureTokenCredentials);
   }
 
 
