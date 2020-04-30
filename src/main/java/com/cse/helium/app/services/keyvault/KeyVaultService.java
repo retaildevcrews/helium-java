@@ -1,18 +1,23 @@
 package com.cse.helium.app.services.keyvault;
 
+import com.azure.core.http.policy.HttpLogDetailLevel;
+import com.azure.core.http.policy.HttpLogOptions;
+import com.azure.identity.DefaultAzureCredential;
+import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.security.keyvault.certificates.CertificateAsyncClient;
+import com.azure.security.keyvault.certificates.CertificateClientBuilder;
+import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPolicy;
+import com.azure.security.keyvault.keys.KeyAsyncClient;
+import com.azure.security.keyvault.keys.KeyClientBuilder;
+import com.azure.security.keyvault.keys.models.KeyVaultKey;
+import com.azure.security.keyvault.secrets.SecretAsyncClient;
+import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+import com.azure.security.keyvault.secrets.models.SecretProperties;
 import com.cse.helium.app.Constants;
-import com.microsoft.azure.AzureEnvironment;
-import com.microsoft.azure.credentials.AppServiceMSICredentials;
-import com.microsoft.azure.credentials.AzureCliCredentials;
-import com.microsoft.azure.credentials.AzureTokenCredentials;
-import com.microsoft.azure.credentials.MSICredentials;
-import com.microsoft.azure.keyvault.KeyVaultClient;
-import com.microsoft.azure.keyvault.models.CertificateBundle;
-import com.microsoft.azure.keyvault.models.KeyBundle;
-import com.microsoft.azure.keyvault.models.SecretBundle;
-import com.microsoft.azure.keyvault.models.SecretItem;
-import com.microsoft.rest.ServiceCallback;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,8 +30,11 @@ import reactor.core.publisher.Mono;
 public class KeyVaultService implements IKeyVaultService {
   private final String keyVaultName;
   private String authType = "";
-  private AzureTokenCredentials azureTokenCredentials;
-  private final KeyVaultClient keyVaultClient;
+  private KeyAsyncClient keyAsyncClient;
+  private SecretClient secretClient;
+  private SecretAsyncClient secretAsyncClient;
+  private CertificateAsyncClient certificateAsyncClient;
+  private DefaultAzureCredential credential; 
 
 
   private static final Logger logger =   LogManager.getLogger(KeyVaultService.class);
@@ -44,27 +52,60 @@ public class KeyVaultService implements IKeyVaultService {
     logger.info("Auth type is " + this.authType);
 
     if (this.authType.equals(Constants.USE_MSI)) {
-      azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
+      credential = new DefaultAzureCredentialBuilder()
+          .excludeEnvironmentCredential()
+          .excludeAzureCliCredential()
+          .excludeSharedTokenCacheCredential()
+          .build();
     } else if (this.authType.equals(Constants.USE_CLI)) {
-      try {
-        azureTokenCredentials = AzureCliCredentials.create();
-      } catch (final IOException ex) {
-        logger.error(ex.getMessage());
-        throw ex;
-      }
+      credential = new DefaultAzureCredentialBuilder()
+        .excludeEnvironmentCredential()
+        .excludeManagedIdentityCredential()
+        .excludeSharedTokenCacheCredential()
+        .build();
     } else if (this.authType.equals(Constants.USE_MSI_APPSVC)) {
       try {
-        azureTokenCredentials = new AppServiceMSICredentials(AzureEnvironment.AZURE);
+        credential = new DefaultAzureCredentialBuilder()
+        .excludeEnvironmentCredential()
+        .excludeAzureCliCredential()
+        .excludeSharedTokenCacheCredential()
+        .build();
       } catch (final Exception ex) {
         logger.error(ex.getMessage());
         throw ex;
       }
     } else {
       this.authType = Constants.USE_MSI;
-      azureTokenCredentials = new MSICredentials(AzureEnvironment.AZURE);
+      credential = new DefaultAzureCredentialBuilder()
+      .excludeEnvironmentCredential()
+      .excludeAzureCliCredential()
+      .excludeSharedTokenCacheCredential()
+      .build();
     }
 
-    keyVaultClient = new KeyVaultClient(azureTokenCredentials);
+    //build secret clients
+    secretClient = new SecretClientBuilder()
+        .vaultUrl(getKeyVaultUri())
+        .credential(credential)
+        .buildClient();
+
+    secretAsyncClient = new SecretClientBuilder()
+        .vaultUrl(getKeyVaultUri())
+        .credential(credential)
+        .httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS))
+        .buildAsyncClient();
+
+    //build key client
+    keyAsyncClient = new KeyClientBuilder()
+      .vaultUrl(getKeyVaultUri())
+      .credential(credential)
+      .buildAsyncClient();
+  
+    //build certificate client
+    certificateAsyncClient = new CertificateClientBuilder()
+    .vaultUrl(getKeyVaultUri())
+    .credential(credential)
+    .buildAsyncClient();
   }
 
 
@@ -88,23 +129,16 @@ public class KeyVaultService implements IKeyVaultService {
   /**
    * getSecret.
    */
-  public Mono<String> getSecret(final String secretName) {
+  public Mono<String> getSecretValue(final String secretName) {
     logger.info("Secrets in getSecret are " + (secretName == null ? "NULL" : "NOT NULL"));
-    return Mono.create(sink -> {
-      keyVaultClient.getSecretAsync(getKeyVaultUri(), secretName,
-          new ServiceCallback<SecretBundle>() {
+    return  getSecret(secretName)
+      .map(keyVaultSecret -> {
+        return keyVaultSecret.getValue();
+      }); 
+  }
 
-            @Override
-            public void success(final SecretBundle secret) {
-              sink.success(secret.value());
-            }
-
-            @Override
-            public void failure(final Throwable error) {
-              sink.error(error);
-            }
-          });
-    });
+  public Mono<KeyVaultSecret> getSecret(final String secretName) {
+    return  secretAsyncClient.getSecret(secretName);
   }
 
   /**
@@ -112,38 +146,38 @@ public class KeyVaultService implements IKeyVaultService {
    * Returns null on error and logs error.
    * Created as a blocking function as app start-up is dependent on success.
    */
-  public List<SecretItem> listSecretsSync() {
-    List<SecretItem> secrets = null;
-    try {
-      secrets = keyVaultClient.listSecretsAsync(getKeyVaultUri(), null).get();
-      logger.info("Secrets in listSecretsSync are " + (secrets == null ? "NULL" : "NOT NULL"));
-    } catch (final Exception exception) {
-      logger.error(exception.getMessage());
-    }
+  public List<SecretProperties> listSecretsSync() {
+    List<SecretProperties> listSecretProps = new ArrayList<SecretProperties>();
+    
+    Iterator<SecretProperties> secretPropsIterator = secretClient
+        .listPropertiesOfSecrets()
+        .iterator();
+        
+    secretPropsIterator.forEachRemaining(secretProps -> {
+      listSecretProps.add(secretProps);
+    });
 
-    return secrets;
+    return listSecretProps;
   }
 
   /**
-   * listSecretsSync.
+   * getSecretsSync.
    * Created as a blocking function as app start-up is dependent on success.
    */
   public Map<String, String> getSecretsSync() {
-    final List<SecretItem> secretItems = listSecretsSync();
+    final List<SecretProperties> secretItems = listSecretsSync();
 
-    logger.info("secretItems variable is" + secretItems);
     final Map<String, String> secrets = new ConcurrentHashMap<String, String>();
     try {
       secretItems.forEach(item -> {
-        logger.info("secretItem single in the loop is " + (item == null ? "NULL" : "NOT NULL"));
-        final String itemName = item.id().substring(item.id().lastIndexOf("/") + 1);
-        final String secretValue = getSecret(itemName).block();
+        final String itemName = item.getName();
+        final String secretValue = getSecretValue(itemName).block();
         logger.info("lengths of secretItem name and value are " + itemName.length()
             + " " + secretValue.length());
         secrets.put(itemName, secretValue);
       });
     } catch (Exception ex) {
-      logger.error("Hit Exception getting the secrets from keyvault ", ex);
+      logger.error("Exception retrieving secrets from keyvault ", ex);
       throw ex;
     }
     return secrets;
@@ -152,39 +186,14 @@ public class KeyVaultService implements IKeyVaultService {
   /**
    * getKey.
    */
-  public Mono<KeyBundle> getKey(final String keyName) {
-    return Mono.create(sink -> {
-      keyVaultClient.getKeyAsync(getKeyVaultUri(), keyName, new ServiceCallback<KeyBundle>() {
-        @Override
-        public void success(final KeyBundle keyBundle) {
-          sink.success(keyBundle);
-        }
-
-        @Override
-        public void failure(final Throwable error) {
-          sink.error(error);
-        }
-      });
-    });
+  public Mono<KeyVaultKey> getKey(final String keyName) {
+    return  keyAsyncClient.getKey(keyName);
   }
 
   /**
    * getCertificate.
    */
-  public Mono<CertificateBundle> getCertificate(final String certName) {
-    return Mono.create(sink -> {
-      keyVaultClient.getCertificateAsync(getKeyVaultUri(), certName,
-          new ServiceCallback<CertificateBundle>() {
-            @Override
-            public void success(final CertificateBundle certBundle) {
-              sink.success(certBundle);
-            }
-
-            @Override
-            public void failure(final Throwable error) {
-              sink.error(error);
-            }
-          });
-    });
+  public Mono<KeyVaultCertificateWithPolicy> getCertificate(final String certName) {
+    return certificateAsyncClient.getCertificate(certName);
   }
 }
