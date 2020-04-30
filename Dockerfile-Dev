@@ -8,25 +8,40 @@ ADD pom.xml /app
 FROM base AS dependencies
 ADD . /app
 # Running mvn clean package will run all the tests as well as package the app up in the jar form
+# skipping the tests as many tests depend on MSI which is not available here
 RUN mvn clean package -DskipTests
 
 #
 # ---- Release App ----
-FROM  openjdk:8-jre-alpine AS release
+FROM  ubuntu:latest AS release
 WORKDIR /app
 
-### install azure cli
-RUN \
-  apk add --no-cache curl tar openssl sudo bash jq python3 && \
-  apk add --virtual=build gcc libffi-dev musl-dev openssl-dev make python3-dev && \
-  pip3 --no-cache-dir install --upgrade pip && \
-  pip3 --no-cache-dir install azure-cli
+# set noninteractive installation so install works unattended and does not ask any interactive
+# questions.
+ARG DEBIAN_FRONTEND=noninteractive
+
+### install azure cli and the dev tooling for compiling the project
+RUN apt-get update && \
+    apt-get install -y apt-transport-https ca-certificates curl software-properties-common libssl-dev git wget nano lsb-release jq && \
+    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
+    CLI_REPO=$(lsb_release -cs) && \
+    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" > /etc/apt/sources.list.d/azure-cli.list && \
+    apt-get update && \
+    apt-get install -y openjdk-8-jdk && \
+    apt-get install -y maven && \
+    apt-get install -y azure-cli
 
 # Create a user
-RUN addgroup -g 4120 -S helium && \
-    adduser -u 4120 -S helium -G helium && \
-    mkdir -p /home/helium/.azure && \
-    chown -R helium:helium /home/helium
+RUN groupadd --gid 4120 helium && \
+    useradd --uid 4120 --gid 4120  helium && \
+    mkdir -p /home/helium/.azure
+
+# copy the current folder into the /home/helium/src as we run the code as the helium user
+COPY . /home/helium/src
+
+# change the owner of the helium home dir to the helium user so they can edit the home directory
+RUN chown -R helium:helium /home/helium
+
 USER helium
 
 # Note: Every time we update helium version, we must update the jar version below
