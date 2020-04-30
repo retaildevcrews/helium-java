@@ -149,7 +149,7 @@ public class CommonUtils {
    * prints the command line help.
    */
   public static void printCmdLineHelp() {
-    System.out.println("\r\nUsage: \r\n"
+    System.out.println("\r\nUsage:\r\n"
         + "   mvn clean spring-boot:run \r\n "
         + "\t-Dspring-boot.run.arguments=\" --h \r\n"
         + "\t\t--auth-type=<CLI|MSI|VS>\r\n"
