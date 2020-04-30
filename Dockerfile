@@ -20,14 +20,10 @@ FROM  openjdk:8-jre-alpine AS release
 ENV APPDIR=/app
 WORKDIR $APPDIR
 
-# Create a user
+# Create the helium user so we can run the app as non-root under helium
 RUN addgroup -g 4120 -S helium && \
-    adduser -u 4120 -S helium -G helium && \
-    mkdir -p /home/helium && \
-    chown -R helium:helium /home/helium
+    adduser -u 4120 -S helium -G helium
 USER helium
-
-#Note: Every time we update helium version, we must update the jar version below
 
 COPY --from=dependencies $APPDIR/target/helium-0.1.0.jar app.jar
 COPY --from=dependencies $APPDIR/applicationinsights-agent-3.0.0-PREVIEW.2.jar applicationinsights-agent-3.0.0-PREVIEW.2.jar
