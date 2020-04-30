@@ -141,7 +141,8 @@ public class EnvironmentReader implements IEnvironmentReader {
 
     keyVaultName = System.getenv(Constants.KEY_VAULT_NAME);
     if (keyVaultName == null || !isValidKeyVaultName(keyVaultName)) {
-      logger.info("No proper Key vault name not set. Exiting");
+      logger.error("KeyVault name not set. Exiting");
+      CommonUtils.printCmdLineHelp();
       System.exit(-1);
     }
 
