@@ -35,7 +35,7 @@ jobs:
         #    You must add the following secrets to github
         #    DOCKER_USER  - your dockerhub user name
         #    DOCKER_PAT   - the personal access token for dockerhub
-       
+
 
         ## login to dockerhub
         echo "${{ secrets.DOCKER_PAT }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
@@ -55,12 +55,12 @@ jobs:
 
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        
+
           # Strip "v" prefix from tag name
           VERSION=$(echo $VERSION | sed -e 's/^v//')
 
           # tag the image with :beta, :Version and :stable
-          #docker tag image $IMAGE_ID:dev 
+          #docker tag image $IMAGE_ID:dev
           docker tag image $IMAGE_ID:beta
           docker tag image $IMAGE_ID:$VERSION
           docker tag image $IMAGE_ID:stable
@@ -93,13 +93,13 @@ jobs:
 
           echo "Building Docker image ${ACR_REPO}/${ACR_IMAGE} from ${GITHUB_REPOSITORY} on ${{ github.ref }}; and pushing it to ${ACR_REG} Azure Container Registry"
           az login --service-principal -u ${{ secrets.SERVICE_PRINCIPAL }} -p ${{ secrets.SERVICE_PRINCIPAL_SECRET }} --tenant ${{ secrets.TENANT }}
-          
+
           if [[ "${{ github.ref }}" == "refs/tags/"* ]]
           then
 
           # Strip git ref prefix from version
             VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        
+
           # Strip "v" prefix from tag name
             VERSION=$(echo $VERSION | sed -e 's/^v//')
 
@@ -108,4 +108,4 @@ jobs:
             az acr build -r ${ACR_REG} -f Dockerfile -t ${ACR_REPO}/${ACR_IMAGE}:dev https://github.com/${GITHUB_REPOSITORY}.git#${{ github.ref }}
           fi
 
-  
+
