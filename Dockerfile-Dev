@@ -1,21 +1,19 @@
 # ----- Base Java - Check Dependencies ----
 FROM maven:3.6.1-jdk-8 AS base
-ENV APPDIR=/app
-WORKDIR $APPDIR
-ADD pom.xml $APPDIR
+WORKDIR /app
+ADD pom.xml /app
 
 #
 # ----Build App with Dependencies ----
 FROM base AS dependencies
-ADD . $APPDIR
+ADD . /app
 # Running mvn clean package will run all the tests as well as package the app up in the jar form
 RUN mvn clean package -DskipTests
 
 #
 # ---- Release App ----
 FROM  openjdk:8-jre-alpine AS release
-ENV APPDIR=/app
-WORKDIR $APPDIR
+WORKDIR /app
 
 ### install azure cli
 RUN \
@@ -32,8 +30,7 @@ RUN addgroup -g 4120 -S helium && \
 USER helium
 
 # Note: Every time we update helium version, we must update the jar version below
-# Issue is being tracked
-COPY --from=dependencies $APPDIR/target/helium-0.1.0.jar app.jar
+COPY --from=dependencies /app/target/helium-0.1.0.jar app.jar
 
 EXPOSE 4120
 CMD ["java", "-jar", "/app/app.jar"]
