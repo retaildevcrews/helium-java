@@ -105,7 +105,7 @@ mvn spring-boot:stop
 
 # IMPORTANT: In the following steps, you will be using the Dockerfile-Dev to build a developer
 # image, and thus, you MUST make sure that you change the UID of the 'helium' user set via the
-# 'useradd -u <uid>' in the Dockerfile-Dev # to the one that is assigned to you on your host.
+# 'useradd -u <uid>' in the Dockerfile-Dev to the one that is assigned to you on your host.
 # You may use the 'id' command to figure out your user id.
 
 docker build . -t helium-dev -f Dockerfile-Dev
