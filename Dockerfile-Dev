@@ -29,7 +29,8 @@ RUN useradd -u 1000 -U -m -s /bin/bash helium && \
 ### build the final image with all the packages and put the code in there.
 FROM helium-dev-base
 
-RUN apt-get update
+RUN apt-get update && \
+    apt-get upgrade -y
 
 USER helium
 
