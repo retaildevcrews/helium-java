@@ -18,7 +18,7 @@ public interface IKeyVaultService {
   
   Mono<KeyVaultCertificateWithPolicy> getCertificate(String certName);
   
-  List<SecretProperties> listSecretsSync();
+  List<SecretProperties> listSecrets();
 
-  Map<String, String> getSecretsSync();
+  Map<String, String> getSecrets();
 }

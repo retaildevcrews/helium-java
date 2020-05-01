@@ -146,7 +146,7 @@ public class KeyVaultService implements IKeyVaultService {
    * Returns null on error and logs error.
    * Created as a blocking function as app start-up is dependent on success.
    */
-  public List<SecretProperties> listSecretsSync() {
+  public List<SecretProperties> listSecrets() {
     List<SecretProperties> listSecretProps = new ArrayList<SecretProperties>();
     
     Iterator<SecretProperties> secretPropsIterator = secretClient
@@ -164,8 +164,8 @@ public class KeyVaultService implements IKeyVaultService {
    * getSecretsSync.
    * Created as a blocking function as app start-up is dependent on success.
    */
-  public Map<String, String> getSecretsSync() {
-    final List<SecretProperties> secretItems = listSecretsSync();
+  public Map<String, String> getSecrets() {
+    final List<SecretProperties> secretItems = listSecrets();
 
     final Map<String, String> secrets = new ConcurrentHashMap<String, String>();
     try {
