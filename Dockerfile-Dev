@@ -1,29 +1,17 @@
-# ----- Base Java - Check Dependencies ----
-FROM maven:3.6.1-jdk-8 AS base
-WORKDIR /app
-ADD pom.xml /app
-
-#
-# ----Build App with Dependencies ----
-FROM base AS dependencies
-ADD . /app
-# Running mvn clean package will run all the tests as well as package the app up in the jar form
-# skipping the tests as many tests depend on MSI which is not available here
-RUN mvn clean package -DskipTests
-
-#
-# ---- Release App ----
-FROM  ubuntu:latest AS release
-WORKDIR /app
+# ---- build the helium base image ----
+FROM  ubuntu:latest AS helium-dev-base
 
 # set noninteractive installation so install works unattended and does not ask any interactive
 # questions.
 ARG DEBIAN_FRONTEND=noninteractive
 
-### install azure cli and the dev tooling for compiling the project
+### install the ubuntu dev tooling and core utilities needed later
 RUN apt-get update && \
-    apt-get install -y apt-transport-https ca-certificates curl software-properties-common libssl-dev git wget nano lsb-release jq && \
-    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
+    apt-get install -y sudo apt-utils apt-transport-https ca-certificates curl gnupg software-properties-common libssl-dev git wget nano lsb-release jq && \
+    apt-get upgrade -y
+
+# Install Azure Cli
+RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
     CLI_REPO=$(lsb_release -cs) && \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" > /etc/apt/sources.list.d/azure-cli.list && \
     apt-get update && \
@@ -31,21 +19,30 @@ RUN apt-get update && \
     apt-get install -y maven && \
     apt-get install -y azure-cli
 
-# Create a user
-RUN groupadd --gid 4120 helium && \
-    useradd --uid 4120 --gid 4120  helium && \
+# Add the helium user with the default
+RUN useradd -u 1000 -U -m -s /bin/bash helium && \
+    usermod -aG sudo helium && \
+    gpasswd -a helium sudo &&  \
+    echo "helium ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/90-helium-users && \
     mkdir -p /home/helium/.azure
+
+### build the final image with all the packages and put the code in there.
+FROM helium-dev-base
+
+RUN apt-get update
+
+USER helium
+
+# set auth type to use cached CLI credentials
+ENV AUTH_TYPE CLI
+
+#expose the app default port
+EXPOSE 4120
+
+WORKDIR /home/helium/src
 
 # copy the current folder into the /home/helium/src as we run the code as the helium user
 COPY . /home/helium/src
 
 # change the owner of the helium home dir to the helium user so they can edit the home directory
-RUN chown -R helium:helium /home/helium
-
-USER helium
-
-# Note: Every time we update helium version, we must update the jar version below
-COPY --from=dependencies /app/target/helium-0.1.0.jar app.jar
-
-EXPOSE 4120
-CMD ["java", "-jar", "/app/app.jar"]
+RUN sudo chown -R helium:helium /home/helium
