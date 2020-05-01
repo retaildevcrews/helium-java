@@ -112,7 +112,7 @@ docker build . -t helium-dev -f Dockerfile-Dev
 
 # Then run the container.
 
-docker run -p4120:4120 --name helium-dev --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure -it --entrypoint /bin/bash helium-dev:latest
+docker run -p4120:4120 --name helium-dev --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure -it helium-dev:latest
 
 # Note that the dev dockerfile contains a full environment for you to be able to build and run the
 # app. However, it does not contain a prebuilt copy of the application for  you to use immediately.
