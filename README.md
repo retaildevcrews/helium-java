@@ -120,7 +120,7 @@ docker build . -t helium-dev -f Dockerfile-Dev
 docker build . --target helium-dev-base -t helium-dev-base -f Dockerfile-Dev
 
 # Customizing your environment with dotFiles
-# If you want to use git from within the container, you should copy your ~/.gitconfig to dotFiles
+# If you want to use git from within the container, you should copy your ~/.gitconfig to dotFiles folder
 # before building the container. You can also copy your ~/.bashrc file to dotFiles
 # Ensure you don't accidentally copy any credentials or secrets!
 # .gitignore will not commit any files in dotFiles that begin with "."
