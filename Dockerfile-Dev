@@ -45,5 +45,8 @@ WORKDIR /home/helium/src
 # copy the current folder into the /home/helium/src as we run the code as the helium user
 COPY . /home/helium/src
 
+### copy .bashrc and .gitconfig if present
+COPY ./dotFiles /home/helium
+
 # change the owner of the helium home dir to the helium user so they can edit the home directory
 RUN sudo chown -R helium:helium /home/helium
