@@ -64,7 +64,7 @@ az account set -s {subscription name or Id}
 # Make sure you are in the root of the repo
 
 export AUTH_TYPE=CLI
-export KEYVAULT_NAME="YOUR_KEYVAULT_NAME"
+export KEYVAULT_NAME=$He_Name
 
 # This command takes about 3-5 minutes:
 
@@ -112,12 +112,30 @@ mvn spring-boot:stop
 
 docker build . -t helium-dev -f Dockerfile-Dev
 
+
+# We use a multi-stage docker build as installing the prerequisites and Azure CLI takes a while
+# If you want to build a "permanent cache" of the first stage (so that "docker system prune"
+# doesn't delete it), you can run this command first
+
+docker build . --target helium-dev-base -t helium-dev-base -f Dockerfile-Dev
+
+# Customizing your environment with dotFiles
+# If you want to use git from within the container, you should copy your ~/.gitconfig to dotFiles
+# before building the container. You can also copy your ~/.bashrc file to dotFiles
+# Ensure you don't accidentally copy any credentials or secrets!
+# .gitignore will not commit any files in dotFiles that begin with "."
+# update .gitignore for any other files to exclude
+
 # Then run the container with the following command. Note that the -v argument below specifies
 # that the $HOME/.azure should be mounted in the /home/helium/.azure in the container. This
 # is done so that any stored azure credentials created and cached by (az login) from the  host OS
 # will be used to access the keyvault specified using the cmd line argument KEYVAULT_NAME.
+# Additionally, mounting the volume (with the -v option) prevents your Azure credentials from
+# accidentally getting pushed to a repo
 
-docker run -p 4120:4120 --name helium-dev --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure -it helium-dev:latest
+docker run -p 4120:4120 --name helium-dev \
+--env KEYVAULT_NAME=$He_Name  \
+-v ~/.azure:/home/helium/.azure -it helium-dev:latest
 
 # Note that the dev dockerfile contains a full environment for you to be able to build and run the
 # app. However, it does not contain a prebuilt copy of the application for  you to use immediately.
