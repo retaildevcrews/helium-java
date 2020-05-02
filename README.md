@@ -113,25 +113,25 @@ mvn spring-boot:stop
 docker build . -t helium-dev -f Dockerfile-Dev
 
 
-# We use a multi-stage docker build as installing the prerequisites and Azure CLI takes a while
+# We use a multi-stage docker build as installing the prerequisites and Azure CLI takes a while.
 # If you want to build a "permanent cache" of the first stage (so that "docker system prune"
-# doesn't delete it), you can run this command first
+# doesn't delete it), you can run this command first:
 
 docker build . --target helium-dev-base -t helium-dev-base -f Dockerfile-Dev
 
 # Customizing your environment with dotFiles
 # If you want to use git from within the container, you should copy your ~/.gitconfig to dotFiles folder
-# before building the container. You can also copy your ~/.bashrc file to dotFiles
+# before building the container. You can also copy your ~/.bashrc file to dotFiles to keep your aliases and exports.
 # Ensure you don't accidentally copy any credentials or secrets!
 # .gitignore will not commit any files in dotFiles that begin with "."
-# update .gitignore for any other files to exclude
+# update .gitignore for any other files to exclude.
 
-# Then run the container with the following command. Note that the -v argument below specifies
-# that the $HOME/.azure should be mounted in the /home/helium/.azure in the container. This
+# Then run the container with the command specified below. Note that the -v argument below specifies
+# that the Host OS $HOME/.azure should be mounted in the /home/helium/.azure in the container. This
 # is done so that any stored azure credentials created and cached by (az login) from the  host OS
 # will be used to access the keyvault specified using the cmd line argument KEYVAULT_NAME.
 # Additionally, mounting the volume (with the -v option) prevents your Azure credentials from
-# accidentally getting pushed to a repo
+# accidentally getting pushed to a repo.
 
 docker run -p 4120:4120 --name helium-dev \
 --env KEYVAULT_NAME=$He_Name  \
@@ -140,21 +140,21 @@ docker run -p 4120:4120 --name helium-dev \
 # Note that the dev dockerfile contains a full environment for you to be able to build and run the
 # app. However, it does not contain a prebuilt copy of the application for  you to use immediately.
 # You will need to use the bash terminal spawned from the docker command above  to build and run
-# the app as follows
+# the app as follows:
 
 mvn clean package
 mvn spring-boot:run
 
 # In a different terminal than the one spawned above, check the logs to ensure the container
-# is properly running and wait until the application started message appears
+# is properly running and wait until the application started message appears.
 
 docker logs helium-dev
 
 # test the application
-# the application takes about 10 seconds to start and you may have to run the below command more than once
+# the application takes about 10 seconds to start and you may have to run the below command more than once.
 curl http://localhost:4120/healthz
 
-# Clean up  - stop and remove the container
+# Clean up  - stop and remove the container.
 docker stop helium-dev
 docker rm helium-dev
 
