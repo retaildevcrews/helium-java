@@ -104,15 +104,20 @@ mvn spring-boot:stop
 # build the image
 
 # IMPORTANT: In the following steps, you will be using the Dockerfile-Dev to build a developer
-# image, and thus, you MUST make sure that you change the UID of the 'helium' user set via the
-# 'useradd -u <uid>' in the Dockerfile-Dev to the one that is assigned to you on your host.
-# You may use the 'id' command to figure out your user id.
+# image, and thus, you MUST make sure that you change the USER ID (UID) and GROUP ID (GID) of the
+# 'helium' user set via the'useradd -u <uid>' in the Dockerfile-Dev to the one that is assigned
+# to you on your host. The Dockerfile-Dev sets default values of UID=1000 and GID=1000 for the
+# helium user. On a single user system, in general you would have the same IDs but kindly
+# verify using the 'id' command that this is the case or change appropriately.
 
 docker build . -t helium-dev -f Dockerfile-Dev
 
-# Then run the container.
+# Then run the container with the following command. Note that the -v argument below specifies
+# that the $HOME/.azure should be mounted in the /home/helium/.azure in the container. This
+# is done so that any stored azure credentials created and cached by (az login) from the  host OS
+# will be used to access the keyvault specified using the cmd line argument KEYVAULT_NAME.
 
-docker run -p4120:4120 --name helium-dev --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure -it helium-dev:latest
+docker run -p 4120:4120 --name helium-dev --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure -it helium-dev:latest
 
 # Note that the dev dockerfile contains a full environment for you to be able to build and run the
 # app. However, it does not contain a prebuilt copy of the application for  you to use immediately.
