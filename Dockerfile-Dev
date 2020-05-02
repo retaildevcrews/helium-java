@@ -29,6 +29,9 @@ RUN useradd -u 1000 -U -m -s /bin/bash helium && \
 ### build the final image with all the packages and put the code in there.
 FROM helium-dev-base
 
+# We are re-running the update and upgrade in the second stage in case any packages in the
+# helium-dev-base image created in an earlier stage have drifted. We can update these packages
+# without rebuilding the helium-dev-base image
 RUN apt-get update && \
     apt-get upgrade -y
 
