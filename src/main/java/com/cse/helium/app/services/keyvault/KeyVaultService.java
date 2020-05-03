@@ -92,7 +92,7 @@ public class KeyVaultService implements IKeyVaultService {
     secretAsyncClient = new SecretClientBuilder()
         .vaultUrl(getKeyVaultUri())
         .credential(credential)
-        .httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.BODY_AND_HEADERS))
+        .httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.NONE))
         .buildAsyncClient();
 
     //build key client
