@@ -137,7 +137,7 @@ public class CommonUtils {
           environmentReader.setAuthType(commandLinePropertySource.getProperty(s));
         } else if (s.equals("keyvault-name")) {
           environmentReader.setKeyVaultName(commandLinePropertySource.getProperty(s));
-        } else if (s.equals("h")) {
+        } else if (s.equals("help")) {
           CommonUtils.printCmdLineHelp();
           System.exit(0);
         }
@@ -151,7 +151,7 @@ public class CommonUtils {
   public static void printCmdLineHelp() {
     System.out.println("\r\nUsage:\r\n"
         + "   mvn clean spring-boot:run \r\n "
-        + "\t-Dspring-boot.run.arguments=\" --h \r\n"
+        + "\t-Dspring-boot.run.arguments=\" --help \r\n"
         + "\t\t--auth-type=<CLI|MSI|VS>\r\n"
         + "\t\t--keyvault-name=<keyVaultName>\r\n"
         + "\t\t--dry-run\r\n"
