@@ -34,7 +34,7 @@ public class ConfigurationService implements IConfigurationService {
       }
 
       keyVaultService = kvService;
-      Map<String, String> secrets = keyVaultService.getSecretsSync();
+      Map<String, String> secrets = keyVaultService.getSecrets();
       logger.info("Secrets are " + (secrets == null ? "NULL" : "NOT NULL"));
       configEntries = secrets;
 
