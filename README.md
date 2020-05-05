@@ -21,7 +21,7 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
   - Will not work in WSL1
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
-- Java 8 above ([download](https://www.java.com/en/download/manual.jsp/)) 
+- Java 8 above ([download](https://www.java.com/en/download/manual.jsp/))
 - JQ ([download](https://stedolan.github.io/jq/download/))
 - Maven ([download](https://maven.apache.org/download.cgi))
 - Completion of the Key Vault, ACR, Azure Monitor and Cosmos DB setup in the Helium [readme](https://github.com/retaildevcrews/helium)
@@ -64,15 +64,15 @@ az account set -s {subscription name or Id}
 # Make sure you are in the root of the repo
 
 export AUTH_TYPE=CLI
-export KEYVAULT_NAME="YOUR_KEYVAULT_NAME"
+export KEYVAULT_NAME=$He_Name
 
 # This command takes about 3-5 minutes:
 
-mvn clean package 
+mvn clean package
 
 mvn spring-boot:run
 
-# When the previous command shows 'Netty started on port(s): 4120' 
+# When the previous command shows 'Netty started on port(s): 4120'
 # test the application (takes about 10 seconds to start) in a new window
 
 curl http://localhost:4120/healthz
@@ -91,11 +91,11 @@ mvn spring-boot:stop
 # Make sure you are in the root of the repo
 # Run the command below to stop the previous instance and free up port 4120:
 
-mvn spring-boot:stop 
+mvn spring-boot:stop
 
 # You can also hit Ctrl-C from the shell window
 
-# Build the image and run the container using Docker 
+# Build the image and run the container using Docker
 
 # make sure you are in the root of the repo
 
@@ -103,22 +103,62 @@ mvn spring-boot:stop
 
 # build the image
 
-docker build -t helium-dev .
+# IMPORTANT: In the following steps, you will be using the Dockerfile-Dev to build a developer
+# image, and thus, you MUST make sure that you change the USER ID (UID) and GROUP ID (GID) of the
+# 'helium' user set via the'useradd -u <uid>' in the Dockerfile-Dev to the one that is assigned
+# to you on your host. The Dockerfile-Dev sets default values of UID=1000 and GID=1000 for the
+# helium user. On a single user system, in general you would have the same IDs but kindly
+# verify using the 'id' command that this is the case or change appropriately.
 
-# Then run the container.  
+docker build . -t helium-dev -f Dockerfile-Dev
 
-docker run -p4120:4120 --name helium-dev --env AUTH_TYPE=CLI --env KEYVAULT_NAME=$KEYVAULT_NAME -v ~/.azure:/home/helium/.azure helium-dev:latest
 
-# Check the logs to ensure the container is properly running
-# Re-run until the application started message appears
+# We use a multi-stage docker build as installing the prerequisites and Azure CLI takes a while.
+# If you want to build a "permanent cache" of the first stage (so that "docker system prune"
+# doesn't delete it), you can run this command first:
+
+docker build . --target helium-dev-base -t helium-dev-base -f Dockerfile-Dev
+
+# Note that as part of building the dev container, we copy the source code into the
+# /home/helium/helium-java as we run the code as the helium user and so the developer has
+# access to the source within the container to experiment with.
+
+# Customizing your environment with dotFiles
+# If you want to use git from within the container, you should copy your ~/.gitconfig to dotFiles folder
+# before building the container. You can also copy your ~/.bashrc file to dotFiles to keep your aliases and exports.
+# Ensure you don't accidentally copy any credentials or secrets!
+# .gitignore will not commit any files in dotFiles that begin with "."
+# update .gitignore for any other files to exclude.
+
+# Then run the container with the command specified below. Note that the -v argument below specifies
+# that the Host OS $HOME/.azure should be mounted in the /home/helium/.azure in the container. This
+# is done so that any stored azure credentials created and cached by (az login) from the  host OS
+# will be used to access the keyvault specified using the cmd line argument KEYVAULT_NAME.
+# Additionally, mounting the volume (with the -v option) prevents your Azure credentials from
+# accidentally getting pushed to a repo.
+
+docker run -p 4120:4120 --name helium-dev \
+--env KEYVAULT_NAME=$He_Name  \
+-v ~/.azure:/home/helium/.azure -it helium-dev:latest
+
+# Note that the dev dockerfile contains a full environment for you to be able to build and run the
+# app. However, it does not contain a prebuilt copy of the application for  you to use immediately.
+# You will need to use the bash terminal spawned from the docker command above  to build and run
+# the app as follows:
+
+mvn clean package
+mvn spring-boot:run
+
+# In a different terminal than the one spawned above, check the logs to ensure the container
+# is properly running and wait until the application started message appears.
 
 docker logs helium-dev
 
 # test the application
-# the application takes about 10 seconds to start and you may have to run the below command more than once
+# the application takes about 10 seconds to start and you may have to run the below command more than once.
 curl http://localhost:4120/healthz
 
-# Clean up  - stop and remove the container
+# Clean up  - stop and remove the container.
 docker stop helium-dev
 docker rm helium-dev
 
