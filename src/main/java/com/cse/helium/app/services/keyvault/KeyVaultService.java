@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -36,9 +37,7 @@ public class KeyVaultService implements IKeyVaultService {
   private CertificateAsyncClient certificateAsyncClient;
   private DefaultAzureCredential credential; 
 
-
   private static final Logger logger =   LogManager.getLogger(KeyVaultService.class);
-
 
   /**
    * KeyVaultService.
@@ -51,6 +50,9 @@ public class KeyVaultService implements IKeyVaultService {
     this.authType = environmentReader.getAuthType();
     logger.info("Auth type is " + this.authType);
 
+    HttpLogDetailLevel logDetailLevel = getKvLogDetailLevel();
+
+    //build credential based on authType flag
     if (this.authType.equals(Constants.USE_MSI)) {
       credential = new DefaultAzureCredentialBuilder()
           .excludeEnvironmentCredential()
@@ -83,7 +85,7 @@ public class KeyVaultService implements IKeyVaultService {
       .build();
     }
 
-    //build secret clients
+    //build KeyVault clients
     secretClient = new SecretClientBuilder()
         .vaultUrl(getKeyVaultUri())
         .credential(credential)
@@ -92,7 +94,7 @@ public class KeyVaultService implements IKeyVaultService {
     secretAsyncClient = new SecretClientBuilder()
         .vaultUrl(getKeyVaultUri())
         .credential(credential)
-        .httpLogOptions(new HttpLogOptions().setLogLevel(HttpLogDetailLevel.NONE))
+        .httpLogOptions(new HttpLogOptions().setLogLevel(logDetailLevel))
         .buildAsyncClient();
 
     //build key client
@@ -108,6 +110,25 @@ public class KeyVaultService implements IKeyVaultService {
     .buildAsyncClient();
   }
 
+  private HttpLogDetailLevel getKvLogDetailLevel() {
+    
+    Level currentLogLevel = logger.getLevel();
+    HttpLogDetailLevel returnLevel = HttpLogDetailLevel.NONE;
+
+    if (currentLogLevel == Level.TRACE 
+        || currentLogLevel == Level.DEBUG 
+        || currentLogLevel == Level.INFO) {
+
+      returnLevel = HttpLogDetailLevel.HEADERS;
+    } else if (currentLogLevel == Level.WARN 
+          || currentLogLevel == Level.ERROR
+          || currentLogLevel == Level.FATAL) {
+
+      returnLevel = HttpLogDetailLevel.BASIC;
+    }
+
+    return returnLevel;
+  }
 
   /**
    * getKeyVaultUri.
