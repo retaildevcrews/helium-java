@@ -119,6 +119,10 @@ docker build . -t helium-dev -f Dockerfile-Dev
 
 docker build . --target helium-dev-base -t helium-dev-base -f Dockerfile-Dev
 
+# Note that as part of building the dev container, we copy the source code into the
+# /home/helium/helium-java as we run the code as the helium user and so the developer has
+# access to the source within the container to experiment with.
+
 # Customizing your environment with dotFiles
 # If you want to use git from within the container, you should copy your ~/.gitconfig to dotFiles folder
 # before building the container. You can also copy your ~/.bashrc file to dotFiles to keep your aliases and exports.

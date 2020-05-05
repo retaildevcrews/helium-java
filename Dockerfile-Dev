@@ -10,14 +10,15 @@ RUN apt-get update && \
     apt-get install -y sudo apt-utils apt-transport-https ca-certificates curl gnupg software-properties-common libssl-dev git wget nano lsb-release jq && \
     apt-get upgrade -y
 
-# Install Azure Cli
+# Install Azure Cli, OpenJDK-8 and maven
 RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.asc.gpg && \
     CLI_REPO=$(lsb_release -cs) && \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" > /etc/apt/sources.list.d/azure-cli.list && \
     apt-get update && \
+    apt-get install -y azure-cli && \
     apt-get install -y openjdk-8-jdk && \
-    apt-get install -y maven && \
-    apt-get install -y azure-cli
+    apt-get install -y maven
+
 
 # Add the helium user with the default
 RUN useradd -u 1000 -U -m -s /bin/bash helium && \
@@ -29,12 +30,6 @@ RUN useradd -u 1000 -U -m -s /bin/bash helium && \
 ### build the final image with all the packages and put the code in there.
 FROM helium-dev-base
 
-# We are re-running the update and upgrade in the second stage in case any packages in the
-# helium-dev-base image created in an earlier stage have drifted. We can update these packages
-# without rebuilding the helium-dev-base image
-RUN apt-get update && \
-    apt-get upgrade -y
-
 USER helium
 
 # set auth type to use cached CLI credentials
@@ -43,10 +38,9 @@ ENV AUTH_TYPE CLI
 #expose the app default port
 EXPOSE 4120
 
-WORKDIR /home/helium/src
+WORKDIR /home/helium/helium-java
 
-# copy the current folder into the /home/helium/src as we run the code as the helium user
-COPY . /home/helium/src
+COPY . /home/helium/helium-java
 
 ### copy .bashrc and .gitconfig if present
 COPY ./dotFiles /home/helium
