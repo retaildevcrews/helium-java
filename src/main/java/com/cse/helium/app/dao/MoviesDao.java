@@ -2,13 +2,15 @@ package com.cse.helium.app.dao;
 
 import static com.microsoft.azure.spring.data.cosmosdb.exception.CosmosDBExceptionUtils.findAPIExceptionHandler;
 
+import com.azure.data.cosmos.SqlParameter;
+import com.azure.data.cosmos.SqlParameterList;
+import com.azure.data.cosmos.SqlQuerySpec;
+import com.cse.helium.app.Constants;
 import com.cse.helium.app.models.Movie;
 import com.cse.helium.app.services.configuration.IConfigurationService;
 import com.cse.helium.app.utils.CommonUtils;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -16,18 +18,17 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class MoviesDao extends BaseCosmosDbDao implements IDao {
-  private static final Logger logger =   LogManager.getLogger(MoviesDao.class);
 
   @Autowired CommonUtils utils;
   @Autowired GenresDao genresDao;
 
   private static String movieSelect =
       "select m.id, m.partitionKey, m.movieId, m.type, m.textSearch, m.title, m.year, m.runtime,"
-          + "m.rating, m.votes, m.totalScore, m.genres, m.roles from m where m.type = 'Movie'  ";
+          + "m.rating, m.votes, m.totalScore, m.genres, m.roles from m where m.type = @type  ";
 
-  private static String movieContains = "and contains(m.textSearch, \"%s\") ";
+  private static String movieContains = "and contains(m.textSearch, @query) ";
   private static String movieOrderBy = " order by m.textSearch, m.movieId ";
-  private static String movieOffset = " offset %d limit %d ";
+  private static String movieOffset = " offset @offset limit @limit ";
 
   /** MoviesDao. */
   public MoviesDao(IConfigurationService configService) {
@@ -42,99 +43,120 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
             .read()
             .flatMap(
                 cosmosItemResponse -> {
-                  return Mono.justOrEmpty(cosmosItemResponse.properties()
-                      .toObject(Movie.class));
+                  return Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Movie.class));
                 })
-            .onErrorResume(throwable ->
-                findAPIExceptionHandler("Failed to find item", throwable));
+            .onErrorResume(throwable -> findAPIExceptionHandler("Failed to find item", throwable));
     return movie;
   }
 
   /**
-  * This method is responsible for checking for expected values in the queryParams dictionary
-  * validating them, building the query, and then passing to the base getAll() implementation.
-  *
-  * @param queryParams dictionary my contain "q", "year", "ratingSelect", and "actorSelect"
-  * @param pageNumber used to specify which page of the paginated results to return
-  * @param pageSize used to specify the number of results per page
-  * @return Flux/<T/> is returned to contains results for the specific entity type
-  */
+   * This method is responsible for checking for expected values in the queryParams dictionary
+   * validating them, building the query, and then passing to the base getAll() implementation.
+   *
+   * @param queryParams dictionary my contain "q", "year", "ratingSelect", and "actorSelect"
+   * @param pageNumber used to specify which page of the paginated results to return
+   * @param pageSize used to specify the number of results per page
+   * @return Flux/<T/> is returned to contains results for the specific entity type
+   */
   public Flux<?> getAll(Map<String, Object> queryParams, Integer pageNumber, Integer pageSize) {
+
     StringBuilder formedQuery = new StringBuilder(movieSelect);
 
+    final String movieDocumentType = Constants.MOVIE_DOCUMENT_TYPE;
 
-    String contains = "";
+    final SqlQuerySpec movieQuerySpec = new SqlQuerySpec();
+
+    SqlParameterList parameterList = new SqlParameterList();
+    parameterList.add(new SqlParameter("@type", movieDocumentType));
+    parameterList.add(new SqlParameter("@offset", pageNumber));
+    parameterList.add(new SqlParameter("@limit", pageSize));
+
+
     if (queryParams.containsKey("q")) {
-      contains = String.format(movieContains, queryParams.get("q"));
-      formedQuery.append(contains);
+      String query = queryParams.get("q").toString();
+      formedQuery.append(movieContains);
+      parameterList.add(new SqlParameter("@query", query));
     }
 
-    String yearSelect = "";
+
     if (queryParams.containsKey("year")) {
       Integer year = (Integer) queryParams.get("year");
       if (year > 0) {
-        yearSelect = " and m.year = " + year;
-        formedQuery.append(yearSelect);
+        formedQuery.append(" and m.year = @year");
+        parameterList.add(new SqlParameter("@year", year));
       }
     }
 
-    String ratingSelect = "";
     if (queryParams.containsKey("ratingSelect")) {
       Double rating = (Double) queryParams.get("ratingSelect");
       if (rating > 0.0) {
-        ratingSelect = " and m.rating >= " + rating;
-        formedQuery.append(ratingSelect);
+        formedQuery.append(" and m.rating >= @rating");
+        parameterList.add(new SqlParameter("@rating", rating));
       }
     }
 
-    String actorSelect = "";
     if (queryParams.containsKey("actorSelect")) {
       String actorId = queryParams.get("actorSelect").toString();
       if (!StringUtils.isEmpty(actorId)) {
-        actorSelect = " and array_contains(m.roles, { actorId: '" + actorId + "' }, true) ";
-        formedQuery.append(actorSelect);
+        formedQuery.append(" and array_contains(m.roles, { actorId: @actorId }, true) ");
+        parameterList.add(new SqlParameter("@actorId", actorId));
       }
     }
 
-    //special genre call to support webflux chain
+    // special genre call to support webflux chain
     if (queryParams.containsKey("genre")) {
       String genre = queryParams.get("genre").toString();
       if (!StringUtils.isEmpty(genre)) {
-        return filterByGenre(genre, formedQuery.toString(), pageNumber, pageSize);
+        return filterByGenre(genre, formedQuery, parameterList);
       }
     }
 
-    String moviesQuery =
-        formedQuery
-            .append(movieOrderBy)
-            .append(String.format(movieOffset, pageNumber, pageSize))
-            .toString();
+    formedQuery.append(movieOrderBy).append(movieOffset);
 
-    logger.info("Movies query = " + moviesQuery);
+    movieQuerySpec.queryText(formedQuery.toString());
+    movieQuerySpec.parameters(parameterList);
 
-    Flux<Movie> queryResult = super.getAll(Movie.class, moviesQuery);
+    Flux<Movie> queryResult = super.getAll(Movie.class, movieQuerySpec);
     return queryResult;
   }
 
   /** filterByGenre. */
-  public Flux<Movie> filterByGenre(String genreKey, String query, Integer pageNumber,
-                                   Integer pageSize) {
-    return
-        genresDao
-            .getGenreByKey(genreKey)
-            .collectList()
-            .flatMapMany(selectedGenre -> {
-              String genreSelect = " and array_contains(m.genres,'" + selectedGenre.get(0) + "')";
-              StringBuilder movieQuery =
-                  new StringBuilder(query)
-                      .append(genreSelect)
-                      .append(movieOrderBy)
-                      .append(String.format(movieOffset, pageNumber, pageSize));
+  public Flux<Movie> filterByGenre(
+      String genreKey, StringBuilder formedQuery, SqlParameterList parameterList) {
+    return genresDao
+        .getGenreByKey(genreKey)
+        .collectList()
+        .flatMapMany(
+            selectedGenre -> {
+              formedQuery.append(" and array_contains(m.genres, @selectedGenre) ");
+              parameterList.add(new SqlParameter("@selectedGenre", selectedGenre.get(0)));
+              formedQuery.append(movieOrderBy).append(movieOffset);
 
-              logger.info("Movies query = " + movieQuery.toString());
+              final SqlQuerySpec genreQuerySpec = new SqlQuerySpec();
 
-              return super.getAll(Movie.class, movieQuery.toString());
+              genreQuerySpec.queryText(formedQuery.toString());
+              genreQuerySpec.parameters(parameterList);
+
+              return super.getAll(Movie.class, genreQuerySpec);
             });
   }
-
 }
+
+/*
+return
+    genresDao
+    .getGenreByKey(genreKey)
+    .collectList()
+    .flatMapMany(selectedGenre -> {
+    String genreSelect = " and array_contains(m.genres,'" + selectedGenre.get(0) + "')";
+    StringBuilder movieQuery =
+    new StringBuilder(query)
+    .append(genreSelect)
+    .append(movieOrderBy)
+    .append(String.format(movieOffset, pageNumber, pageSize));
+
+    logger.info("Movies query = " + movieQuery.toString());
+
+    return super.getAll(Movie.class, movieQuery.toString());
+    });
+*/
