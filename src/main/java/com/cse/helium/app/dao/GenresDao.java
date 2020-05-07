@@ -56,13 +56,11 @@ public class GenresDao extends BaseCosmosDbDao {
 
   /** getGenreByKey. */
   public Flux<String> getGenreByKey(String genreKey) {
-    String documentType = Constants.GENRE_DOCUMENT_TYPE;
-
     SqlQuerySpec sqsGenreQueryById =
         new SqlQuerySpec(
             genreQueryById,
             new SqlParameterList(
-                new SqlParameter("@id", documentType),
+                new SqlParameter("@id", Constants.GENRE_DOCUMENT_TYPE),
                 new SqlParameter("@type", genreKey.toLowerCase())));
 
     Flux<String> genreFlux =

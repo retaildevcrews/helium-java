@@ -62,12 +62,10 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
     StringBuilder formedQuery = new StringBuilder(movieSelect);
 
-    final String movieDocumentType = Constants.MOVIE_DOCUMENT_TYPE;
-
     final SqlQuerySpec movieQuerySpec = new SqlQuerySpec();
 
     SqlParameterList parameterList = new SqlParameterList();
-    parameterList.add(new SqlParameter("@type", movieDocumentType));
+    parameterList.add(new SqlParameter("@type", Constants.MOVIE_DOCUMENT_TYPE));
     parameterList.add(new SqlParameter("@offset", pageNumber));
     parameterList.add(new SqlParameter("@limit", pageSize));
 

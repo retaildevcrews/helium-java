@@ -68,11 +68,9 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
       query = queryParams.get("q").toString();
     }
 
-    final String actorDocumentType = Constants.ACTOR_DOCUMENT_TYPE;
     final SqlQuerySpec actorQuerySpec = new SqlQuerySpec();
-
     SqlParameterList parameterList = new SqlParameterList();
-    parameterList.add(new SqlParameter("@type", actorDocumentType));
+    parameterList.add(new SqlParameter("@type", Constants.ACTOR_DOCUMENT_TYPE));
     parameterList.add(new SqlParameter("@offset", pageNumber));
     parameterList.add(new SqlParameter("@limit", pageSize));
 
