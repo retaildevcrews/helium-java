@@ -5,6 +5,7 @@ import com.azure.data.cosmos.CosmosContainer;
 import com.azure.data.cosmos.CosmosItemProperties;
 import com.azure.data.cosmos.FeedOptions;
 import com.azure.data.cosmos.FeedResponse;
+import com.azure.data.cosmos.SqlQuerySpec;
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.services.configuration.IConfigurationService;
 import com.cse.helium.app.utils.CommonUtils;
@@ -56,15 +57,14 @@ public class BaseCosmosDbDao {
    * in query.
    *
    * @param classType used for the object mapper to map results into object
-   * @param query is passed in from the specific data access object and used to fetch matching
-   *     records
+   * @param sqlQuerySpec is passed in from the specific data access object and used to fetch
+   *     matching records
    * @return Flux/<T/> is returned to contains results for the specific entity type
    */
-  public <T> Flux<T> getAll(Class<T> classType, String query) {
+  public <T> Flux<T> getAll(Class<T> classType, SqlQuerySpec sqlQuerySpec) {
     ObjectMapper objMapper = ObjectMapperFactory.getObjectMapper();
-
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
-        getContainer().queryItems(query, this.feedOptions);
+        getContainer().queryItems(sqlQuerySpec, this.feedOptions);
 
     Flux<T> selectedItems =
         (Flux<T>)
