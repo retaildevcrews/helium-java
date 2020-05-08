@@ -33,7 +33,7 @@ public class CosmosDbConfig extends AbstractCosmosConfiguration {
   public CosmosDbConfig(IConfigurationService configService) {
     configurationService = configService;
 
-    requestOptions.setConsistencyLevel(ConsistencyLevel.CONSISTENT_PREFIX);
+    requestOptions.setConsistencyLevel(ConsistencyLevel.SESSION);
     requestOptions.setScriptLoggingEnabled(true);
   }
 
