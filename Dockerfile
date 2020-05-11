@@ -26,7 +26,7 @@ RUN addgroup -g 4120 -S helium && \
     adduser -u 4120 -S helium -G helium
 USER helium
 
-COPY --from=dependencies /app/target/helium-0.1.0.jar app.jar
+COPY --from=dependencies /app/target/helium.jar app.jar
 COPY --from=dependencies /app/applicationinsights-agent-3.0.0-PREVIEW.2.jar applicationinsights-agent-3.0.0-PREVIEW.2.jar
 EXPOSE 4120
 CMD ["java", "-javaagent:/app/applicationinsights-agent-3.0.0-PREVIEW.2.jar", "-jar", "/app/app.jar"]
