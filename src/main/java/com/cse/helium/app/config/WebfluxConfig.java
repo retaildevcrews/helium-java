@@ -13,8 +13,8 @@ public class WebfluxConfig implements WebFluxConfigurer {
         .addResourceLocations("classpath:/META-INF/resources/webjars/");
     registry.addResourceHandler("/swagger-ui.html**")
         .addResourceLocations("classpath:/static/");
-    registry.addResourceHandler("/helium.json**")
-        .addResourceLocations("classpath:/static/");
+    registry.addResourceHandler("/swagger/helium.json**")
+        .addResourceLocations("classpath:/static/swagger/");
 
   }
 }
