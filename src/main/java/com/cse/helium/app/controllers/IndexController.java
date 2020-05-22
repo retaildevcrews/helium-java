@@ -7,6 +7,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,7 @@ public class IndexController {
     InputStreamResource inputStreamResource = new InputStreamResource(resource.getInputStream());
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentLength(resource.getInputStream().available());
+    httpHeaders.setContentType(MediaType.TEXT_HTML);
     return new ResponseEntity(inputStreamResource, httpHeaders, HttpStatus.OK);
   }
 }
