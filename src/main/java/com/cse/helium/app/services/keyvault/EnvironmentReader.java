@@ -76,8 +76,6 @@ public class EnvironmentReader implements IEnvironmentReader {
 
     // If it is not set, use the MSI
     if (authType == null) {
-      // TODO: changing this temporarily to force using app svc msi if
-      // auth type is not set
       logger.info("Auth type is null, defaulting to MSI APP SVC");
       return Constants.USE_MSI_APPSVC;
       //return Constants.USE_MSI;
