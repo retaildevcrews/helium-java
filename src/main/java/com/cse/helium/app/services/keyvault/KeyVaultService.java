@@ -16,6 +16,8 @@ import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.azure.security.keyvault.secrets.models.SecretProperties;
 import com.cse.helium.app.Constants;
+import com.cse.helium.app.error.HeliumException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -43,12 +45,18 @@ public class KeyVaultService implements IKeyVaultService {
    * KeyVaultService.
    */
   public KeyVaultService(IEnvironmentReader environmentReader)
-      throws Exception {
+      throws HeliumException {
 
     this.keyVaultName = environmentReader.getKeyVaultName();
-    logger.info("KeyVaultName is " + this.keyVaultName);
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("KeyVaultName is {0}", this.keyVaultName));
+    }
+
     this.authType = environmentReader.getAuthType();
-    logger.info("Auth type is " + this.authType);
+
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("Auth type is {0}", this.authType));
+    }
 
     HttpLogDetailLevel logDetailLevel = getKvLogDetailLevel();
 
@@ -74,7 +82,7 @@ public class KeyVaultService implements IKeyVaultService {
         .build();
       } catch (final Exception ex) {
         logger.error(ex.getMessage());
-        throw ex;
+        throw new HeliumException(ex.getMessage());
       }
     } else {
       this.authType = Constants.USE_MSI;
@@ -143,7 +151,9 @@ public class KeyVaultService implements IKeyVaultService {
         kvUri = "https://" + keyVaultName + ".vault.azure.net";
       }
     }
-    logger.info("KeyVaultUrl is " + kvUri);
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("KeyVaultUrl is {0}", kvUri));
+    }
     return kvUri;
   }
 
@@ -151,12 +161,16 @@ public class KeyVaultService implements IKeyVaultService {
    * getSecret.
    */
   public Mono<String> getSecretValue(final String secretName) {
-    logger.info("Secrets in getSecret are " + (secretName == null ? "NULL" : "NOT NULL"));
+    
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("Secrets in getSecret are {0}", 
+          secretName == null ? "NULL" : "NOT NULL"));
+    }
+
     return  getSecret(secretName)
-      .map(keyVaultSecret -> {
-        return keyVaultSecret.getValue();
-      }); 
+      .map(keyVaultSecret -> keyVaultSecret.getValue());
   }
+
 
   public Mono<KeyVaultSecret> getSecret(final String secretName) {
     return  secretAsyncClient.getSecret(secretName);
@@ -168,15 +182,14 @@ public class KeyVaultService implements IKeyVaultService {
    * Created as a blocking function as app start-up is dependent on success.
    */
   public List<SecretProperties> listSecrets() {
-    List<SecretProperties> listSecretProps = new ArrayList<SecretProperties>();
+    List<SecretProperties> listSecretProps = new ArrayList<>();
     
     Iterator<SecretProperties> secretPropsIterator = secretClient
         .listPropertiesOfSecrets()
         .iterator();
         
-    secretPropsIterator.forEachRemaining(secretProps -> {
-      listSecretProps.add(secretProps);
-    });
+    secretPropsIterator.forEachRemaining(secretProps -> 
+        listSecretProps.add(secretProps));
 
     return listSecretProps;
   }
@@ -188,13 +201,16 @@ public class KeyVaultService implements IKeyVaultService {
   public Map<String, String> getSecrets() {
     final List<SecretProperties> secretItems = listSecrets();
 
-    final Map<String, String> secrets = new ConcurrentHashMap<String, String>();
+    final Map<String, String> secrets = new ConcurrentHashMap<>();
     try {
       secretItems.forEach(item -> {
         final String itemName = item.getName();
         final String secretValue = getSecretValue(itemName).block();
-        logger.info("lengths of secretItem name and value are " + itemName.length()
-            + " " + secretValue.length());
+        if (logger.isInfoEnabled()) {
+          logger.info(MessageFormat.format("lengths of secretItem name and value are {0} {1}",
+              itemName.length(),
+              secretValue.length()));
+        }
         secrets.put(itemName, secretValue);
       });
     } catch (Exception ex) {
