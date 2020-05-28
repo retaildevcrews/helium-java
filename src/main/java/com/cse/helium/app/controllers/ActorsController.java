@@ -54,7 +54,7 @@ public class ActorsController extends Controller {
           .doOnSuccess(value -> logger.info("!!!!! completed actorsDao call!!!!"))
           .map(savedActor -> ResponseEntity.ok(savedActor))
           .switchIfEmpty(Mono.defer(() ->
-            Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor not found"))));
+            Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor Not Found"))));
     } else {
       logger.error("Invalid Actor ID parameter " + actorId);
 

@@ -23,15 +23,17 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+
 /** MovieController. */
 @RestController
 @RequestMapping(path = "/api/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Movies")
 public class MoviesController extends Controller {
+
   @Autowired MoviesDao moviesDao;
   @Autowired ParameterValidator validator;
 
-  private static final Logger logger =   LogManager.getLogger(MoviesController.class);
+  private static final Logger logger = LogManager.getLogger(MoviesController.class);
 
   /** getMovie. */
   @RequestMapping(
@@ -49,13 +51,16 @@ public class MoviesController extends Controller {
       return moviesDao
           .getMovieById(movieId)
           .map(savedMovie -> ResponseEntity.ok(savedMovie))
-          .switchIfEmpty(Mono.defer(() ->
-            Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"))));
+          .switchIfEmpty(
+              Mono.defer(
+                  () ->
+                      Mono.error(
+                          new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie Not Found"))));
     } else {
-      logger.error("Invalid Movie ID parameter" + movieId);
+      logger.error("Invalid Movie ID parameter " + movieId);
 
-      return Mono.error(new ResponseStatusException(
-        HttpStatus.BAD_REQUEST, "Invalid Movie ID parameter"));
+      return Mono.error(
+          new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Movie ID parameter"));
     }
   }
 
@@ -65,28 +70,18 @@ public class MoviesController extends Controller {
       method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Object getAllMovies(
-      @ApiParam(value = "(query) (optional) The term used to search Movie name")
-      @RequestParam("q")
+      @ApiParam(value = "(query) (optional) The term used to search Movie name") @RequestParam("q")
           final Optional<String> query,
-      @ApiParam(
-          value = "(optional) Movies of a genre (Action)")
-      @RequestParam
-      final Optional<String> genre,
-      @ApiParam(
-              value = "(optional) Get movies by year (2005)",
-              defaultValue = "0")
-      @RequestParam
+      @ApiParam(value = "(optional) Movies of a genre (Action)") @RequestParam
+          final Optional<String> genre,
+      @ApiParam(value = "(optional) Get movies by year (2005)", defaultValue = "0") @RequestParam
           final Optional<String> year,
-      @ApiParam(
-          value = "(optional) Get movies with a rating >= rating (8.5)",
-          defaultValue = "0")
-      @RequestParam
-      final Optional<String> rating,
-      @ApiParam(
-          value = "(optional) Get movies with a rating >= rating (8.5)",
-          defaultValue = "0")
-      @RequestParam
-      final Optional<String> actorId,
+      @ApiParam(value = "(optional) Get movies with a rating >= rating (8.5)", defaultValue = "0")
+          @RequestParam
+          final Optional<String> rating,
+      @ApiParam(value = "(optional) Get movies with a rating >= rating (8.5)", defaultValue = "0")
+          @RequestParam
+          final Optional<String> actorId,
       @ApiParam(value = "(optional) Get movies by Actor Id (nm0000704)") @RequestParam
           Optional<String> pageNumber,
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam
@@ -94,15 +89,18 @@ public class MoviesController extends Controller {
 
     try {
 
-      logger.info(MessageFormat.format("getAllMovies (query={0}, genre={1}, year={2}, rating={3}, "
-            + " actorId={4}, pageNumber={5}, pageSize={6})",
-            query, genre, year, rating, actorId, pageNumber, pageSize));
+      logger.info(
+          MessageFormat.format(
+              "getAllMovies (query={0}, genre={1}, year={2}, rating={3}, "
+                  + " actorId={4}, pageNumber={5}, pageSize={6})",
+              query, genre, year, rating, actorId, pageNumber, pageSize));
 
       return getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao);
     } catch (Exception ex) {
       logger.error("MovieControllerException " + ex.getMessage());
-      return Flux.error(new ResponseStatusException(
-        HttpStatus.INTERNAL_SERVER_ERROR, Constants.MOVIE_CONTROLLER_EXCEPTION));
+      return Flux.error(
+          new ResponseStatusException(
+              HttpStatus.INTERNAL_SERVER_ERROR, Constants.MOVIE_CONTROLLER_EXCEPTION));
     }
   }
 }
