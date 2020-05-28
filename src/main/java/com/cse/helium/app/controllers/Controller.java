@@ -48,10 +48,10 @@ public class Controller {
       if (validator.isValidSearchQuery(query.get())) {
         queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
-        logger.error("Invalid q (search) parameter");
+        logger.error(Constants.INVALID_Q_PARAM_MESSAGE);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid q (search) parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MESSAGE));
       }
     }
 
@@ -119,10 +119,10 @@ public class Controller {
         q = query.get().trim().toLowerCase().replace("'", "''");
         queryParams.put("q",q);
       } else {
-        logger.error("Invalid q (search) parameter");
+        logger.error(Constants.INVALID_Q_PARAM_MESSAGE);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid q (search) parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MESSAGE));
       }
     }
 

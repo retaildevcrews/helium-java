@@ -32,5 +32,6 @@ public final class Constants {
 
   public static final String webInstanceRole = "WEBSITE_ROLE_INSTANCE_ID";
 
+  public static final String INVALID_Q_PARAM_MESSAGE = "Invalid q (search) parameter";
 
 }
