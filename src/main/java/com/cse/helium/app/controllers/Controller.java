@@ -48,20 +48,20 @@ public class Controller {
       if (validator.isValidSearchQuery(query.get())) {
         queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
-        logger.error(Constants.INVALID_Q_PARAM_MESSAGE);
+        logger.error(Constants.INVALID_Q_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MESSAGE));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MSG));
       }
     }
 
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
       if (!validator.isValidPageNumber(pageNumber.get())) {
-        logger.error("Invalid PageNumber parameter");
+        logger.error(Constants.INVALID_PAGENUM_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid PageNumber parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_PARAM_MSG));
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -119,20 +119,20 @@ public class Controller {
         q = query.get().trim().toLowerCase().replace("'", "''");
         queryParams.put("q",q);
       } else {
-        logger.error(Constants.INVALID_Q_PARAM_MESSAGE);
+        logger.error(Constants.INVALID_Q_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MESSAGE));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MSG));
       }
     }
 
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
       if (!validator.isValidPageNumber(pageNumber.get())) {
-        logger.error("Invalid PageNumber parameter");
+        logger.error(Constants.INVALID_PAGENUM_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid PageNumber parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_PARAM_MSG));
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
