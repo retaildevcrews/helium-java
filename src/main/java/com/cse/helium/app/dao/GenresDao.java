@@ -7,6 +7,7 @@ import com.azure.data.cosmos.SqlQuerySpec;
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.models.Genre;
 import com.cse.helium.app.services.configuration.IConfigurationService;
+import java.text.MessageFormat;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,24 +35,19 @@ public class GenresDao extends BaseCosmosDbDao {
    * @return
    */
   public Mono<List<String>> getGenres() {
-    logger.info("genreQuery " + genreQuery);
+    logger.info(MessageFormat.format("genreQuery {0}", genreQuery));
 
     SqlQuerySpec sqsGenreQuery = new SqlQuerySpec(genreQuery);
 
-    Mono<List<String>> selectedGenres =
-        this.context
+    return this.context
             .getBean(CosmosClient.class)
             .getDatabase(this.cosmosDatabase)
             .getContainer(this.cosmosContainer)
             .queryItems(sqsGenreQuery, this.feedOptions)
             .flatMap(
-                flatFeedResponse -> {
-                  return Flux.fromIterable(flatFeedResponse.results());
-                })
+                flatFeedResponse -> Flux.fromIterable(flatFeedResponse.results()))
             .map(cosmosItemProperties -> cosmosItemProperties.toObject(Genre.class).getGenre())
             .collectList();
-
-    return selectedGenres;
   }
 
   /** getGenreByKey. */
@@ -63,15 +59,11 @@ public class GenresDao extends BaseCosmosDbDao {
                 new SqlParameter("@id", Constants.GENRE_DOCUMENT_TYPE),
                 new SqlParameter("@type", genreKey.toLowerCase())));
 
-    Flux<String> genreFlux =
-        getContainer()
+    return getContainer()
             .queryItems(sqsGenreQueryById, this.feedOptions)
             .flatMap(
-                cosmosItemResponse -> {
-                  return Flux.fromIterable(cosmosItemResponse.results());
-                })
+                cosmosItemResponse -> Flux.fromIterable(cosmosItemResponse.results()))
             .map(cosmosItemProperties -> cosmosItemProperties.toObject(Genre.class))
             .map(selectedGenre -> selectedGenre.getGenre());
-    return genreFlux;
   }
 }
