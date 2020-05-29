@@ -171,7 +171,6 @@ public class KeyVaultService implements IKeyVaultService {
       .map(keyVaultSecret -> keyVaultSecret.getValue());
   }
 
-
   public Mono<KeyVaultSecret> getSecret(final String secretName) {
     return  secretAsyncClient.getSecret(secretName);
   }
