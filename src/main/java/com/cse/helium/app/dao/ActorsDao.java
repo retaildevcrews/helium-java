@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 public class ActorsDao extends BaseCosmosDbDao implements IDao {
   private static final Logger logger = LogManager.getLogger(ActorsDao.class);
 
-   private static String actorSelect =
+  private static String actorSelect =
       "select m.id, m.partitionKey, m.actorId, m.type, "
           + "m.name, m.birthYear, m.deathYear, m.profession, "
           + "m.textSearch, m.movies from m where m.type = @type ";
@@ -47,7 +47,7 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
                 cosmosItemResponse -> 
                     Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Actor.class)))
             .onErrorResume(throwable -> findAPIExceptionHandler("Failed to find item", throwable));
-   }
+  }
 
   /**
    * This method is responsible for checking for expected values in the queryParams dictionary
