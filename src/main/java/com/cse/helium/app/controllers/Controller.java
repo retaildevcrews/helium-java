@@ -1,9 +1,7 @@
 package com.cse.helium.app.controllers;
 
 import com.cse.helium.app.Constants;
-import com.cse.helium.app.dao.ActorsDao;
 import com.cse.helium.app.dao.IDao;
-import com.cse.helium.app.dao.MoviesDao;
 import com.cse.helium.app.utils.ParameterValidator;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -21,9 +19,6 @@ import reactor.core.publisher.Flux;
 
 @Component
 public class Controller {
-
-  @Autowired ActorsDao actorsDao;
-  @Autowired MoviesDao movieDao;
 
   @Autowired ParameterValidator validator;
 

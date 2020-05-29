@@ -1,6 +1,7 @@
 package com.cse.helium.app.controllers;
 
 import com.cse.helium.app.Constants;
+import com.cse.helium.app.dao.ActorsDao;
 import com.cse.helium.app.models.Actor;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
@@ -8,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ import reactor.core.publisher.Mono;
 public class ActorsController extends Controller {
 
   private static final Logger logger =   LogManager.getLogger(ActorsController.class);
+
+  @Autowired ActorsDao actorsDao;
 
   /** getActor. */
   @GetMapping(
