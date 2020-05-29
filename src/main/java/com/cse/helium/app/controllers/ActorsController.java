@@ -1,22 +1,19 @@
 package com.cse.helium.app.controllers;
 
 import com.cse.helium.app.Constants;
-import com.cse.helium.app.dao.ActorsDao;
 import com.cse.helium.app.models.Actor;
-import com.cse.helium.app.utils.ParameterValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import java.text.MessageFormat;
 import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,16 +26,11 @@ import reactor.core.publisher.Mono;
 @Api(tags = "Actors")
 public class ActorsController extends Controller {
 
-  @Autowired ActorsDao actorsDao;
-
-  @Autowired ParameterValidator validator;
-
   private static final Logger logger =   LogManager.getLogger(ActorsController.class);
 
   /** getActor. */
-  @RequestMapping(
+  @GetMapping(
       value = "/{id}",
-      method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
   @SuppressWarnings("raw")
   public Mono<ResponseEntity<Actor>> getActor(
@@ -48,7 +40,7 @@ public class ActorsController extends Controller {
 
     logger.info(MessageFormat.format("getActor (actorId={0})",actorId));
 
-    if (validator.isValidActorId(actorId)) {
+    if (Boolean.TRUE.equals(validator.isValidActorId(actorId))) {
       return actorsDao
           .getActorById(actorId)
           .doOnSuccess(value -> logger.info("!!!!! completed actorsDao call!!!!"))
@@ -56,7 +48,7 @@ public class ActorsController extends Controller {
           .switchIfEmpty(Mono.defer(() ->
             Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor Not Found"))));
     } else {
-      logger.error("Invalid Actor ID parameter " + actorId);
+      logger.error(MessageFormat.format("Invalid Actor ID parameter {0}", actorId));
 
       return Mono.error(new ResponseStatusException(
         HttpStatus.BAD_REQUEST, "Invalid Actor ID parameter"));
@@ -64,9 +56,8 @@ public class ActorsController extends Controller {
   }
 
   /** getAllActors. */
-  @RequestMapping(
+  @GetMapping(
       value = "",
-      method = RequestMethod.GET,
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Object getAllActors(
       @ApiParam(value = "(query) (optional) The term used to search Actor name") @RequestParam("q")
@@ -82,7 +73,7 @@ public class ActorsController extends Controller {
 
       return super.getAll(query,pageNumber, pageSize, actorsDao);
     } catch (Exception ex) {
-      logger.error("ActorControllerException " + ex.getMessage());
+      logger.error(MessageFormat.format("ActorControllerException {0}", ex.getMessage()));
       return Flux.error(new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, Constants.ACTOR_CONTROLLER_EXCEPTION));
     }
