@@ -45,6 +45,6 @@ public class Movie extends MovieBase {
 
 
   public Movie(){
-
+    // default constructor
   }
 }

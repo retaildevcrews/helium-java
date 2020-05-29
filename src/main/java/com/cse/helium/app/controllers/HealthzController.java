@@ -59,7 +59,7 @@ public class HealthzController {
 
     return resultsMono.map(data -> {
       String healthStatus = getOverallHealthStatus(data);
-      int resCode = healthStatus.equals(IeTfStatus.fail.name())
+      int resCode = healthStatus.equals(IeTfStatus.FAIL.name())
           ? HttpStatus.SERVICE_UNAVAILABLE.value()
           : HttpStatus.OK.value();
       return new ResponseEntity<>(healthStatus,
@@ -152,12 +152,12 @@ public class HealthzController {
   }
 
   String getOverallHealthStatus(List<Map<String, Object>> resultsList) {
-    String returnStatus = IeTfStatus.pass.name();
+    String returnStatus = IeTfStatus.PASS.name();
 
     for (Map<String, Object> resultItem : resultsList) {
-      if (!resultItem.get(STATUS_TEXT).toString().equalsIgnoreCase(IeTfStatus.pass.name())) {
+      if (!resultItem.get(STATUS_TEXT).toString().equalsIgnoreCase(IeTfStatus.PASS.name())) {
         returnStatus = resultItem.get(STATUS_TEXT).toString();
-        if (returnStatus.equals(IeTfStatus.fail.name())) {
+        if (returnStatus.equals(IeTfStatus.FAIL.name())) {
           // if we hit a fail then break otherwise loop to end
           break;
         }
@@ -183,9 +183,9 @@ public class HealthzController {
       Long duration, Long expectedDuration) {
     String passStatus;
     if (duration <= expectedDuration) {
-      passStatus = IeTfStatus.pass.name();
+      passStatus = IeTfStatus.PASS.name();
     } else {
-      passStatus = IeTfStatus.warn.name();
+      passStatus = IeTfStatus.WARN.name();
     }
 
     Map<String, Object> resultsDict = new HashMap<>();
@@ -193,7 +193,7 @@ public class HealthzController {
     resultsDict.put("componentType", "datastore");
     resultsDict.put("observedUnit", "ms");
     resultsDict.put("observedValue", duration);
-    resultsDict.put(STATUS_TEXT, passStatus);
+    resultsDict.put(STATUS_TEXT, passStatus.toLowerCase());
     resultsDict.put("targetValue", expectedDuration);
     resultsDict.put("time",  new Date().toInstant().toString());
 

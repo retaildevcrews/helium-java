@@ -39,7 +39,8 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
             .getItem(movieId, utils.getPartitionKey(movieId))
             .read()
             .flatMap(
-                cosmosItemResponse -> Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Movie.class)))
+                cosmosItemResponse -> 
+                    Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Movie.class)))
             .onErrorResume(throwable -> findAPIExceptionHandler("Failed to find item", throwable));
   }
 

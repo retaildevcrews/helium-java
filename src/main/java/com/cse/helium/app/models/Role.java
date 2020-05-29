@@ -21,5 +21,6 @@ public class Role extends ActorBase {
   public List<String> characters;
 
   public Role() {
+    // default constructor
   }
 }
