@@ -2,6 +2,7 @@ package com.cse.helium.app.services.configuration;
 
 import com.cse.helium.app.services.keyvault.IKeyVaultService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +16,7 @@ public class ConfigurationService implements IConfigurationService {
 
   private IKeyVaultService keyVaultService;
 
-  Map<String, String> configEntries = new ConcurrentHashMap<String, String>();
+  Map<String, String> configEntries = new ConcurrentHashMap<>();
 
   public Map<String, String> getConfigEntries() {
     return configEntries;
@@ -35,7 +36,9 @@ public class ConfigurationService implements IConfigurationService {
 
       keyVaultService = kvService;
       Map<String, String> secrets = keyVaultService.getSecrets();
-      logger.info("Secrets are " + (secrets == null ? "NULL" : "NOT NULL"));
+      if (logger.isInfoEnabled()) {
+        logger.info(MessageFormat.format("Secrets are {0}", secrets == null ? "NULL" : "NOT NULL"));
+      }
       configEntries = secrets;
 
     } catch (Exception ex) {
