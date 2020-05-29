@@ -78,7 +78,7 @@ public class HealthzController {
    */
   @GetMapping(value = "/ietf", produces = "application/health+json")
   public Mono<ResponseEntity<LinkedHashMap<String, Object>>>  ietfHealthCheck() {
-    if(logger.isInfoEnabled()) {
+    if (logger.isInfoEnabled()) {
       logger.info("healthz ietf endpoint");
     }
 
