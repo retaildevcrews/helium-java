@@ -1,5 +1,6 @@
 package com.cse.helium.app.config;
 
+import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -35,7 +36,9 @@ public class BuildConfig {
 
     String formattedDateTime = formatter.format(buildTime);
 
-    logger.info("version " + major + "." + formattedDateTime);
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("version {0}.{1}", major, formattedDateTime));
+    }
     return major + "+" + formattedDateTime;
 
   }
