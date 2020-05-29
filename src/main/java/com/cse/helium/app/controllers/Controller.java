@@ -40,12 +40,12 @@ public class Controller {
     logger.info(MessageFormat.format("controller::getAll (query={0}, pageNumber={1}, pageSize={2})",
         query, pageNumber, pageSize));
 
-    Map<String,Object> queryParams = new HashMap<String, Object>();
+    Map<String,Object> queryParams = new HashMap<>();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
 
     if (query.isPresent()) {
-      if (validator.isValidSearchQuery(query.get())) {
+      if (Boolean.TRUE.equals(validator.isValidSearchQuery(query.get()))) {
         queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
         logger.error(Constants.INVALID_Q_PARAM_MSG);
@@ -57,7 +57,7 @@ public class Controller {
 
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
-      if (!validator.isValidPageNumber(pageNumber.get())) {
+      if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
         logger.error(Constants.INVALID_PAGENUM_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
@@ -69,11 +69,11 @@ public class Controller {
 
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
     if (pageSize.isPresent()) {
-      if (!validator.isValidPageSize(pageSize.get())) {
-        logger.error("Invalid PageSize parameter");
+      if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
+        logger.error(Constants.INVALID_PAGESIZE_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid PageSize parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_PARAM_MSG));
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -105,7 +105,7 @@ public class Controller {
       Optional<String> pageSize,
       IDao dataObject) {
 
-    Map<String,Object> queryParams = new HashMap<String, Object>();
+    Map<String,Object> queryParams = new HashMap<>();
     String q = null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
@@ -115,7 +115,7 @@ public class Controller {
         query, genre, year, rating, actorId, pageNumber, pageSize));
 
     if (query.isPresent()) {
-      if (validator.isValidSearchQuery(query.get())) {
+      if (Boolean.TRUE.equals(validator.isValidSearchQuery(query.get()))) {
         q = query.get().trim().toLowerCase().replace("'", "''");
         queryParams.put("q",q);
       } else {
@@ -128,7 +128,7 @@ public class Controller {
 
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
-      if (!validator.isValidPageNumber(pageNumber.get())) {
+      if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
         logger.error(Constants.INVALID_PAGENUM_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
@@ -140,11 +140,11 @@ public class Controller {
 
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
     if (pageSize.isPresent()) {
-      if (!validator.isValidPageSize(pageSize.get())) {
-        logger.error("Invalid PageSize parameter");
+      if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
+        logger.error(Constants.INVALID_PAGESIZE_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid PageSize parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_PARAM_MSG));
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -152,7 +152,7 @@ public class Controller {
 
     String movieGenre = "";
     if (genre.isPresent()) {
-      if (!validator.isValidGenre(genre.get())) {
+      if (Boolean.FALSE.equals(validator.isValidGenre(genre.get()))) {
         logger.error("Invalid Genre parameter");
 
         return Flux.error(new ResponseStatusException(
@@ -165,7 +165,7 @@ public class Controller {
 
     Integer movieYear = 0;
     if (year.isPresent()) {
-      if (!validator.isValidYear(year.get())) {
+      if (Boolean.FALSE.equals(validator.isValidYear(year.get()))) {
         logger.error("Invalid Year parameter");
 
         return Flux.error(new ResponseStatusException(
@@ -176,9 +176,9 @@ public class Controller {
       }
     }
 
-    Double movieRating = 0.0;
+    Double movieRating;
     if (rating.isPresent()) {
-      if (!validator.isValidRating(rating.get())) {
+      if (Boolean.FALSE.equals(validator.isValidRating(rating.get()))) {
         logger.error("Invalid Rating parameter");
 
         return Flux.error(new ResponseStatusException(
@@ -191,7 +191,7 @@ public class Controller {
 
     String movieActorId = "";
     if (actorId.isPresent()) {
-      if (!validator.isValidActorId(actorId.get())) {
+      if (Boolean.FALSE.equals(validator.isValidActorId(actorId.get()))) {
         logger.error("Invalid Actor ID parameter");
 
         return Flux.error(new ResponseStatusException(

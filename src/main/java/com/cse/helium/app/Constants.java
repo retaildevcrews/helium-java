@@ -38,4 +38,5 @@ public final class Constants {
       + " which does not meet the criteria must be 3-24 characters long, begin with a "
       + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
       + "alphanumeric.  Check ${KEYVAULT_NAME} in your environment variables.";
+  public static final String INVALID_PAGESIZE_PARAM_MSG = "Invalid PageSize parameter";
 }
