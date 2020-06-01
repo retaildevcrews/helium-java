@@ -8,7 +8,6 @@ import com.azure.data.cosmos.SqlQuerySpec;
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.models.Movie;
 import com.cse.helium.app.services.configuration.IConfigurationService;
-import com.cse.helium.app.utils.CommonUtils;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
-  @Autowired CommonUtils utils;
   @Autowired GenresDao genresDao;
 
   private static String movieSelect =
@@ -37,16 +35,13 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
 
   /** getMovieByIdSingleRead. */
   public Mono<Movie> getMovieById(String movieId) {
-    Mono<Movie> movie =
-        getContainer()
+    return getContainer()
             .getItem(movieId, utils.getPartitionKey(movieId))
             .read()
             .flatMap(
-                cosmosItemResponse -> {
-                  return Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Movie.class));
-                })
+                cosmosItemResponse -> 
+                    Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Movie.class)))
             .onErrorResume(throwable -> findAPIExceptionHandler("Failed to find item", throwable));
-    return movie;
   }
 
   /**
@@ -114,8 +109,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
     movieQuerySpec.queryText(formedQuery.toString());
     movieQuerySpec.parameters(parameterList);
 
-    Flux<Movie> queryResult = super.getAll(Movie.class, movieQuerySpec);
-    return queryResult;
+    return super.getAll(Movie.class, movieQuerySpec);
   }
 
   /** filterByGenre. */
@@ -139,22 +133,3 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
             });
   }
 }
-
-/*
-return
-    genresDao
-    .getGenreByKey(genreKey)
-    .collectList()
-    .flatMapMany(selectedGenre -> {
-    String genreSelect = " and array_contains(m.genres,'" + selectedGenre.get(0) + "')";
-    StringBuilder movieQuery =
-    new StringBuilder(query)
-    .append(genreSelect)
-    .append(movieOrderBy)
-    .append(String.format(movieOffset, pageNumber, pageSize));
-
-    logger.info("Movies query = " + movieQuery.toString());
-
-    return super.getAll(Movie.class, movieQuery.toString());
-    });
-*/

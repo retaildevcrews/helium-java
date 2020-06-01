@@ -23,23 +23,18 @@ public class FeaturedMovieDao extends BaseCosmosDbDao {
    *
    * @return
    */
+  @SuppressWarnings ("squid:S1612")  // suppress warning to move lambda to function
   public Flux<String> getFeaturedMovie() {
 
-    Flux<String> featuredMovies =
-        this.context
+    return this.context
             .getBean(CosmosClient.class)
             .getDatabase(this.cosmosDatabase)
             .getContainer(this.cosmosContainer)
             .queryItems(featuredMovieQuery, this.feedOptions)
             .flatMap(
-                flatFeedResponse -> {
-                  return Flux.fromIterable(flatFeedResponse.results());
-                })
+                flatFeedResponse -> Flux.fromIterable(flatFeedResponse.results()))
             .map(cosmosItemProperties -> cosmosItemProperties.toObject(FeaturedMovie.class))
             .sort(Comparator.comparing(FeaturedMovie::getWeight))
             .map(featuredMovie -> featuredMovie.getMovieId());
-
-
-    return featuredMovies;
   }
 }

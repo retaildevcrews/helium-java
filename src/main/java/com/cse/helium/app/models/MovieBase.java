@@ -22,6 +22,7 @@ public class MovieBase {
   private List<String> genres;
 
   public MovieBase() {
+    // default constructor
   }
 
 }

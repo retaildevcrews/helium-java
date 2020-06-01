@@ -58,6 +58,7 @@ public class ParameterValidator {
   }
 
   /** isValidSearchQuery. */
+  @SuppressWarnings("squid:S1126") // suppressing conditional check is required
   public Boolean isValidSearchQuery(String query) {
     if (!StringUtils.isEmpty(query) && (query.length() < 2 || query.length() > 20)) {
       return false;

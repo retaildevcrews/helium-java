@@ -9,6 +9,7 @@ import com.cse.helium.app.services.configuration.IConfigurationService;
 import com.microsoft.azure.spring.data.cosmosdb.config.AbstractCosmosConfiguration;
 import com.microsoft.azure.spring.data.cosmosdb.config.CosmosDBConfig;
 import com.microsoft.azure.spring.data.cosmosdb.repository.config.EnableCosmosRepositories;
+import java.text.MessageFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,8 @@ public class CosmosDbConfig extends AbstractCosmosConfiguration {
           .requestOptions(requestOptions).connectionPolicy(policy)
           .build();
     } catch (Exception ex) {
-      logger.error("buildCosmosDbConfig failed with error: " + ex.getMessage());
+      logger.error(MessageFormat.format("buildCosmosDbConfig failed with error: {0}", 
+          ex.getMessage()));
 
       throw ex;
     }

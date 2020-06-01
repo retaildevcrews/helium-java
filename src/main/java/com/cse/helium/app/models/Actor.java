@@ -35,6 +35,7 @@ public class Actor extends ActorBase {
   private List<MovieBase> movies;
 
   public Actor() {
+    // default constructor
   }
 
   @Override

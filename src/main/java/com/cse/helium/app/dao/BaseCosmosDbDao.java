@@ -10,14 +10,17 @@ import com.cse.helium.app.Constants;
 import com.cse.helium.app.services.configuration.IConfigurationService;
 import com.cse.helium.app.utils.CommonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import reactor.core.publisher.Flux;
 
 public class BaseCosmosDbDao {
+
+  private static final Logger logger = LogManager.getLogger(BaseCosmosDbDao.class);
 
   @Autowired ApplicationContext context;
 
@@ -27,8 +30,6 @@ public class BaseCosmosDbDao {
   protected String cosmosContainer = "";
   protected String cosmosDatabase = "";
   protected final FeedOptions feedOptions = new FeedOptions();
-
-  private CosmosContainer container;
 
   /** BaseCosmosDbDao. */
   @Autowired
@@ -44,12 +45,10 @@ public class BaseCosmosDbDao {
 
   /** getContainer. */
   public CosmosContainer getContainer() {
-    container =
-        context
+    return context
             .getBean(CosmosClient.class)
             .getDatabase(this.cosmosDatabase)
             .getContainer(this.cosmosContainer);
-    return container;
   }
 
   /**
@@ -66,26 +65,18 @@ public class BaseCosmosDbDao {
     Flux<FeedResponse<CosmosItemProperties>> feedResponse =
         getContainer().queryItems(sqlQuerySpec, this.feedOptions);
 
-    Flux<T> selectedItems =
-        (Flux<T>)
-            feedResponse
+    return feedResponse
                 .flatMap(
-                    flatFeedResponse -> {
-                      return Flux.fromIterable(flatFeedResponse.results());
-                    })
+                    flatFeedResponse -> Flux.fromIterable(flatFeedResponse.results()))
                 .flatMap(
                     cosmosItemProperties -> {
                       try {
                         return Flux.just(
                             objMapper.readValue(cosmosItemProperties.toJson(), classType));
-                      } catch (JsonMappingException e) {
-                        e.printStackTrace();
                       } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                      }
+                        logger.error(e);
+                      } 
                       return Flux.empty();
                     });
-
-    return selectedItems;
   }
 }

@@ -8,11 +8,10 @@ import com.azure.data.cosmos.SqlQuerySpec;
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.models.Actor;
 import com.cse.helium.app.services.configuration.IConfigurationService;
-import com.cse.helium.app.utils.CommonUtils;
+import java.text.MessageFormat;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -20,8 +19,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class ActorsDao extends BaseCosmosDbDao implements IDao {
   private static final Logger logger = LogManager.getLogger(ActorsDao.class);
-
-  @Autowired CommonUtils utils;
 
   private static String actorSelect =
       "select m.id, m.partitionKey, m.actorId, m.type, "
@@ -39,17 +36,17 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
 
   /** getActorByIdSingleRead. */
   public Mono<Actor> getActorById(String actorId) {
-    logger.info("Call to getActorById (" + actorId + ")");
-    Mono<Actor> actor =
-        getContainer()
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("Call to getActorById ({0})", actorId));
+    }
+    
+    return getContainer()
             .getItem(actorId, utils.getPartitionKey(actorId))
             .read()
             .flatMap(
-                cosmosItemResponse -> {
-                  return Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Actor.class));
-                })
+                cosmosItemResponse -> 
+                    Mono.justOrEmpty(cosmosItemResponse.properties().toObject(Actor.class)))
             .onErrorResume(throwable -> findAPIExceptionHandler("Failed to find item", throwable));
-    return actor;
   }
 
   /**
@@ -84,8 +81,6 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
     actorQuerySpec.queryText(queryBuilder.toString());
     actorQuerySpec.parameters(parameterList);
 
-    Flux<Actor> queryResult = super.getAll(Actor.class, actorQuerySpec);
-
-    return queryResult;
+    return super.getAll(Actor.class, actorQuerySpec);
   }
 }

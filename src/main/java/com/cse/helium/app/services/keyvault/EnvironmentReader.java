@@ -3,6 +3,8 @@ package com.cse.helium.app.services.keyvault;
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.utils.CommonUtils;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.text.MessageFormat;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ public class EnvironmentReader implements IEnvironmentReader {
 
   private String authType;
   private String keyVaultName;
-  private final String keyVaultNameRegex = "^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$";
+  private static final String KV_NAME_REGEX = "^[a-zA-Z](?!.*--)([a-zA-Z0-9-]*[a-zA-Z0-9])?$";
   private static final Logger logger =   LogManager.getLogger(EnvironmentReader.class);
 
   /**
@@ -52,7 +54,7 @@ public class EnvironmentReader implements IEnvironmentReader {
     } else if (authType.equals(Constants.USE_MSI_APPSVC)) {
       this.authType = Constants.USE_MSI_APPSVC;
     } else if (authType.equals(Constants.USE_VS)) {
-      System.out.println("VS Credentials are not yet supported in Java");
+      logger.log(Level.ERROR, "VS Credentials are not yet supported in Java");
       System.exit(-1);
     } else {
       CommonUtils.printCmdLineHelp();
@@ -68,7 +70,9 @@ public class EnvironmentReader implements IEnvironmentReader {
   @SuppressFBWarnings("DM_EXIT")
   public String getAuthType() {
     if (this.authType != null) {
-      logger.info("Auth type is " + this.authType);
+      if (logger.isInfoEnabled()) {
+        logger.info(MessageFormat.format("Auth type is {0}", this.authType));
+      }
       return this.authType;
     }
 
@@ -78,7 +82,6 @@ public class EnvironmentReader implements IEnvironmentReader {
     if (authType == null) {
       logger.info("Auth type is null, defaulting to MSI APP SVC");
       return Constants.USE_MSI_APPSVC;
-      //return Constants.USE_MSI;
     }
 
     // ONLY If it is set and values are either MSI or CLI, we will accept.
@@ -90,7 +93,7 @@ public class EnvironmentReader implements IEnvironmentReader {
       logger.info("Auth type is CLI");
       return Constants.USE_CLI;
     } else if (authType.equals(Constants.USE_VS)) {
-      System.out.println("VS Credentials are not yet supported in Java");
+      logger.log(Level.ERROR, "VS Credentials are not yet supported in Java");
       System.exit(-1);
       // following return needs to be there because java compiler wants a return statement.
       return null;
@@ -106,18 +109,18 @@ public class EnvironmentReader implements IEnvironmentReader {
    * setKeyVaultName.
    * @param kvName set the key vault name from env or cli.
    */
-  @SuppressFBWarnings("DM_EXIT")
+  @SuppressFBWarnings({"squid:S2629", "DM_EXIT"}) // suppressing conditional error log 
   public void setKeyVaultName(String kvName) {
     if (kvName == null) {
       CommonUtils.printCmdLineHelp();
       System.exit(-1);
     }
 
-    if (!isValidKeyVaultName(kvName)) {
-      logger.error("KEYVAULT_NAME value is '" + kvName
-          + "' which does not meet the criteria must be 3-24 characters long, begin with a "
-          + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
-          + "alphanumeric.  Check ${KEYVAULT_NAME} in your environment variables.");
+    if (Boolean.FALSE.equals(isValidKeyVaultName(kvName))) {
+      // suppression of 2629 is not working so wrapped call in conditional
+      if (logger.isErrorEnabled()) {
+        logger.error(MessageFormat.format(Constants.KEYVAULT_NAME_ERROR_MSG, kvName));
+      }
       CommonUtils.printCmdLineHelp();
       System.exit(-1);
     }
@@ -133,7 +136,9 @@ public class EnvironmentReader implements IEnvironmentReader {
   @SuppressFBWarnings("DM_EXIT")
   public String getKeyVaultName() {
     if (this.keyVaultName != null) {
-      logger.info("KeyVaultName is " + this.keyVaultName);
+      if (logger.isInfoEnabled()) {
+        logger.info(MessageFormat.format("KeyVaultName is {0}", this.keyVaultName));
+      }
       return this.keyVaultName;
     }
 
@@ -163,7 +168,7 @@ public class EnvironmentReader implements IEnvironmentReader {
     // (?!.*--) - look ahead and make sure there are no double hyphens (e.g., "--")
     // [a-zA-Z0-9-]* - match alphanumeric and hyphen as many times as needed
     // [a-zA-Z0-9] - final character must be alphanumeric
-    if (!keyVaultName.matches(keyVaultNameRegex)) {
+    if (!keyVaultName.matches(KV_NAME_REGEX)) {
       validSetting = false;
     }
 

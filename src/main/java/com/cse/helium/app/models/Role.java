@@ -12,6 +12,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @JsonPropertyOrder({"order", "category", "character"})
+// suppressing requirement for static final and accessors as this matches data
+@SuppressWarnings ("squid:S1104") 
 public class Role extends ActorBase {
 
   public int order;
@@ -21,5 +23,6 @@ public class Role extends ActorBase {
   public List<String> characters;
 
   public Role() {
+    // default constructor
   }
 }

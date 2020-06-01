@@ -1,9 +1,7 @@
 package com.cse.helium.app.controllers;
 
 import com.cse.helium.app.Constants;
-import com.cse.helium.app.dao.ActorsDao;
 import com.cse.helium.app.dao.IDao;
-import com.cse.helium.app.dao.MoviesDao;
 import com.cse.helium.app.utils.ParameterValidator;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -22,46 +20,45 @@ import reactor.core.publisher.Flux;
 @Component
 public class Controller {
 
-  @Autowired ActorsDao actorsDao;
-  @Autowired MoviesDao movieDao;
-
   @Autowired ParameterValidator validator;
-
   private static final Logger logger =   LogManager.getLogger(Controller.class);
 
   /** commonControllerUtilAll. */
-  @SuppressWarnings("CPD-START")
+
   public Object getAll(
       Optional<String> query,
       Optional<String> pageNumber,
       Optional<String> pageSize,
       IDao dataObject) {
 
-    logger.info(MessageFormat.format("controller::getAll (query={0}, pageNumber={1}, pageSize={2})",
-        query, pageNumber, pageSize));
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat
+          .format("controller::getAll (query={0}, pageNumber={1}, pageSize={2})",
+          query, pageNumber, pageSize));
+    }
 
-    Map<String,Object> queryParams = new HashMap<String, Object>();
+    Map<String,Object> queryParams = new HashMap<>();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
 
     if (query.isPresent()) {
-      if (validator.isValidSearchQuery(query.get())) {
+      if (Boolean.TRUE.equals(validator.isValidSearchQuery(query.get()))) {
         queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
-        logger.error("Invalid q (search) parameter");
+        logger.error(Constants.INVALID_Q_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid q (search) parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MSG));
       }
     }
 
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
-      if (!validator.isValidPageNumber(pageNumber.get())) {
-        logger.error("Invalid PageNumber parameter");
+      if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
+        logger.error(Constants.INVALID_PAGENUM_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid PageNumber parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_PARAM_MSG));
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -69,11 +66,11 @@ public class Controller {
 
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
     if (pageSize.isPresent()) {
-      if (!validator.isValidPageSize(pageSize.get())) {
-        logger.error("Invalid PageSize parameter");
+      if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
+        logger.error(Constants.INVALID_PAGESIZE_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid PageSize parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_PARAM_MSG));
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -94,7 +91,8 @@ public class Controller {
    * @param pageNumber A variable of type String.
    * @param pageSize A variable of type String.
    */
-
+  // suppressing cyclomatic complexity (S3776) and param count (S107)
+  @SuppressWarnings({"CPD-START", "squid:S3776", "squid:S107"})
   public Object getAll(
       Optional<String> query,
       Optional<String> genre,
@@ -105,34 +103,36 @@ public class Controller {
       Optional<String> pageSize,
       IDao dataObject) {
 
-    Map<String,Object> queryParams = new HashMap<String, Object>();
+    Map<String,Object> queryParams = new HashMap<>();
     String q = null;
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
 
-    logger.info(MessageFormat.format("controller::getAll (query={0}, genre={1}, year={2}, "
-        + "rating={3}, actorId={4}, pageNumber={5}, pageSize={6})",
-        query, genre, year, rating, actorId, pageNumber, pageSize));
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("controller::getAll (query={0}, genre={1}, year={2}, "
+          + "rating={3}, actorId={4}, pageNumber={5}, pageSize={6})",
+          query, genre, year, rating, actorId, pageNumber, pageSize));
+    }
 
     if (query.isPresent()) {
-      if (validator.isValidSearchQuery(query.get())) {
+      if (Boolean.TRUE.equals(validator.isValidSearchQuery(query.get()))) {
         q = query.get().trim().toLowerCase().replace("'", "''");
         queryParams.put("q",q);
       } else {
-        logger.error("Invalid q (search) parameter");
+        logger.error(Constants.INVALID_Q_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid q (search) parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MSG));
       }
     }
 
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
-      if (!validator.isValidPageNumber(pageNumber.get())) {
-        logger.error("Invalid PageNumber parameter");
+      if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
+        logger.error(Constants.INVALID_PAGENUM_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid PageNumber parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_PARAM_MSG));
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -140,11 +140,11 @@ public class Controller {
 
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
     if (pageSize.isPresent()) {
-      if (!validator.isValidPageSize(pageSize.get())) {
-        logger.error("Invalid PageSize parameter");
+      if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
+        logger.error(Constants.INVALID_PAGESIZE_PARAM_MSG);
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid PageSize parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_PARAM_MSG));
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -152,7 +152,7 @@ public class Controller {
 
     String movieGenre = "";
     if (genre.isPresent()) {
-      if (!validator.isValidGenre(genre.get())) {
+      if (Boolean.FALSE.equals(validator.isValidGenre(genre.get()))) {
         logger.error("Invalid Genre parameter");
 
         return Flux.error(new ResponseStatusException(
@@ -165,7 +165,7 @@ public class Controller {
 
     Integer movieYear = 0;
     if (year.isPresent()) {
-      if (!validator.isValidYear(year.get())) {
+      if (Boolean.FALSE.equals(validator.isValidYear(year.get()))) {
         logger.error("Invalid Year parameter");
 
         return Flux.error(new ResponseStatusException(
@@ -176,9 +176,9 @@ public class Controller {
       }
     }
 
-    Double movieRating = 0.0;
+    Double movieRating;
     if (rating.isPresent()) {
-      if (!validator.isValidRating(rating.get())) {
+      if (Boolean.FALSE.equals(validator.isValidRating(rating.get()))) {
         logger.error("Invalid Rating parameter");
 
         return Flux.error(new ResponseStatusException(
@@ -191,7 +191,7 @@ public class Controller {
 
     String movieActorId = "";
     if (actorId.isPresent()) {
-      if (!validator.isValidActorId(actorId.get())) {
+      if (Boolean.FALSE.equals(validator.isValidActorId(actorId.get()))) {
         logger.error("Invalid Actor ID parameter");
 
         return Flux.error(new ResponseStatusException(
