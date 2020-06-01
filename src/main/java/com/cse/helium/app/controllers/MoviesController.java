@@ -37,12 +37,16 @@ public class MoviesController extends Controller {
   @GetMapping(
       value = "/{id}",
       produces = MediaType.APPLICATION_JSON_VALUE)
+  // to suprress wrapping the logger.error() in a conditional and lambda to function
+  @SuppressWarnings({"squid:S2629", "squid:S1612"})  
   public Mono<ResponseEntity<Movie>> getMovie(
       @ApiParam(value = "The ID of the movie to look for", example = "tt0000002", required = true)
           @PathVariable("id")
           String movieId) {
 
-    logger.info(MessageFormat.format("getMovie (movieId={0})", movieId));
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("getMovie (movieId={0})", movieId));
+    }
 
     if (Boolean.TRUE.equals(validator.isValidMovieId(movieId))) {
       return moviesDao
@@ -54,6 +58,7 @@ public class MoviesController extends Controller {
                       Mono.error(
                           new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie Not Found"))));
     } else {
+
       logger.error(MessageFormat.format("Invalid Movie ID parameter {0}", movieId));
 
       return Mono.error(
@@ -84,12 +89,13 @@ public class MoviesController extends Controller {
           Optional<String> pageSize) {
 
     try {
-
-      logger.info(
-          MessageFormat.format(
-              "getAllMovies (query={0}, genre={1}, year={2}, rating={3}, "
-                  + " actorId={4}, pageNumber={5}, pageSize={6})",
-              query, genre, year, rating, actorId, pageNumber, pageSize));
+      if (logger.isInfoEnabled()) {
+        logger.info(
+            MessageFormat.format(
+                "getAllMovies (query={0}, genre={1}, year={2}, rating={3}, "
+                    + " actorId={4}, pageNumber={5}, pageSize={6})",
+                query, genre, year, rating, actorId, pageNumber, pageSize));
+      }
 
       return getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao);
     } catch (Exception ex) {

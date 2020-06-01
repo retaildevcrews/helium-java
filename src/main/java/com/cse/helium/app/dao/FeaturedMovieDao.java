@@ -23,6 +23,7 @@ public class FeaturedMovieDao extends BaseCosmosDbDao {
    *
    * @return
    */
+  @SuppressWarnings ("squid:S1612")  // suppress warning to move lambda to function
   public Flux<String> getFeaturedMovie() {
 
     return this.context

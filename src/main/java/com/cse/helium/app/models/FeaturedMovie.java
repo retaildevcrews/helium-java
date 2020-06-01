@@ -12,8 +12,9 @@ public class FeaturedMovie {
   private String movieId;
   private String weight;
 
+  
   public FeaturedMovie() {
-
+    // default constructor
   }
 
   @Override

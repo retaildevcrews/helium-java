@@ -35,7 +35,9 @@ public class GenresDao extends BaseCosmosDbDao {
    * @return
    */
   public Mono<List<String>> getGenres() {
-    logger.info(MessageFormat.format("genreQuery {0}", genreQuery));
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("genreQuery {0}", genreQuery));
+    }
 
     SqlQuerySpec sqsGenreQuery = new SqlQuerySpec(genreQuery);
 
@@ -51,6 +53,7 @@ public class GenresDao extends BaseCosmosDbDao {
   }
 
   /** getGenreByKey. */
+  @SuppressWarnings ("squid:S1612")  // suppress warning to move lambda to function
   public Flux<String> getGenreByKey(String genreKey) {
     SqlQuerySpec sqsGenreQueryById =
         new SqlQuerySpec(

@@ -9,9 +9,10 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class Genre {
 
+  @SuppressWarnings("squid:S1700") // suppress rename field as this matches data
   private String genre;
 
   public Genre() {
-
+    // default constructor
   }
 }

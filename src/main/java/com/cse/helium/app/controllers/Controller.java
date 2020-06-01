@@ -21,19 +21,21 @@ import reactor.core.publisher.Flux;
 public class Controller {
 
   @Autowired ParameterValidator validator;
-
   private static final Logger logger =   LogManager.getLogger(Controller.class);
 
   /** commonControllerUtilAll. */
-  @SuppressWarnings("CPD-START")
+
   public Object getAll(
       Optional<String> query,
       Optional<String> pageNumber,
       Optional<String> pageSize,
       IDao dataObject) {
 
-    logger.info(MessageFormat.format("controller::getAll (query={0}, pageNumber={1}, pageSize={2})",
-        query, pageNumber, pageSize));
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat
+          .format("controller::getAll (query={0}, pageNumber={1}, pageSize={2})",
+          query, pageNumber, pageSize));
+    }
 
     Map<String,Object> queryParams = new HashMap<>();
     HttpHeaders headers = new HttpHeaders();
@@ -89,7 +91,8 @@ public class Controller {
    * @param pageNumber A variable of type String.
    * @param pageSize A variable of type String.
    */
-
+  // suppressing cyclomatic complexity (S3776) and param count (S107)
+  @SuppressWarnings({"CPD-START", "squid:S3776", "squid:S107"})
   public Object getAll(
       Optional<String> query,
       Optional<String> genre,
@@ -105,9 +108,11 @@ public class Controller {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.TEXT_PLAIN);
 
-    logger.info(MessageFormat.format("controller::getAll (query={0}, genre={1}, year={2}, "
-        + "rating={3}, actorId={4}, pageNumber={5}, pageSize={6})",
-        query, genre, year, rating, actorId, pageNumber, pageSize));
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("controller::getAll (query={0}, genre={1}, year={2}, "
+          + "rating={3}, actorId={4}, pageNumber={5}, pageSize={6})",
+          query, genre, year, rating, actorId, pageNumber, pageSize));
+    }
 
     if (query.isPresent()) {
       if (Boolean.TRUE.equals(validator.isValidSearchQuery(query.get()))) {

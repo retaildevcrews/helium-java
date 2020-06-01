@@ -98,6 +98,7 @@ public class CommonUtils {
   }
 
   @SuppressFBWarnings({"NP_UNWRITTEN_FIELD", "UWF_UNWRITTEN_FIELD"})
+  @SuppressWarnings ("squid:S106") // System.out needed to print usage
   static void printDryRunParameters(IKeyVaultService keyVaultService, BuildConfig buildConfig,
                                     IEnvironmentReader environmentReader) {
     System.out.println(MessageFormat.format("Version                    {0}",
@@ -148,6 +149,7 @@ public class CommonUtils {
   /**
    * prints the command line help.
    */
+  @SuppressWarnings ("squid:S106") // System.out needed to print usage
   public static void printCmdLineHelp() {
     System.out.println("\r\nUsage:\r\n"
         + "   mvn clean spring-boot:run \r\n "

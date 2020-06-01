@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
+@SuppressWarnings("squid:S1612") // Suppressing requirement to move lambda to function
 public class KeyVaultService implements IKeyVaultService {
   private final String keyVaultName;
   private String authType = "";

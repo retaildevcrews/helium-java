@@ -36,13 +36,16 @@ public class ActorsController extends Controller {
   @GetMapping(
       value = "/{id}",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  @SuppressWarnings("raw")
+  // to suprress wrapping the logger.error() in a conditional and lambda to function
+  @SuppressWarnings({"squid:S2629", "squid:S1612"})
   public Mono<ResponseEntity<Actor>> getActor(
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
       @PathVariable("id")
           String actorId) {
 
-    logger.info(MessageFormat.format("getActor (actorId={0})",actorId));
+    if (logger.isInfoEnabled()) {
+      logger.info(MessageFormat.format("getActor (actorId={0})",actorId));
+    }
 
     if (Boolean.TRUE.equals(validator.isValidActorId(actorId))) {
       return actorsDao
@@ -72,8 +75,10 @@ public class ActorsController extends Controller {
           Optional<String> pageSize) {
 
     try {
-      logger.info(MessageFormat.format("getAllActors (query={0}, pageNumber={1}, pageSize={2})",
-          query, pageNumber, pageSize));
+      if (logger.isInfoEnabled()) {
+        logger.info(MessageFormat.format("getAllActors (query={0}, pageNumber={1}, pageSize={2})",
+            query, pageNumber, pageSize));
+      }
 
       return super.getAll(query,pageNumber, pageSize, actorsDao);
     } catch (Exception ex) {

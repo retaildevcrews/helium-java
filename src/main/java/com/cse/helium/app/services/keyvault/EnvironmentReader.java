@@ -109,7 +109,7 @@ public class EnvironmentReader implements IEnvironmentReader {
    * setKeyVaultName.
    * @param kvName set the key vault name from env or cli.
    */
-  @SuppressFBWarnings("DM_EXIT")
+  @SuppressFBWarnings({"squid:S2629", "DM_EXIT"}) // suppressing conditional error log 
   public void setKeyVaultName(String kvName) {
     if (kvName == null) {
       CommonUtils.printCmdLineHelp();
@@ -117,7 +117,10 @@ public class EnvironmentReader implements IEnvironmentReader {
     }
 
     if (Boolean.FALSE.equals(isValidKeyVaultName(kvName))) {
-      logger.error(MessageFormat.format(Constants.KEYVAULT_NAME_ERROR_MSG,kvName));
+      // suppression of 2629 is not working so wrapped call in conditional
+      if (logger.isErrorEnabled()) {
+        logger.error(MessageFormat.format(Constants.KEYVAULT_NAME_ERROR_MSG, kvName));
+      }
       CommonUtils.printCmdLineHelp();
       System.exit(-1);
     }

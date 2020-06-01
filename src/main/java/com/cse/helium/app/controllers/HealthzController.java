@@ -84,7 +84,7 @@ public class HealthzController {
 
     LinkedHashMap<String, Object> ieTfResult = new LinkedHashMap<>();
 
-    String webInstanceRole = environment.getProperty(Constants.webInstanceRole);
+    String webInstanceRole = environment.getProperty(Constants.WEB_INSTANCE_ROLE_ID);
     if (webInstanceRole == null || webInstanceRole.isEmpty()) {
       webInstanceRole = "unknown";
     }
