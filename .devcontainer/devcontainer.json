@@ -1,0 +1,25 @@
+{
+  "name": "helium-java",
+
+  "settings": { "terminal.integrated.shell.linux": "/bin/bash" },
+
+	// Open port 4120 by default
+  "forwardPorts": [4120],
+
+  // Install extensions
+  "extensions": [
+    "vscjava.vscode-java-debug",
+    "vscjava.vscode-java-dependency",
+    "vscjava.vscode-java-pack",
+    "vscjava.vscode-java-test",
+    "redhat.java",
+    "redhat.vscode-xml",
+    "eamodio.gitlens",
+    "davidanson.vscode-markdownlint",
+    "gruntfuggly.todo-tree",
+    "ms-azuretools.vscode-docker"
+  ],
+
+  // Run Bash script in .devcontainer directory
+  "postCreateCommand": "/bin/bash ./.devcontainer/post-install.sh"
+}
