@@ -16,8 +16,8 @@ import lombok.Getter;
 @SuppressWarnings ("squid:S1104") 
 public class Role extends ActorBase {
 
-  public int order;
-  public String category;
+  private int order;
+  private String category;
 
   @JsonInclude(Include.NON_DEFAULT)
   public List<String> characters;

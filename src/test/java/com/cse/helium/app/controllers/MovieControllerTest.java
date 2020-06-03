@@ -163,7 +163,7 @@ public class MovieControllerTest {
         .expectHeader().contentType(MediaType.APPLICATION_JSON)
         .expectStatus().isOk()
         .expectBodyList(Movie.class).consumeWith(movies ->
-        Assert.assertEquals(movies.getResponseBody().get(0).getYear(), 2005));
+        Assert.assertEquals(2005, movies.getResponseBody().get(0).getYear()));
   }
 
   @Test
@@ -253,7 +253,7 @@ public class MovieControllerTest {
         .expectHeader().contentType(MediaType.APPLICATION_JSON)
         .expectStatus().isOk()
         .expectBodyList(Movie.class).consumeWith(movies ->
-        Assert.assertEquals(movies.getResponseBody().get(0).getRating(), 8.0, 0.0));
+        Assert.assertEquals(8.0, movies.getResponseBody().get(0).getRating(), 0.0));
   }
 
   @Test
@@ -291,7 +291,7 @@ public class MovieControllerTest {
         .expectHeader().contentType(MediaType.APPLICATION_JSON)
         .expectStatus().isOk()
         .expectBodyList(Movie.class).consumeWith(movies ->
-        Assert.assertEquals(movies.getResponseBody().get(0).getRoles().get(0).getActorId() , "nm0000246"));
+        Assert.assertEquals("nm0000246", movies.getResponseBody().get(0).getRoles().get(0).getActorId()));
   }
 
   @Test
@@ -347,7 +347,7 @@ public class MovieControllerTest {
         .expectHeader().contentType(MediaType.APPLICATION_JSON)
         .expectStatus().isOk()
         .expectBodyList(Movie.class).consumeWith(movies ->
-        Assert.assertEquals(movies.getResponseBody().get(0).getGenres().get(0), "Action" ));
+        Assert.assertEquals("Action" ,movies.getResponseBody().get(0).getGenres().get(0)));
   }
 
   @Test
@@ -358,7 +358,7 @@ public class MovieControllerTest {
         .expectHeader().contentType(MediaType.APPLICATION_JSON)
         .expectStatus().isOk()
         .expectBodyList(Movie.class).consumeWith(movies ->
-        Assert.assertEquals(movies.getResponseBody().size(), 7 ));
+        Assert.assertEquals(7, movies.getResponseBody().size()));
   }
 
 
@@ -370,7 +370,7 @@ public class MovieControllerTest {
         .expectHeader().contentType(MediaType.APPLICATION_JSON)
         .expectStatus().isOk()
         .expectBodyList(Movie.class).consumeWith(movies ->
-        Assert.assertEquals(movies.getResponseBody().get(0).getGenres().contains("Sci-Fi"), true ));
+        Assert.assertEquals(true, movies.getResponseBody().get(0).getGenres().contains("Sci-Fi")));
   }
 
 
