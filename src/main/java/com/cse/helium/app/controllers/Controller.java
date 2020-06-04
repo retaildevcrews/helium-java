@@ -81,10 +81,9 @@ public class Controller {
     return dataObject.getAll(queryParams, pageNo * pageSz, pageSz);
   }
 
-
-
   /**
    * getAll.
+   *
    * @param query A variable of type String.
    * @param genre A variable of type String.
    * @param year A variable of type String.
@@ -92,7 +91,7 @@ public class Controller {
    * @param pageSize A variable of type String.
    */
   // suppressing cyclomatic complexity (S3776) and param count (S107)
-  @SuppressWarnings({"CPD-START", "squid:S3776", "squid:S107"})
+  @SuppressWarnings({"CPD-START", "squid:S3776", "squid:S107", "squid:S00107"})
   public Object getAll(
       Optional<String> query,
       Optional<String> genre,
