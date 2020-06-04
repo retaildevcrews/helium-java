@@ -30,7 +30,7 @@ public class ActorsController extends Controller {
 
   private static final Logger logger =   LogManager.getLogger(ActorsController.class);
 
-  @Autowired ActorsDao actorsDao;
+  @Autowired ActorsDao dao;
 
   /** getActor. */
   @GetMapping(
@@ -48,7 +48,7 @@ public class ActorsController extends Controller {
     }
 
     if (Boolean.TRUE.equals(validator.isValidActorId(actorId))) {
-      return actorsDao
+      return dao
           .getActorById(actorId)
           .doOnSuccess(value -> logger.info("!!!!! completed actorsDao call!!!!"))
           .map(savedActor -> ResponseEntity.ok(savedActor))
@@ -80,7 +80,7 @@ public class ActorsController extends Controller {
             query, pageNumber, pageSize));
       }
 
-      return super.getAll(query,pageNumber, pageSize, actorsDao);
+      return super.getAll(query,pageNumber, pageSize, dao);
     } catch (Exception ex) {
       logger.error(MessageFormat.format("ActorControllerException {0}", ex.getMessage()));
       return Flux.error(new ResponseStatusException(

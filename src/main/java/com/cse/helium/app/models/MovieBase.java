@@ -18,7 +18,7 @@ public class MovieBase {
   private String type;
   private String title;
   private int year;
-  public int runtime;
+  private int runtime;
   private List<String> genres;
 
   public MovieBase() {
