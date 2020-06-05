@@ -17,7 +17,14 @@
     "eamodio.gitlens",
     "davidanson.vscode-markdownlint",
     "gruntfuggly.todo-tree",
-    "ms-azuretools.vscode-docker"
+    "ms-azuretools.vscode-docker",
+    "eamodio.gitlens",
+    "gabrielbb.vscode-lombok",
+    "redhat.java",
+    "redhat.vscode-xml",
+    "sonarsource.sonarlint-vscode",
+    "visualstudioexptteam.vscodeintellicode",
+    "vscjava.vscode-maven"
   ],
 
   // Run Bash script in .devcontainer directory
