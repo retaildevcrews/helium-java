@@ -20,7 +20,15 @@ public class HeliumJavaApplication {
   */
   public static void main(String[] args) {
     // Set the default log level to Warn unless it is overridden on the CLI
+    Configurator.setRootLevel(Level.WARN);
     Configurator.setLevel("com.cse.helium",Level.WARN);
+
+    Configurator.setLevel("com.azure.core", Level.OFF);
+    Configurator.setLevel("com.azure.security.keyvault.secrets.SecretAsyncClient", Level.OFF);
+    Configurator.setLevel("com.azure.security.keyvault.secrets", Level.OFF);
+    Configurator.setAllLevels("com.azure.security.keyvault.secrets.SecretAsyncClient", Level.OFF);
+    Configurator.setAllLevels("com.cse.helium", Level.OFF);
+    
     CommonUtils.handleCliLogLevelOption(args);
     SpringApplication.run(HeliumJavaApplication.class, args);
   }
