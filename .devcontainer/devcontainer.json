@@ -3,7 +3,7 @@
 
   "settings": { "terminal.integrated.shell.linux": "/bin/bash" },
 
-	// Open port 4120 by default
+  // Open port 4120 by default
   "forwardPorts": [4120],
 
   // Install extensions
@@ -18,10 +18,7 @@
     "davidanson.vscode-markdownlint",
     "gruntfuggly.todo-tree",
     "ms-azuretools.vscode-docker",
-    "eamodio.gitlens",
     "gabrielbb.vscode-lombok",
-    "redhat.java",
-    "redhat.vscode-xml",
     "sonarsource.sonarlint-vscode",
     "visualstudioexptteam.vscodeintellicode",
     "vscjava.vscode-maven"
