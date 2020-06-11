@@ -36,21 +36,19 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
   - All instructions assume starting from the root of the repo
   
 - Setup using [Codespace](https://visualstudio.microsoft.com/services/visual-studio-codespaces/)
-   - Fork this repo
-   - Create a new CodeSpace pointing to the forked repo
-     - While the Codespace is getting prepared, this popup shows up which gets resolved once the mvn gets installed
+   - fork this repo
+   - create a new CodeSpace pointing to the forked repo
+   - NOTE: While the Codespace is getting prepared, this popup shows up which gets resolved once the mvn gets installed
          ![popup](popup.jpg)
-     - This is a bug in vscode-maven extension. The vscode team is working on fine tuning these extensions and will get
-        resolved once this issue is fixed https://github.com/microsoft/vscode-maven/issues/504
         
    - Use the built-in bash shell
       - mvn clean package 
-        - When running this command for the first time maven downloads all the required artifacts on the new infra created by codespace
+      - NOTE : When running this command for the first time maven downloads all the required artifacts on the new infra created by codespace
         - The application fails with the following error as  KEYVAULT_NAME is a required environment variable for helium-java app to run and is not set
             [ERROR] Error occurred in starting fork, check output in log
             [ERROR] Process Exit Code: 255
             [ERROR] org.apache.maven.surefire.booter.SurefireBooterForkException: The forked VM terminated without properly saying goodbye. VM crash or System.exit called?
-        - To overcome the above the error Set the KEYVAULT_NAME as the environment variable and login to azure as 
+      - To overcome the above the error set the KEYVAULT_NAME as the environment variable and login to azure  
             - export KEYVAULT_NAME=my_keyvault_name
             - az login
             - mvn clean package 
