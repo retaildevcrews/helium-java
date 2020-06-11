@@ -34,22 +34,30 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
 - Fork this repo and clone to your local machine
   - cd to the base directory of the repo
   - All instructions assume starting from the root of the repo
+  
+- Setup using [Codespace](https://visualstudio.microsoft.com/services/visual-studio-codespaces/)
+   - Fork this repo
+   - Create a new CodeSpace pointing to the forked repo
+     - While the Codespace is getting prepared, this popup shows up which gets resolved once the mvn gets installed
+         ![popup](popup.jpg)
+     - This is a bug in vscode-maven extension. The vscode team is working on fine tuning these extensions and will get
+        resolved once this issue is fixed https://github.com/microsoft/vscode-maven/issues/504
+        
+   - Use the built-in bash shell
+      - mvn clean package 
+        - When running this command for the first time maven downloads all the required artifacts on the new infra created by codespace
+        - The application fails with the following error as  KEYVAULT_NAME is a required environment variable for helium-java app to run and is not set
+            [ERROR] Error occurred in starting fork, check output in log
+            [ERROR] Process Exit Code: 255
+            [ERROR] org.apache.maven.surefire.booter.SurefireBooterForkException: The forked VM terminated without properly saying goodbye. VM crash or System.exit called?
+        - To overcome the above the error Set the KEYVAULT_NAME as the environment variable and login to azure as 
+            - export KEYVAULT_NAME=my_keyvault_name
+            - az login
+            - mvn clean package 
+                [INFO] BUILD SUCCESS
+            - mvn spring-boot:run
+                [main] INFO  org.springframework.boot.web.embedded.netty.NettyWebServer.start (89) - Netty started on port(s): 4120
 
-## CI-CD
-
-
-This repo uses [GitHub Actions](/.github/workflows/dockerCI.yml) for Continuous Integration.
-
-- CI supports pushing to Azure Container Registry or DockerHub
-- The action is setup to execute on a PR or commit to ```master```
-  - The action does not run on commits to branches other than ```master```
-- The action always publishes an image with the ```:beta``` tag
-- If you tag the repo with a version i.e. ```v1.0.8``` the action will also
-  - Tag the image with ```:1.0.8```
-  - Tag the image with ```:stable```
-  - Note that the ```v``` is case sensitive (lower case)
-
-CD is supported via webhooks in Azure App Services connected to the ACR or DockerHub repository.
 
 ### Pushing to Azure Container Registry
 
@@ -202,6 +210,20 @@ docker stop helium-dev
 docker rm helium-dev
 
 ```
+## CI-CD
+
+This repo uses [GitHub Actions](/.github/workflows/dockerCI.yml) for Continuous Integration.
+
+- CI supports pushing to Azure Container Registry or DockerHub
+- The action is setup to execute on a PR or commit to ```master```
+  - The action does not run on commits to branches other than ```master```
+- The action always publishes an image with the ```:beta``` tag
+- If you tag the repo with a version i.e. ```v1.0.8``` the action will also
+  - Tag the image with ```:1.0.8```
+  - Tag the image with ```:stable```
+  - Note that the ```v``` is case sensitive (lower case)
+
+CD is supported via webhooks in Azure App Services connected to the ACR or DockerHub repository.
 
 ## Contributing
 
