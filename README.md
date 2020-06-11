@@ -42,23 +42,14 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
      ![popup](popup.jpg)
         
   - Use the built-in bash shell
-    - Run this command on the terminal : mvn clean package
-    - NOTE: When running this command for the first time maven downloads all the required artifacts on the new infra created by codespace
-      
-      - The application fails with the following error as  KEYVAULT_NAME is a required environment variable for helium-java app to run and is not set
-          [ERROR] Error occurred in starting fork, check output in log
-          [ERROR] Process Exit Code: 255
-          [ERROR] org.apache.maven.surefire.booter.SurefireBooterForkException: The forked VM terminated without properly saying goodbye. VM crash or System.exit called?
-      
-      - To overcome the above the error set the KEYVAULT_NAME as the environment variable and login to azure  
-          
-          - export KEYVAULT_NAME=my_keyvault_name
-          - az login
-          - mvn clean package 
-             [INFO] BUILD SUCCESS
-          - mvn spring-boot:run
-             [main] INFO  org.springframework.boot.web.embedded.netty.NettyWebServer.start (89) - Netty started on port(s): 4120
-
+    - NOTE: When running this command for the first time maven downloads all the required artifacts on the new infra created by codespace        
+     ```
+      # Set the KeyVault on the environment variable as 
+      export KEYVAULT_NAME=my_keyvault_name
+      az login
+      mvn clean package 
+      mvn spring-boot:run
+     ```
 
 ### Pushing to Azure Container Registry
 
