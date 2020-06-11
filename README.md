@@ -41,7 +41,12 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
   - NOTE: While the Codespace is getting prepared, this popup shows up which gets resolved once the mvn gets installed
      ![popup](popup.jpg)
         
-  - Use the built-in bash shell
+  - Quick start with F5
+    - Set the --keyvault-name parameter and press F5
+    - Open launch.json in the .vscode directory at the root of the repo
+    - Replace {your keyvault name}
+        
+  - Start with built-in bash shell
     - NOTE: When running this command for the first time maven downloads all the required artifacts on the new infra created by codespace        
      ```
       # Set the KeyVault on the environment variable as 

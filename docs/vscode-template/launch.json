@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Java Launch (web)",
+            "request": "launch",
+            "mainClass": "com.cse.helium.app.HeliumJavaApplication",
+            "projectName": "helium",
+            "env" : {"KEYVAULT_NAME":"{your keyvault name}", "AUTH_CLI":"CLI" }
+        }
+    ]
+}
