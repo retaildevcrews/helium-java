@@ -75,8 +75,8 @@ public class KeyVaultSecretsLogPolicy implements HttpPipelinePolicy {
   @Override
   public Mono<HttpResponse> process(HttpPipelineCallContext context, HttpPipelineNextPolicy next) {
     // No logging will be performed, trigger a no-op.
-    if (httpLogDetailLevel == HttpLogDetailLevel.NONE ||
-      httpLogDetailLevel == HttpLogDetailLevel.BASIC) {
+    if (httpLogDetailLevel == HttpLogDetailLevel.NONE 
+        || httpLogDetailLevel == HttpLogDetailLevel.BASIC) {
       return next.process();
     }
 
