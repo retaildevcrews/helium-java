@@ -39,7 +39,7 @@ dotnet tool install -g webvalidate --version 1.0.7.3
 
 # copy launch.json from docs/vscode-template to .vscode folder
 mkdir .vscode
-cp cp docs/vscode-template/* .vscode
+cp docs/vscode-template/* .vscode
 
 date >> ~/status
 echo "Done" >> ~/status
