@@ -59,8 +59,6 @@ public class KeyVaultService implements IKeyVaultService {
       logger.info(MessageFormat.format("Auth type is {0}", this.authType));
     }
 
-    HttpLogDetailLevel logDetailLevel = getKvLogDetailLevel();
-
     //build credential based on authType flag
     if (this.authType.equals(Constants.USE_MSI)) {
       credential = new DefaultAzureCredentialBuilder()
@@ -94,16 +92,18 @@ public class KeyVaultService implements IKeyVaultService {
       .build();
     }
 
+
     //build KeyVault clients
     secretClient = new SecretClientBuilder()
         .vaultUrl(getKeyVaultUri())
         .credential(credential)
+        .addPolicy(getKvLogPolicy())
         .buildClient();
 
     secretAsyncClient = new SecretClientBuilder()
         .vaultUrl(getKeyVaultUri())
         .credential(credential)
-        .httpLogOptions(new HttpLogOptions().setLogLevel(logDetailLevel))
+        .addPolicy(getKvLogPolicy())
         .buildAsyncClient();
 
     //build key client
@@ -119,24 +119,33 @@ public class KeyVaultService implements IKeyVaultService {
     .buildAsyncClient();
   }
 
-  private HttpLogDetailLevel getKvLogDetailLevel() {
+  private KeyVaultSecretsLogPolicy getKvLogPolicy() {
     
     Level currentLogLevel = logger.getLevel();
-    HttpLogDetailLevel returnLevel = HttpLogDetailLevel.NONE;
+    HttpLogDetailLevel logLevel = HttpLogDetailLevel.NONE;
 
     if (currentLogLevel == Level.TRACE 
-        || currentLogLevel == Level.DEBUG 
-        || currentLogLevel == Level.INFO) {
+        || currentLogLevel == Level.DEBUG) {
 
-      returnLevel = HttpLogDetailLevel.HEADERS;
+      logLevel = HttpLogDetailLevel.BODY_AND_HEADERS;
+
+
+    } else if (currentLogLevel == Level.INFO) {
+
+      logLevel = HttpLogDetailLevel.HEADERS;
+
     } else if (currentLogLevel == Level.WARN 
           || currentLogLevel == Level.ERROR
           || currentLogLevel == Level.FATAL) {
 
-      returnLevel = HttpLogDetailLevel.BASIC;
+      logLevel = HttpLogDetailLevel.BASIC;
     }
 
-    return returnLevel;
+    HttpLogOptions options = new HttpLogOptions()
+        .setLogLevel(logLevel)
+        .setPrettyPrintBody(true);
+
+    return new KeyVaultSecretsLogPolicy(options);
   }
 
   /**
