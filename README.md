@@ -1,4 +1,6 @@
-### Build a Web API reference application via a Java Web API application using Managed Identity, Key Vault, and Cosmos DB that is designed to be deployed to Azure App Service or AKS
+# Managed Identity and Key Vault with Java Spring Boot
+
+> Build a Java Web API application using Managed Identity, Key Vault and Cosmos DB that is designed to be deployed to Azure App Service or AKS
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -7,24 +9,22 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 - Securely build, deploy and run an App Service (Web App for Containers) application
 - Use Managed Identity to securely access resources
 - Securely store secrets in Key Vault
-- Securely build and deploy the Docker container from Container Registry
-- Connect to and query CosmosDB
+- Build and deploy the Docker container to Container Registry
+- Connect to and query Cosmos DB
 - Automatically send telemetry and logs to Azure Monitor
 - Instructions for setting up Key Vault, ACR, Azure Monitor and Cosmos DB are in the Helium [readme](https://github.com/retaildevcrews/helium)
 
 ## Prerequisites
 
 - Azure subscription with permissions to create:
-  - Resource Groups, Service Principals, Keyvault, CosmosDB, App Service, Azure Container Registry, Azure Monitor
-- Bash shell (tested on Mac, Ubuntu, Windows with WSL2)
-  - Will not work in Cloud Shell unless you have a remote dockerd
-  - Will not work in WSL1
+  - Resource Groups, Service Principals, Keyvault, Cosmos DB, App Service, Azure Container Registry, Azure Monitor
+- Bash shell (tested on Visual Studio Codespaces, Mac, Ubuntu, Windows with WSL2)
+  - Will not work in Cloud Shell or WSL1
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
-- Java 8 above ([download](https://www.java.com/en/download/manual.jsp/))
+- Java 8+ ([download](https://www.java.com/en/download/manual.jsp/))
 - JQ ([download](https://stedolan.github.io/jq/download/))
 - Maven ([download](https://maven.apache.org/download.cgi))
-- Completion of the Key Vault, ACR, Azure Monitor and Cosmos DB setup in the Helium [readme](https://github.com/retaildevcrews/helium)
 - Visual Studio Code (optional) ([download](https://code.visualstudio.com/download))
 
 ## Setup
@@ -35,32 +35,34 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
   - cd to the base directory of the repo
   - All instructions assume starting from the root of the repo
   
-- Setup using [Codespace](https://visualstudio.microsoft.com/services/visual-studio-codespaces/)
+- Setup using [Visual Studio Codespaces](https://visualstudio.microsoft.com/services/visual-studio-codespaces/)
   - Fork this repo
-  - Create a new CodeSpace pointing to the forked repo
+  - Create a new Codespace from the forked repo
+  - TODO - include instructions / screenshots
+    - can we share this across repos?
   - NOTE: While the Codespace is getting prepared, this popup shows up which gets resolved once the mvn gets installed
      ![popup](docs/popup.jpg)
-        
+
   - Quick start with F5
-    - Run az login from command line
+    - Run az login from command line - TODO - instructions on opening a bash shell
     - Set the --keyvault-name parameter and press F5
     - Open launch.json in the .vscode directory at the root of the repo [For more info on how to use dotfiles, click here](https://www.freecodecamp.org/news/dive-into-dotfiles-part-1-e4eb1003cff6/)
     - Replace {your keyvault name}
-        
+
   - Start with built-in bash shell
     - NOTE: When running this command for the first time maven downloads all the required artifacts on the new infra created by Codespace
-    - NOTE: Running from F5 is instant, whereas running from mvn spring-boot:run can take upto 2 minutes
-   
-     ```
-      # Set the KeyVault on the environment variable as 
+    - NOTE: Running from F5 is instant, whereas running from mvn spring-boot:run can take up to 2 minutes
+    - TODO - can we make bash run use the same command as F5 so it's not so slow?
+
+     ```bash
+
+      # Set the KeyVault on the environment variable as
       export KEYVAULT_NAME=my_keyvault_name
       az login
-      mvn clean package 
+      mvn clean package
       mvn spring-boot:run
+
      ```
-    
-    
-  
 
 ### Pushing to Azure Container Registry
 
@@ -86,10 +88,12 @@ In order to push to DockerHub, you must set the following ```secrets``` in your 
   - Personal Access Token
 
 ### Build the container using Docker
+
 - The unit tests run as part of the Docker build process. You can also run the unit tests manually.
-- For instructions on building the container with ACR, please see the Helium [readme](https://github.com/retaildevcrews/helium)
+- TODO - we can delete this as it's not in the readme For instructions on building the container with ACR, please see the Helium [readme](https://github.com/retaildevcrews/helium)
 
 ```bash
+
 # Make sure you are in the root of the repo
 # Build the image - this can take 3-5 minutes
 
@@ -102,7 +106,9 @@ docker build -t helium-dev .
 - The application requires Key Vault and Cosmos DB to be setup per the Helium [readme](https://github.com/retaildevcrews/helium)
   - You can run the application locally by using Azure CLI cached credentials
     - You must run az login before this will work
+
 ```bash
+
 az login
 
 # show your Azure accounts
@@ -113,10 +119,13 @@ az account set -s {subscription name or Id}
 
 # Make sure you are in the root of the repo
 
+### TODO - we set AUTH_TYPE at setup - can leave for completeness if we want
 export AUTH_TYPE=CLI
 export KEYVAULT_NAME=$He_Name
 
 # This command takes about 3-5 minutes:
+
+### TODO - replace with fast run like F5 uses
 
 mvn clean package
 
@@ -133,6 +142,8 @@ curl http://localhost:4120/healthz
 mvn spring-boot:stop
 
 ```
+
+### TODO - didn't we decide we were going to cut the local container in favor of Codespaces
 
 - Run the application as a local container instead
 
@@ -213,6 +224,7 @@ docker stop helium-dev
 docker rm helium-dev
 
 ```
+
 ## CI-CD
 
 This repo uses [GitHub Actions](/.github/workflows/dockerCI.yml) for Continuous Integration.
@@ -241,4 +253,3 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
