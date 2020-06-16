@@ -44,7 +44,7 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
   - Quick start with F5
     - Run az login from command line
     - Set the --keyvault-name parameter and press F5
-    - Open launch.json in the .vscode directory at the root of the repo [How to use dotfiles](https://www.freecodecamp.org/news/dive-into-dotfiles-part-1-e4eb1003cff6/)
+    - Open launch.json in the .vscode directory at the root of the repo [For more info on how to use dotfiles, click here](https://www.freecodecamp.org/news/dive-into-dotfiles-part-1-e4eb1003cff6/)
     - Replace {your keyvault name}
         
   - Start with built-in bash shell
