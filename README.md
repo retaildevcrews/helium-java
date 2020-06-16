@@ -42,8 +42,9 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
      ![popup](popup.jpg)
         
   - Quick start with F5
+    - Run az login from command line
     - Set the --keyvault-name parameter and press F5
-    - Open launch.json in the .vscode directory at the root of the repo
+    - Open launch.json in the .vscode directory at the root of the repo [How to use dotfiles](https://www.freecodecamp.org/news/dive-into-dotfiles-part-1-e4eb1003cff6/)
     - Replace {your keyvault name}
         
   - Start with built-in bash shell
@@ -55,6 +56,8 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
       mvn clean package 
       mvn spring-boot:run
      ```
+    
+  
 
 ### Pushing to Azure Container Registry
 
