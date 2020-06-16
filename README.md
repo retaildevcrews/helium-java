@@ -29,19 +29,14 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 
 ## Setup
 
-The application requires Key Vault and Cosmos DB to be setup per the Helium [readme](https://github.com/retaildevcrews/helium)
+> WIP
 
-- Fork this repo and clone to your local machine
-  - cd to the base directory of the repo
-  - All instructions assume starting from the root of the repo
-  
-- Setup using [Visual Studio Codespaces](https://visualstudio.microsoft.com/services/visual-studio-codespaces/)
-  - Fork this repo
-  - Create a new Codespace from the forked repo
-  - TODO - include instructions / screenshots
-    - can we share this across repos?
-  - NOTE: While the Codespace is getting prepared, this popup shows up which gets resolved once the mvn gets installed
-     ![popup](docs/popup.jpg)
+- Initial setup instructions are in the [Helium readme](https://github.com/retaildevcrews/helium)
+  - Please complete the setup steps and then continue below
+
+> NOTE: While the Codespace is getting prepared, this popup shows up which gets resolved once the mvn gets installed
+>
+> ![popup](docs/popup.jpg)
 
   - Quick start with F5
     - Run az login from command line - TODO - instructions on opening a bash shell
@@ -63,6 +58,8 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
       mvn spring-boot:run
 
      ```
+
+> WIP - end
 
 ### Pushing to Azure Container Registry
 
