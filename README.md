@@ -39,7 +39,7 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
   - Fork this repo
   - Create a new CodeSpace pointing to the forked repo
   - NOTE: While the Codespace is getting prepared, this popup shows up which gets resolved once the mvn gets installed
-     ![popup](popup.jpg)
+     ![popup](docs/popup.jpg)
         
   - Quick start with F5
     - Run az login from command line
