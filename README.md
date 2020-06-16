@@ -48,7 +48,9 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
     - Replace {your keyvault name}
         
   - Start with built-in bash shell
-    - NOTE: When running this command for the first time maven downloads all the required artifacts on the new infra created by codespace        
+    - NOTE: When running this command for the first time maven downloads all the required artifacts on the new infra created by Codespace
+    - NOTE: Running from F5 is instant, whereas running from mvn spring-boot:run can take upto 2 minutes
+   
      ```
       # Set the KeyVault on the environment variable as 
       export KEYVAULT_NAME=my_keyvault_name
@@ -56,6 +58,7 @@ The application requires Key Vault and Cosmos DB to be setup per the Helium [rea
       mvn clean package 
       mvn spring-boot:run
      ```
+    
     
   
 
