@@ -23,23 +23,19 @@ sudo apt-get update
 date >> ~/status
 echo "Installing basics ..." >> ~/status
 
-sudo apt-get install -y --no-install-recommends apt-utils dialog dnsutils
+sudo apt-get install -y --no-install-recommends apt-utils dialog
 
 date >> ~/status
 echo "Installing mvn ..." >> ~/status
 
-sudo apt-get install -y maven
-
-DEBIAN_FRONTEND=dialog
-
-# add tools to path
-export PATH="$PATH:~/.dotnet/tools"
-
-# set dotnet root
-export DOTNET_ROOT=~/.dotnet
+sudo apt-get install -y maven dnsutils httpie
 
 # install WebV
+export PATH="$PATH:~/.dotnet/tools"
+export DOTNET_ROOT=~/.dotnet
 dotnet tool install -g webvalidate
+
+DEBIAN_FRONTEND=dialog
 
 date >> ~/status
 echo "Done" >> ~/status
