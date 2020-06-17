@@ -10,7 +10,10 @@
             "request": "launch",
             "mainClass": "com.cse.helium.app.HeliumJavaApplication",
             "projectName": "helium",
-            "env" : {"KEYVAULT_NAME":"{your keyvault name}", "AUTH_CLI":"CLI" }
+            "env" : {
+              "KEYVAULT_NAME": "{your keyvault name}",
+              "AUTH_TYPE": "CLI"
+            }
         }
     ]
 }
