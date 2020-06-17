@@ -16,8 +16,6 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 
 ## Prerequisites
 
-- Azure subscription with permissions to create:
-  - Resource Groups, Service Principals, Key Vault, Cosmos DB, App Service, Azure Container Registry, Azure Monitor
 - Bash shell (tested on Visual Studio Codespaces, Mac, Ubuntu, Windows with WSL2)
   - Will not work in Cloud Shell or WSL1
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
