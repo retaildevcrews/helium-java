@@ -17,7 +17,7 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 ## Prerequisites
 
 - Azure subscription with permissions to create:
-  - Resource Groups, Service Principals, Keyvault, Cosmos DB, App Service, Azure Container Registry, Azure Monitor
+  - Resource Groups, Service Principals, Key Vault, Cosmos DB, App Service, Azure Container Registry, Azure Monitor
 - Bash shell (tested on Visual Studio Codespaces, Mac, Ubuntu, Windows with WSL2)
   - Will not work in Cloud Shell or WSL1
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
@@ -30,6 +30,12 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 
 - Initial setup instructions are in the [Helium readme](https://github.com/retaildevcrews/helium)
   - Please complete the setup steps and then continue below
+- Helium requires two environment variables be set in order to run
+  - AUTH_TYPE=CLI
+  - KEYVAULT_NAME={you key vault name}
+  - These are set during the setup process
+  - These are automatically set in Codespaces each time you login
+    - To automatically set in bash, `source ~/.helium.env`
 
 ### Using Visual Studio Codespaces
 
@@ -39,11 +45,8 @@ Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup
 >
 > ![popup](docs/popup.jpg)
 
-- Open a terminal (bash) using the command pallette or by pressing ctl + `
-  - Run `az login` from the bash shell
-
 - Open `launch.json` in the `.vscode` directory
-- Replace `{your keyvault name}` with the name of your keyvault
+- Replace `{your key vault name}` with the name of your key vault
   - the file saves automatically
 - Press F5
 - Wait for `Netty started on ports(s):4120` in the Java Debug Console
@@ -54,12 +57,6 @@ Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup
 > This will work from a terminal in Visual Studio Codespaces as well
 
 ```bash
-
-# set the KeyVault environment variable
-export KEYVAULT_NAME=my_keyvault_name
-
-# login to Azure
-az login
 
 # run the application
 mvn clean package
