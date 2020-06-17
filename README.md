@@ -23,8 +23,6 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
 - Java 8+ ([download](https://www.java.com/en/download/manual.jsp/))
-- TODO - do we need JQ?
-- JQ ([download](https://stedolan.github.io/jq/download/))
 - Maven ([download](https://maven.apache.org/download.cgi))
 - Visual Studio Code (optional) ([download](https://code.visualstudio.com/download))
 
