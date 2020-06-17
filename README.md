@@ -23,6 +23,7 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
 - Java 8+ ([download](https://www.java.com/en/download/manual.jsp/))
+- TODO - do we need JQ?
 - JQ ([download](https://stedolan.github.io/jq/download/))
 - Maven ([download](https://maven.apache.org/download.cgi))
 - Visual Studio Code (optional) ([download](https://code.visualstudio.com/download))
@@ -39,6 +40,9 @@ Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup
 > NOTE: during container setup, this popup appears and can be ignored as it will resolve once maven installation completes
 >
 > ![popup](docs/popup.jpg)
+
+- Open a terminal (bash) using the command pallette or by pressing ctl + `
+  - Run `az login` from the bash shell
 
 - Open `launch.json` in the `.vscode` directory
 - Replace `{your keyvault name}` with the name of your keyvault
