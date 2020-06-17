@@ -41,10 +41,6 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 
 Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup steps in the [Helium readme](https://github.com/retaildevcrews/helium) to setup Codespaces.
 
-> NOTE: during container setup, this popup appears and can be ignored as it will resolve once maven installation completes
->
-> ![popup](docs/popup.jpg)
-
 - Open `launch.json` in the `.vscode` directory
 - Replace `{your key vault name}` with the name of your key vault
   - the file saves automatically
@@ -58,6 +54,17 @@ Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup
 
 ```bash
 
+# check environment variables
+# Note: these are set during the setup process and should already be set
+#       AUTH_TYPE should be set to CLI
+#       KEYVAULT_NAME should be set to your key vault
+echo $AUTH_TYPE
+echo $KEYVAULT_NAME
+
+# set environment variables (if necessary)
+export AUTH_TYPE=CLI
+export KEYVAULT_NAME={your key vault name}
+
 # run the application
 mvn clean package
 mvn spring-boot:run
@@ -68,13 +75,12 @@ wait for `Netty started on port(s): 4120`
 
 ### Testing the application
 
-Open a bash shell
+Open a new bash shell
 
 ```bash
 
 # test the application
-
-http http://localhost:4120/version
+webv -s localhost:4120 -f baseline.json
 
 ```
 
