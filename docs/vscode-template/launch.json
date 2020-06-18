@@ -5,15 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "env" : {
+                "KEYVAULT_NAME": "{your keyvault name}",
+                "AUTH_TYPE": "CLI"
+            },
             "type": "java",
             "name": "Java Launch (web)",
             "request": "launch",
             "mainClass": "com.cse.helium.app.HeliumJavaApplication",
-            "projectName": "helium",
-            "env" : {
-              "KEYVAULT_NAME": "{your keyvault name}",
-              "AUTH_TYPE": "CLI"
-            }
+            "projectName": "helium"
         }
     ]
 }
