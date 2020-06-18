@@ -106,9 +106,9 @@ Stop helium by typing Ctrl-C or the stop button if run via F5
 
 We use [Web Validate](https://github.com/retaildevcrews/webvalidate) to run deep verification tests on the Web API
 
-```bash
+If you have dotnet core sdk installed (Codespaces has dotnet core installed)
 
-# TODO - add instructions for docker run
+```bash
 
 # install Web Validate as a dotnet global tool
 # this is automatically installed in CodeSpaces
@@ -118,7 +118,28 @@ dotnet tool install -g webvalidate
 
 # run the validation tests
 # validation tests are located in the TestFiles directory
-webv -s localhost:4120 -f TestFiles/baseline.json
+cd TestFiles
+
+webv -s localhost:4120 -f baseline.json
+
+# bad.json tests error conditions that return 4xx codes
+
+# benchmark.json is a 300 request test that covers the entire API
+
+# cd to root of repo
+cd ..
+
+```
+
+Test using Docker image
+
+```bash
+
+# make sure you are in the root of the repository
+
+# run the validation tests
+# validation tests are located in the TestFiles directory
+docker run -it --rm -v ./TestFiles:/app/TestFiles -s localhost:4120 -f baseline.json
 
 # bad.json tests error conditions that return 4xx codes
 
