@@ -78,7 +78,6 @@ Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup
 export AUTH_TYPE=CLI
 
 # run the application
-mvn clean package
 mvn spring-boot:run
 
 ```
