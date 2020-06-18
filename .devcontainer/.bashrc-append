@@ -1,12 +1,6 @@
 # set auth type
 export AUTH_TYPE=CLI
 
-# source the helium env vars
-if [ -f ~/.helium.env ]
-then
-  source ~/.helium.env
-fi
-
 # add tools to path
 export PATH="$PATH:~/.dotnet/tools"
 
