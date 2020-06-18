@@ -1,9 +1,10 @@
 package com.cse.helium.app.services.keyvault;
 
+import com.azure.core.credential.TokenCredential;
 import com.azure.core.http.policy.HttpLogDetailLevel;
 import com.azure.core.http.policy.HttpLogOptions;
-import com.azure.identity.DefaultAzureCredential;
-import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.identity.AzureCliCredentialBuilder;
+import com.azure.identity.ManagedIdentityCredentialBuilder;
 import com.azure.security.keyvault.certificates.CertificateAsyncClient;
 import com.azure.security.keyvault.certificates.CertificateClientBuilder;
 import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPolicy;
@@ -38,7 +39,7 @@ public class KeyVaultService implements IKeyVaultService {
   private SecretClient secretClient;
   private SecretAsyncClient secretAsyncClient;
   private CertificateAsyncClient certificateAsyncClient;
-  private DefaultAzureCredential credential; 
+  private TokenCredential credential; 
 
   private static final Logger logger =   LogManager.getLogger(KeyVaultService.class);
 
@@ -61,35 +62,23 @@ public class KeyVaultService implements IKeyVaultService {
 
     //build credential based on authType flag
     if (this.authType.equals(Constants.USE_MSI)) {
-      credential = new DefaultAzureCredentialBuilder()
-          .excludeEnvironmentCredential()
-          .excludeAzureCliCredential()
-          .excludeSharedTokenCacheCredential()
-          .build();
+
+      credential = new ManagedIdentityCredentialBuilder().build();
+
     } else if (this.authType.equals(Constants.USE_CLI)) {
-      credential = new DefaultAzureCredentialBuilder()
-        .excludeEnvironmentCredential()
-        .excludeManagedIdentityCredential()
-        .excludeSharedTokenCacheCredential()
-        .build();
+      
+      credential = new AzureCliCredentialBuilder().build();
+      
     } else if (this.authType.equals(Constants.USE_MSI_APPSVC)) {
       try {
-        credential = new DefaultAzureCredentialBuilder()
-        .excludeEnvironmentCredential()
-        .excludeAzureCliCredential()
-        .excludeSharedTokenCacheCredential()
-        .build();
+        credential = new ManagedIdentityCredentialBuilder().build();
       } catch (final Exception ex) {
         logger.error(ex.getMessage());
         throw new HeliumException(ex.getMessage());
       }
     } else {
       this.authType = Constants.USE_MSI;
-      credential = new DefaultAzureCredentialBuilder()
-      .excludeEnvironmentCredential()
-      .excludeAzureCliCredential()
-      .excludeSharedTokenCacheCredential()
-      .build();
+      credential = new ManagedIdentityCredentialBuilder().build();
     }
 
 
