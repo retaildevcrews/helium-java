@@ -1,42 +1,170 @@
-### Build a Web API reference application via a Java Web API application using Managed Identity, Key Vault, and Cosmos DB that is designed to be deployed to Azure App Service or AKS
+# Managed Identity and Key Vault with Java Spring Boot
+
+> Build a Java Web API application using Managed Identity, Key Vault and Cosmos DB that is designed to be deployed to Azure App Service or AKS
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
 This is a Java Spring Boot Web API reference application designed to "fork and code" with the following features:
 
-- Securely build, deploy and run an App Service (Web App for Containers) application
+- Securely build, deploy and run an Azure App Service (Web App for Containers) application
+- Securely build, deploy and run an Azure Kubernetes Service (AKS) application
 - Use Managed Identity to securely access resources
 - Securely store secrets in Key Vault
-- Securely build and deploy the Docker container from Container Registry
-- Connect to and query CosmosDB
+- Securely build and deploy the Docker container to Azure Container Registry (ACR) or Docker Hub
+- Connect to and query Cosmos DB
 - Automatically send telemetry and logs to Azure Monitor
-- Instructions for setting up Key Vault, ACR, Azure Monitor and Cosmos DB are in the Helium [readme](https://github.com/retaildevcrews/helium)
+
+> Visual Studio Codespaces is the easiest way to evaluate helium as all of the prerequisites are automatically installed
+>
+> Follow the setup steps in the [Helium readme](https://github.com/retaildevcrews/helium) to setup Codespaces
 
 ## Prerequisites
 
-- Azure subscription with permissions to create:
-  - Resource Groups, Service Principals, Keyvault, CosmosDB, App Service, Azure Container Registry, Azure Monitor
-- Bash shell (tested on Mac, Ubuntu, Windows with WSL2)
-  - Will not work in Cloud Shell unless you have a remote dockerd
-  - Will not work in WSL1
+- Bash shell (tested on Visual Studio Codespaces, Mac, Ubuntu, Windows with WSL2)
+  - Will not work in Cloud Shell or WSL1
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
-- Java 8 above ([download](https://www.java.com/en/download/manual.jsp/))
-- JQ ([download](https://stedolan.github.io/jq/download/))
+- Java 8+ ([download](https://www.java.com/en/download/manual.jsp/))
 - Maven ([download](https://maven.apache.org/download.cgi))
-- Completion of the Key Vault, ACR, Azure Monitor and Cosmos DB setup in the Helium [readme](https://github.com/retaildevcrews/helium)
 - Visual Studio Code (optional) ([download](https://code.visualstudio.com/download))
 
 ## Setup
 
-The application requires Key Vault and Cosmos DB to be setup per the Helium [readme](https://github.com/retaildevcrews/helium)
+- Initial setup instructions are in the [Helium readme](https://github.com/retaildevcrews/helium)
+  - Please complete the setup steps and then continue below
 
-- Fork this repo and clone to your local machine
-  - cd to the base directory of the repo
-  - All instructions assume starting from the root of the repo
+### Validate az CLI works
+
+> In Visual Studio Codespaces, open a terminal by pressing ctl + `
+
+```bash
+
+# make sure you are logged into Azure
+az account show
+
+# if not, log in
+az login
+
+```
+
+### Verify Key Vault Access
+
+```bash
+
+# verify you have access to Key Vault
+az keyvault secret show --name CosmosDatabase --vault-name $He_Name
+
+```
+## Run the application
+
+### Using Visual Studio Codespaces
+
+Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup steps in the [Helium readme](https://github.com/retaildevcrews/helium) to setup Codespaces.
+
+- Open `launch.json` in the `.vscode` directory
+- Replace `{your key vault name}` with the name of your key vault
+  - the file saves automatically
+- Press F5
+- Wait for `Netty started on ports(s):4120` in the Java Debug Console
+- Skip to the testing step below
+
+### Using bash shell
+
+> This will work from a terminal in Visual Studio Codespaces as well
+
+```bash
+
+# set environment variables
+export AUTH_TYPE=CLI
+
+# run the application
+mvn clean package
+mvn spring-boot:run
+
+```
+
+wait for `Netty started on port(s): 4120`
+
+### Testing the application
+
+Open a new bash shell
+
+```bash
+
+# test the application
+
+# test using httpie (installed automatically in Codespaces)
+http localhost:4120/version
+
+# test using curl
+curl localhost:4120/version
+
+```
+
+Stop helium by typing Ctrl-C or the stop button if run via F5
+
+### Deep Testing
+
+We use [Web Validate](https://github.com/retaildevcrews/webvalidate) to run deep verification tests on the Web API
+
+If you have dotnet core sdk installed (Codespaces has dotnet core installed)
+
+```bash
+
+# install Web Validate as a dotnet global tool
+# this is automatically installed in CodeSpaces
+dotnet tool install -g webvalidate
+
+# make sure you are in the root of the repository
+
+# run the validation tests
+# validation tests are located in the TestFiles directory
+cd TestFiles
+
+webv -s localhost:4120 -f baseline.json
+
+# bad.json tests error conditions that return 4xx codes
+
+# benchmark.json is a 300 request test that covers the entire API
+
+# cd to root of repo
+cd ..
+
+```
+
+Test using Docker image
+
+```bash
+
+# make sure you are in the root of the repository
+
+# run the validation tests
+# validation tests are located in the TestFiles directory
+docker run -it --rm -v ./TestFiles:/app/TestFiles -s localhost:4120 -f baseline.json
+
+# bad.json tests error conditions that return 4xx codes
+
+# benchmark.json is a 300 request test that covers the entire API
+
+```
+
+### Build the container using Docker
+
+- The unit tests run as part of the Docker build process
+
+```bash
+
+# Make sure you are in the root of the repo
+
+docker build . -t helium-java
+
+# run docker tag and docker push to push to your repo
+
+```
 
 ## CI-CD
 
+> Make sure to fork the repo before experimenting with CI-CD
 
 This repo uses [GitHub Actions](/.github/workflows/dockerCI.yml) for Continuous Integration.
 
@@ -48,12 +176,14 @@ This repo uses [GitHub Actions](/.github/workflows/dockerCI.yml) for Continuous 
   - Tag the image with ```:1.0.8```
   - Tag the image with ```:stable```
   - Note that the ```v``` is case sensitive (lower case)
+- Once the `secrets` below are set, create a new branch, make a change to a file (md file changes are ignored), commit and push your change, create a PR into your local master
+- Check the `Actions` tab on the GitHub repo main page
 
 CD is supported via webhooks in Azure App Services connected to the ACR or DockerHub repository.
 
-### Pushing to Azure Container Registry
+### CI to Azure Container Registry
 
-In order to push to ACR, you must create a Service Principal that has push permissions to the ACR and set the following ```secrets``` in your GitHub repo:
+In order to push to ACR, you set the following `secrets` in your GitHub repo:
 
 - Azure Login Information
   - TENANT
@@ -65,143 +195,14 @@ In order to push to ACR, you must create a Service Principal that has push permi
   - ACR_REPO
   - ACR_IMAGE
 
-### Pushing to DockerHub
+### CI to DockerHub
 
-In order to push to DockerHub, you must set the following ```secrets``` in your GitHub repo:
+In order to push to DockerHub, you must set the following `secrets` in your GitHub repo:
 
 - DOCKER_REPO
 - DOCKER_USER
 - DOCKER_PAT
-  - Personal Access Token
-
-### Build the container using Docker
-- The unit tests run as part of the Docker build process. You can also run the unit tests manually.
-- For instructions on building the container with ACR, please see the Helium [readme](https://github.com/retaildevcrews/helium)
-
-```bash
-# Make sure you are in the root of the repo
-# Build the image - this can take 3-5 minutes
-
-docker build -t helium-dev .
-
-```
-
-- Run the application locally and clean previous packages and unit tests
-
-- The application requires Key Vault and Cosmos DB to be setup per the Helium [readme](https://github.com/retaildevcrews/helium)
-  - You can run the application locally by using Azure CLI cached credentials
-    - You must run az login before this will work
-```bash
-az login
-
-# show your Azure accounts
-az account list -o table
-
-# select the Azure account
-az account set -s {subscription name or Id}
-
-# Make sure you are in the root of the repo
-
-export AUTH_TYPE=CLI
-export KEYVAULT_NAME=$He_Name
-
-# This command takes about 3-5 minutes:
-
-mvn clean package
-
-mvn spring-boot:run
-
-# When the previous command shows 'Netty started on port(s): 4120'
-# test the application (takes about 10 seconds to start) in a new window
-
-curl http://localhost:4120/healthz
-
-# Stop the application by typing Ctrl-C in the Azure CLI terminal window
-# Or :::::
-
-mvn spring-boot:stop
-
-```
-
-- Run the application as a local container instead
-
-```bash
-
-# Make sure you are in the root of the repo
-# Run the command below to stop the previous instance and free up port 4120:
-
-mvn spring-boot:stop
-
-# You can also hit Ctrl-C from the shell window
-
-# Build the image and run the container using Docker
-
-# make sure you are in the root of the repo
-
-# this will use Azure CLI cached credentials
-
-# build the image
-
-# IMPORTANT: In the following steps, you will be using the Dockerfile-Dev to build a developer
-# image, and thus, you MUST make sure that you change the USER ID (UID) and GROUP ID (GID) of the
-# 'helium' user set via the'useradd -u <uid>' in the Dockerfile-Dev to the one that is assigned
-# to you on your host. The Dockerfile-Dev sets default values of UID=1000 and GID=1000 for the
-# helium user. On a single user system, in general you would have the same IDs but kindly
-# verify using the 'id' command that this is the case or change appropriately.
-
-docker build . -t helium-dev -f Dockerfile-Dev
-
-
-# We use a multi-stage docker build as installing the prerequisites and Azure CLI takes a while.
-# If you want to build a "permanent cache" of the first stage (so that "docker system prune"
-# doesn't delete it), you can run this command first:
-
-docker build . --target helium-dev-base -t helium-dev-base -f Dockerfile-Dev
-
-# Note that as part of building the dev container, we copy the source code into the
-# /home/helium/helium-java as we run the code as the helium user and so the developer has
-# access to the source within the container to experiment with.
-
-# Customizing your environment with dotFiles
-# If you want to use git from within the container, you should copy your ~/.gitconfig to dotFiles folder
-# before building the container. You can also copy your ~/.bashrc file to dotFiles to keep your aliases and exports.
-# Ensure you don't accidentally copy any credentials or secrets!
-# .gitignore will not commit any files in dotFiles that begin with "."
-# update .gitignore for any other files to exclude.
-
-# Then run the container with the command specified below. Note that the -v argument below specifies
-# that the Host OS $HOME/.azure should be mounted in the /home/helium/.azure in the container. This
-# is done so that any stored azure credentials created and cached by (az login) from the  host OS
-# will be used to access the keyvault specified using the cmd line argument KEYVAULT_NAME.
-# Additionally, mounting the volume (with the -v option) prevents your Azure credentials from
-# accidentally getting pushed to a repo.
-
-docker run -p 4120:4120 --name helium-dev \
---env KEYVAULT_NAME=$He_Name  \
--v ~/.azure:/home/helium/.azure -it helium-dev:latest
-
-# Note that the dev dockerfile contains a full environment for you to be able to build and run the
-# app. However, it does not contain a prebuilt copy of the application for  you to use immediately.
-# You will need to use the bash terminal spawned from the docker command above  to build and run
-# the app as follows:
-
-mvn clean package
-mvn spring-boot:run
-
-# In a different terminal than the one spawned above, check the logs to ensure the container
-# is properly running and wait until the application started message appears.
-
-docker logs helium-dev
-
-# test the application
-# the application takes about 10 seconds to start and you may have to run the below command more than once.
-curl http://localhost:4120/healthz
-
-# Clean up  - stop and remove the container.
-docker stop helium-dev
-docker rm helium-dev
-
-```
+  - Personal Access Token (recommended) or password
 
 ## Contributing
 
@@ -216,4 +217,3 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
