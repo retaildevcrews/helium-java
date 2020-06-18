@@ -6,13 +6,17 @@
 
 This is a Java Spring Boot Web API reference application designed to "fork and code" with the following features:
 
-- Securely build, deploy and run an App Service (Web App for Containers) application
+- Securely build, deploy and run an Azure App Service (Web App for Containers) application
+- Securely build, deploy and run an Azure Kubernetes Service (AKS) application
 - Use Managed Identity to securely access resources
 - Securely store secrets in Key Vault
-- Build and deploy the Docker container to Container Registry
+- Securely build and deploy the Docker container to Azure Container Registry (ACR) or Docker Hub
 - Connect to and query Cosmos DB
 - Automatically send telemetry and logs to Azure Monitor
-- Instructions for setting up Key Vault, ACR, Azure Monitor and Cosmos DB are in the Helium [readme](https://github.com/retaildevcrews/helium)
+
+> Visual Studio Codespaces is the easiest way to evaluate helium as all of the prerequisites are automatically installed
+>
+> Follow the setup steps in the [Helium readme](https://github.com/retaildevcrews/helium) to setup Codespaces
 
 ## Prerequisites
 
@@ -28,12 +32,29 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
 
 - Initial setup instructions are in the [Helium readme](https://github.com/retaildevcrews/helium)
   - Please complete the setup steps and then continue below
-- Helium requires two environment variables be set in order to run
-  - AUTH_TYPE=CLI
-  - KEYVAULT_NAME={you key vault name}
-  - These are set during the setup process
-  - These are automatically set in Codespaces each time you login
-    - To automatically set in bash, `source ~/.helium.env`
+
+### Validate az CLI works
+
+> In Visual Studio Codespaces, open a terminal by pressing ctl + `
+
+```bash
+
+# make sure you are logged into Azure
+az account show
+
+# if not, log in
+az login
+
+```
+
+### Verify Key Vault Access
+
+```bash
+
+# verify you have access to Key Vault
+az keyvault secret show --name CosmosDatabase --vault-name $He_Name
+
+```
 
 ### Using Visual Studio Codespaces
 
@@ -52,16 +73,8 @@ Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup
 
 ```bash
 
-# check environment variables
-# Note: these are set during the setup process and should already be set
-#       AUTH_TYPE should be set to CLI
-#       KEYVAULT_NAME should be set to your key vault
-echo $AUTH_TYPE
-echo $KEYVAULT_NAME
-
-# set environment variables (if necessary)
+# set environment variables
 export AUTH_TYPE=CLI
-export KEYVAULT_NAME={your key vault name}
 
 # run the application
 mvn clean package
@@ -78,11 +91,40 @@ Open a new bash shell
 ```bash
 
 # test the application
-webv -s localhost:4120 -f baseline.json
+
+# test using httpie (installed automatically in Codespaces)
+http localhost:4120/version
+
+# test using curl
+curl localhost:4120/version
 
 ```
 
 Stop helium by typing Ctrl-C or the stop button if run via F5
+
+### Deep Testing
+
+We use [Web Validate](https://github.com/retaildevcrews/webvalidate) to run deep verification tests on the Web API
+
+```bash
+
+# TODO - add instructions for docker run
+
+# install Web Validate as a dotnet global tool
+# this is automatically installed in CodeSpaces
+dotnet tool install -g webvalidate
+
+# make sure you are in the root of the repository
+
+# run the validation tests
+# validation tests are located in the TestFiles directory
+webv -s localhost:4120 -f TestFiles/baseline.json
+
+# bad.json tests error conditions that return 4xx codes
+
+# benchmark.json is a 300 request test that covers the entire API
+
+```
 
 ### Build the container using Docker
 
@@ -92,11 +134,15 @@ Stop helium by typing Ctrl-C or the stop button if run via F5
 
 # Make sure you are in the root of the repo
 
-docker build . -t helium
+docker build . -t helium-java
+
+# run docker tag and docker push to push to your repo
 
 ```
 
 ## CI-CD
+
+> Make sure to fork the repo before experimenting with CI-CD
 
 This repo uses [GitHub Actions](/.github/workflows/dockerCI.yml) for Continuous Integration.
 
