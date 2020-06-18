@@ -146,6 +146,11 @@ Test using Docker image
 # validation tests are located in the TestFiles directory
 docker run -it --rm -v ./TestFiles:/app/TestFiles -s localhost:4120 -f baseline.json
 
+# there may be a validation error on the /healthz/ietf endpoint test
+#   json: status: warn : Expected: pass
+# the "warn" status indicates a slower than normal response time
+# and will occasionally occur
+
 # bad.json tests error conditions that return 4xx codes
 
 # benchmark.json is a 300 request test that covers the entire API
