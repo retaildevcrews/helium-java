@@ -9,7 +9,7 @@ sudo apt-get update
 sudo apt-get install -y --no-install-recommends apt-utils dialog
 
 # update / install utils
-sudo apt-get install -y --no-install-recommends dnsutils httpie bash-completion curl wget git maven
+sudo apt-get install -y --no-install-recommends dnsutils httpie bash-completion curl wget git unzip maven
 DEBIAN_FRONTEND=dialog
 
 # copy vscode files
