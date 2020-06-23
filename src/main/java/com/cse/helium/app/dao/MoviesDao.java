@@ -123,7 +123,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
             selectedGenre -> {
               formedQuery.append(" and contains(m.genres, @selectedGenre) ");
               parameterList.add(new SqlParameter("@selectedGenre",
-                  MessageFormat.format(":{0}:", selectedGenre.get(0))));
+                  MessageFormat.format("|{0}|", selectedGenre.get(0))));
               formedQuery.append(movieOrderBy).append(movieOffset);
 
               final SqlQuerySpec genreQuerySpec = new SqlQuerySpec();
