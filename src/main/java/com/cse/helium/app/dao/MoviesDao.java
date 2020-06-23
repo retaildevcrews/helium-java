@@ -121,7 +121,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
         .collectList()
         .flatMapMany(
             selectedGenre -> {
-              formedQuery.append(" and contains(m.genres, @selectedGenre) ");
+              formedQuery.append(" and contains(m.genreSearch, @selectedGenre) ");
               parameterList.add(new SqlParameter("@selectedGenre",
                   MessageFormat.format("|{0}|", selectedGenre.get(0))));
               formedQuery.append(movieOrderBy).append(movieOffset);
