@@ -19,7 +19,7 @@
 </reporting>
 <groupId>com.cse</groupId>
     <artifactId>helium</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>helium-java</name>
     <description>Helium Java with Spring Boot</description>
     <properties>

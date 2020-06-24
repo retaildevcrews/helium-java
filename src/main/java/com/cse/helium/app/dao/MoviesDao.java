@@ -8,6 +8,7 @@ import com.azure.data.cosmos.SqlQuerySpec;
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.models.Movie;
 import com.cse.helium.app.services.configuration.IConfigurationService;
+import java.text.MessageFormat;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,8 +121,9 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
         .collectList()
         .flatMapMany(
             selectedGenre -> {
-              formedQuery.append(" and array_contains(m.genres, @selectedGenre) ");
-              parameterList.add(new SqlParameter("@selectedGenre", selectedGenre.get(0)));
+              formedQuery.append(" and contains(m.genreSearch, @selectedGenre) ");
+              parameterList.add(new SqlParameter("@selectedGenre",
+                  MessageFormat.format("|{0}|", selectedGenre.get(0))));
               formedQuery.append(movieOrderBy).append(movieOffset);
 
               final SqlQuerySpec genreQuerySpec = new SqlQuerySpec();
