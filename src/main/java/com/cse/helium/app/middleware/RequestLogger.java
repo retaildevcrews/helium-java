@@ -24,7 +24,8 @@ public class RequestLogger implements WebFilter {
   public Mono<Void> filter(ServerWebExchange serverWebExchange, 
       WebFilterChain webFilterChain) {
     // get request metadata
-    String requestAddress = getRequestAddress(serverWebExchange.getRequest().getRemoteAddress());
+    String requestAddress = getRequestAddress(
+        serverWebExchange.getRequest().getRemoteAddress());
     String pathQueryString = getPathQueryString(serverWebExchange.getRequest());
 
     // set start time
