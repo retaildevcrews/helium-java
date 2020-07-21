@@ -1,6 +1,7 @@
 package com.cse.helium.app.middleware;
 
 import java.net.InetSocketAddress;
+import java.text.MessageFormat;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class RequestLogger implements WebFilter {
 
-  private static final Logger logger =   LogManager.getLogger();
+  private static final Logger logger =   LogManager.getLogger(RequestLogger.class);
  
   /**
    * filter gathers the request and response metadata and logs
@@ -48,8 +49,8 @@ public class RequestLogger implements WebFilter {
       }
 
       // log results to console
-      logger.info(String.format(
-          "%s\t%s\t%s\t%s", 
+      logger.info(MessageFormat.format(
+          "{0}\t{1}\t{2}\t{3}", 
           statusCode, duration, requestAddress, pathQueryString));
     });
   }
