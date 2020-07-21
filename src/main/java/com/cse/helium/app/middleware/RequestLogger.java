@@ -3,8 +3,8 @@ package com.cse.helium.app.middleware;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
@@ -20,14 +20,14 @@ public class RequestLogger implements WebFilter {
    *   the results to console.
   */
   @Override
-  public Mono<Void> filter (ServerWebExchange serverWebExchange, 
-    WebFilterChain webFilterChain) {
-      // get request metadata
-      String remoteAddress = serverWebExchange.getRequest().getRemoteAddress().getHostString();
-      String pathQueryString = getPathQueryString(serverWebExchange.getRequest());
+  public Mono<Void> filter(ServerWebExchange serverWebExchange, 
+      WebFilterChain webFilterChain) {
+    // get request metadata
+    String remoteAddress = serverWebExchange.getRequest().getRemoteAddress().getHostString();
+    String pathQueryString = getPathQueryString(serverWebExchange.getRequest());
 
-      // set start time
-      long startTime = System.currentTimeMillis();
+    // set start time
+    long startTime = System.currentTimeMillis();
       
       // process next handler
       return webFilterChain.filter(serverWebExchange).doFinally(signalType -> {
@@ -46,12 +46,14 @@ public class RequestLogger implements WebFilter {
         }
 
         // log results to console
-        logger.info(String.format("%s\t%s\t%s\t%s", statusCode, duration, remoteAddress, pathQueryString));
+        logger.info(String.format(
+            "%s\t%s\t%s\t%s", 
+            statusCode, duration, remoteAddress, pathQueryString));
       });
   }
 
-  /** getPathQueryString returns the path and query string if it exists */
-  private String getPathQueryString (ServerHttpRequest request) {
+  /** getPathQueryString returns the path and query string if it exists. */
+  private String getPathQueryString(ServerHttpRequest request) {
     String pathQueryString = request.getURI().getPath();
     String query = request.getURI().getQuery();
     if (query != null) {
