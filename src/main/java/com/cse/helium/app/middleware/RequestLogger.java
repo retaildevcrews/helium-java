@@ -1,5 +1,6 @@
 package com.cse.helium.app.middleware;
 
+import java.net.InetSocketAddress;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,33 +24,41 @@ public class RequestLogger implements WebFilter {
   public Mono<Void> filter(ServerWebExchange serverWebExchange, 
       WebFilterChain webFilterChain) {
     // get request metadata
-    String remoteAddress = serverWebExchange.getRequest().getRemoteAddress().getHostString();
+    String requestAddress = getRequestAddress(serverWebExchange.getRequest().getRemoteAddress());
     String pathQueryString = getPathQueryString(serverWebExchange.getRequest());
 
     // set start time
     long startTime = System.currentTimeMillis();
       
-      // process next handler
-      return webFilterChain.filter(serverWebExchange).doFinally(signalType -> {
-        // compute request duration and get status code
-        long duration = System.currentTimeMillis() - startTime;
-        int statusCode = serverWebExchange.getResponse().getStatusCode().value();
-        
-        // don't log favicon.ico 404s
-        if (pathQueryString.startsWith("/favicon.ico")) {
-          return;
-        }
+    // process next handler
+    return webFilterChain.filter(serverWebExchange).doFinally(signalType -> {
+      // compute request duration and get status code
+      long duration = System.currentTimeMillis() - startTime;
+      int statusCode = serverWebExchange.getResponse().getStatusCode().value();
+      
+      // don't log favicon.ico 404s
+      if (pathQueryString.startsWith("/favicon.ico")) {
+        return;
+      }
 
-        // don't log if log level >= warn but response code < 400
-        if (logger.getLevel().isMoreSpecificThan(Level.WARN) && statusCode < 400) {
-          return;
-        }
+      // don't log if log level >= warn but response code < 400
+      if (logger.getLevel().isMoreSpecificThan(Level.WARN) && statusCode < 400) {
+        return;
+      }
 
-        // log results to console
-        logger.info(String.format(
-            "%s\t%s\t%s\t%s", 
-            statusCode, duration, remoteAddress, pathQueryString));
-      });
+      // log results to console
+      logger.info(String.format(
+          "%s\t%s\t%s\t%s", 
+          statusCode, duration, requestAddress, pathQueryString));
+    });
+  }
+
+  /** getRequestAddress returns the request IP address if it exists. */
+  private String getRequestAddress(InetSocketAddress requestAddress) {
+    if (requestAddress != null) {
+      return requestAddress.getHostString();
+    }
+    return "";
   }
 
   /** getPathQueryString returns the path and query string if it exists. */
