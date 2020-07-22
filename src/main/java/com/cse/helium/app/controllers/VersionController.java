@@ -2,6 +2,9 @@ package com.cse.helium.app.controllers;
 
 
 import com.cse.helium.app.config.BuildConfig;
+import com.cse.helium.app.config.SwaggerConfig;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,22 +25,32 @@ public class VersionController {
   @Autowired
   ApplicationContext context;
 
+  @Autowired
+  SwaggerConfig swaggerConfig;
+
   /**
    * Returns the application build version.
    *
    * @param response ServerHttpResponse passed into the alternate version handler by Spring
-   * @return Mono/<String/> container the build number
+   * @return Mono/<Map<String, String>/> container the build number
   */
   @GetMapping(name = "Helium Version Controller",
       value = "/version",
-      produces = MediaType.TEXT_PLAIN_VALUE)
-  public Mono<String> version(ServerHttpResponse response) {
+      produces = MediaType.APPLICATION_JSON_VALUE) //APPLICATION_JSON_VALUE //TEXT_PLAIN_VALUE
+  public Mono<Map<String, String>> version(ServerHttpResponse response) {
     try {
+      LinkedHashMap<String, String> versionResult = new LinkedHashMap<>();
+      String appVersion = context.getBean(BuildConfig.class).getBuildVersion();
+      String apiVersion = swaggerConfig.getInfo().get("version");
+
+      versionResult.put("appVersion", appVersion);
+      versionResult.put("apiVersion", apiVersion);
+
       response.setStatusCode(HttpStatus.OK);
-      return Mono.just(context.getBean(BuildConfig.class).getBuildVersion());
+      return Mono.just(versionResult);
     } catch (Exception ex) {
 
-      logger.error("Error recieved in VersionController", ex);
+      logger.error("Error received in VersionController", ex);
       return Mono.error(new ResponseStatusException(
         HttpStatus.INTERNAL_SERVER_ERROR, "version Error"));
     }
