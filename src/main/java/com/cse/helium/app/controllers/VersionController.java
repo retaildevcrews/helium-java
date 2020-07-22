@@ -32,7 +32,8 @@ public class VersionController {
    * Returns the application build version.
    *
    * @param response ServerHttpResponse passed into the alternate version handler by Spring
-   * @return Mono/<Map<String, String>/> container the build number
+   * @return Mono{@literal <}Map{@literal <}String, 
+   *      String{@literal <}{@literal <} container the build number
   */
   @GetMapping(name = "Helium Version Controller",
       value = "/version",
