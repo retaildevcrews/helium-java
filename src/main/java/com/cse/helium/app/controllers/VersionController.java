@@ -50,7 +50,7 @@ public class VersionController {
       response.setStatusCode(HttpStatus.OK);
       return Mono.just(versionResult);
     } catch (Exception ex) {
-      logger.error("Error received in VersionController.", ex);
+      logger.error("Error received in VersionController", ex);
       return Mono.error(new ResponseStatusException(
         HttpStatus.INTERNAL_SERVER_ERROR, "version Error"));
     }
