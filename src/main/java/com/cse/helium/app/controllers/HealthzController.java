@@ -73,7 +73,7 @@ public class HealthzController {
    *    the discrete calls that are made.
    *
    *    @return Mono{@literal <}ResponseEntity{@literal <}LinkedHashMap{@literal <}String,
-   *        Object{@literal <}{@literal <}{@literal <}
+   *        Object{@literal >}{@literal >}{@literal >}
    *        returned with status information for overall execution and discrete calls.
    */
   @GetMapping(value = "/ietf", produces = "application/health+json")

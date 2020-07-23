@@ -11,6 +11,12 @@ import org.springframework.core.io.support.PropertySourceFactory;
 
 public class JsonConfigReader implements PropertySourceFactory {
 
+  /**
+   * createPropertySource makes use of the Jackson JSON mapping library
+   *    to load a JSON config file.
+   *
+   * @return PropertySource{@literal <}?{@literal >}
+  */
   @Override
   public PropertySource<?> createPropertySource(String name, EncodedResource resource)
       throws IOException {
