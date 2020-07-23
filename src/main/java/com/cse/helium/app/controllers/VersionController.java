@@ -37,15 +37,14 @@ public class VersionController {
   */
   @GetMapping(name = "Helium Version Controller",
       value = "/version",
-      produces = MediaType.APPLICATION_JSON_VALUE) //APPLICATION_JSON_VALUE //TEXT_PLAIN_VALUE
+      produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<Map<String, String>> version(ServerHttpResponse response) {
     try {
       LinkedHashMap<String, String> versionResult = new LinkedHashMap<>();
-      String appVersion = context.getBean(BuildConfig.class).getBuildVersion();
-      String apiVersion = swaggerConfig.getInfo().get("version");
 
-      versionResult.put("appVersion", appVersion);
-      versionResult.put("apiVersion", apiVersion);
+      versionResult.put("appVersion", 
+          context.getBean(BuildConfig.class).getBuildVersion());
+      versionResult.put("apiVersion", swaggerConfig.getInfo().get("version"));
 
       response.setStatusCode(HttpStatus.OK);
       return Mono.just(versionResult);
