@@ -1,9 +1,5 @@
 {
     "openapi": "3.0.1",
-    "info": {
-      "title": "Helium",
-      "version": "1.0"
-    },
     "paths": {
       "/api/movies": {
         "get": {

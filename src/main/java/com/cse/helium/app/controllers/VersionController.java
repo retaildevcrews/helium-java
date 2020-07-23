@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 
@@ -38,20 +39,20 @@ public class VersionController {
       value = "/version",
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<Map<String, String>> version(ServerHttpResponse response) {
-    String apiVersion = "1.0";
     try {
-      apiVersion = swaggerConfig.getInfo().get("version");      
+      // build the json result body
+      LinkedHashMap<String, String> versionResult = new LinkedHashMap<>();
+
+      versionResult.put("appVersion", 
+          context.getBean(BuildConfig.class).getBuildVersion());
+      versionResult.put("apiVersion", swaggerConfig.getInfo().get("version"));
+
+      response.setStatusCode(HttpStatus.OK);
+      return Mono.just(versionResult);
     } catch (Exception ex) {
       logger.error("Error received in VersionController.", ex);
+      return Mono.error(new ResponseStatusException(
+        HttpStatus.INTERNAL_SERVER_ERROR, "version Error"));
     }
-
-    // build the json result body
-    LinkedHashMap<String, String> versionResult = new LinkedHashMap<>();
-
-    versionResult.put("appVersion", context.getBean(BuildConfig.class).getBuildVersion());
-    versionResult.put("apiVersion", apiVersion);
-
-    response.setStatusCode(HttpStatus.OK);
-    return Mono.just(versionResult);
   }
 }
