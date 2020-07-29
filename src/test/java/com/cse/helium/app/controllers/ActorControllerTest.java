@@ -50,8 +50,8 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectStatus().isOk()
-                .expectBodyList(Actor.class);
+                .expectStatus().isOk();
+                //.expectBodyList(Actor.class);
     }
     @Test
     public void testBadQueryActors_1(){
