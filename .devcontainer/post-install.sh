@@ -4,6 +4,8 @@
 sudo curl https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker -o /etc/bash_completion.d/docker
 
 DEBIAN_FRONTEND=noninteractive
+
+echo 'deb http://ftp.debian.org/debian stretch-backports main' | sudo tee /etc/apt/sources.list.d/stretch-backports.list
 # update apt-get
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends apt-utils dialog
