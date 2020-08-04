@@ -5,7 +5,9 @@ sudo curl https://raw.githubusercontent.com/docker/docker-ce/master/components/c
 
 DEBIAN_FRONTEND=noninteractive
 
+#Repository for Java 11
 echo 'deb http://ftp.debian.org/debian stretch-backports main' | sudo tee /etc/apt/sources.list.d/stretch-backports.list
+
 # update apt-get
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends apt-utils dialog
