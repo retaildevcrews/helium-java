@@ -1,7 +1,10 @@
 {
   "name": "helium-java",
 
-  "settings": { "terminal.integrated.shell.linux": "/bin/bash" },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "java.home": "/usr/lib/jvm/java-11-openjdk-amd64"
+  },
 
   // Open port 4120 by default
   "forwardPorts": [4120],
