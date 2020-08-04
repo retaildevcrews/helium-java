@@ -1,9 +1,9 @@
 {
   "name": "helium-java",
-
+  "dockerFile": "Dockerfile",
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash",
-    "java.home": "/usr/lib/jvm/java-11-openjdk-amd64"
+    "java.home": "/docker-java-home"
   },
 
   // Open port 4120 by default
