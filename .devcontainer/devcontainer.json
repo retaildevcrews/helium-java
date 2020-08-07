@@ -1,6 +1,6 @@
 {
   "name": "helium-java",
-  "dockerFile": "Dockerfile",
+  "image": "retaildevcrew/helium-java-codespaces",
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash",
     "java.home": "/docker-java-home"
