@@ -1,5 +1,5 @@
 # ----- Base Java - Check Dependencies ----
-FROM maven:3.6.1-jdk-8 AS base
+FROM maven:3.6.3-jdk-11 AS base
 WORKDIR /app
 ADD pom.xml /app
 
@@ -18,12 +18,12 @@ RUN mvn clean package -DskipTests
 
 #
 # ---- Release App ----
-FROM  openjdk:8-jre-alpine AS release
+FROM  openjdk:11.0-jre-slim AS release
 WORKDIR /app
 
 # Create the helium user so we can run the app as non-root under helium
-RUN addgroup -g 4120 -S helium && \
-    adduser -u 4120 -S helium -G helium
+RUN groupadd -g 4120 helium && \
+    useradd -u 4120 -g helium -s /bin/sh helium
 USER helium
 
 COPY --from=dependencies /app/target/helium.jar app.jar

@@ -1,7 +1,10 @@
 {
   "name": "helium-java",
-
-  "settings": { "terminal.integrated.shell.linux": "/bin/bash" },
+  "image": "retaildevcrew/helium-java-codespaces",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "java.home": "/docker-java-home"
+  },
 
   // Open port 4120 by default
   "forwardPorts": [4120],
