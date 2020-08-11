@@ -43,9 +43,9 @@ public class VersionController {
       // build the json result body
       LinkedHashMap<String, String> versionResult = new LinkedHashMap<>();
 
+      versionResult.put("apiVersion", swaggerConfig.getInfo().get("version"));
       versionResult.put("appVersion", 
           context.getBean(BuildConfig.class).getBuildVersion());
-      versionResult.put("apiVersion", swaggerConfig.getInfo().get("version"));
 
       response.setStatusCode(HttpStatus.OK);
       return Mono.just(versionResult);
