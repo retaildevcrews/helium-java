@@ -1,7 +1,5 @@
 package com.cse.helium.app.controllers;
 
-import com.cse.helium.app.models.Movie;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,16 +167,18 @@ public class MovieControllerTest {
   public void testMoviesWithValidYear_2(){
     webClient.get().uri("/api/movies?year=2025")
         .header(HttpHeaders.ACCEPT, "application/json")
-        .exchange();
-        //.expectBodyList(Movie.class).hasSize(0);
+        .exchange()
+        .expectStatus().is2xxSuccessful();
+        //.expectBodyList(Object.class).hasSize(0);
   }
 
   @Test
   public void testMoviesWithValidYear_3(){
     webClient.get().uri("/api/movies?year=1874")
         .header(HttpHeaders.ACCEPT, "application/json")
-        .exchange();
-        //.expectBodyList(Movie.class).hasSize(0);
+        .exchange()
+        .expectStatus().is2xxSuccessful();
+        //.expectBodyList(Object.class).hasSize(0);
   }
 
   @Test

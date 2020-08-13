@@ -1,6 +1,5 @@
 package com.cse.helium.app.controllers;
 
-import com.cse.helium.app.models.Actor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

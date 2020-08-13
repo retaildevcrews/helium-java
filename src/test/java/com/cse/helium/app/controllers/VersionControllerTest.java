@@ -20,13 +20,13 @@ public class VersionControllerTest {
 
   @Test
   public void testVersion() {
-    assertTrue(versionController != null);
+    assertNotNull(versionController);
     WebTestClient webClient = WebTestClient.bindToController(versionController)
         .configureClient()
         .baseUrl("/")
         .build();
 
-    assertTrue(webClient != null);
+    assertNotNull(webClient);
     webClient
         .get()
         .uri("/version")
