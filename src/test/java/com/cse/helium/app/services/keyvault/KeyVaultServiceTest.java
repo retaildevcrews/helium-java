@@ -48,14 +48,14 @@ public class KeyVaultServiceTest {
   public void TestEmptyAuthType() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
     environmentVariables.clear("AUTH_TYPE");
-    assertTrue("No Auth specified, MSI used", environmentReader.getAuthType() == "MSI_APPSVC");
+    assertTrue("No Auth specified, MI used", environmentReader.getAuthType() == "MI_APPSVC");
   }
 
   @Test
-  public void TestPositiveMSI() throws Exception {
+  public void TestPositiveMI() throws Exception {
     EnvironmentReader environmentReader = new EnvironmentReader(applicationArguments);
-    environmentVariables.set("AUTH_TYPE", "MSI");
-    assertTrue("MSI specified, MSI used", environmentReader.getAuthType() == "MSI");
+    environmentVariables.set("AUTH_TYPE", "MI");
+    assertTrue("MI specified, MI used", environmentReader.getAuthType() == "MI");
   }
 
   @Test

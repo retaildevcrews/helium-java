@@ -22,8 +22,8 @@ public final class Constants {
 
   public static final String AUTH_TYPE = "AUTH_TYPE";
   public static final String KEY_VAULT_NAME = "KEYVAULT_NAME";
-  public static final String USE_MSI = "MSI";
-  public static final String USE_MSI_APPSVC = "MSI_APPSVC";
+  public static final String USE_MI = "MI";
+  public static final String USE_MI_APPSVC = "MI_APPSVC";
   public static final String USE_CLI = "CLI";
   public static final String USE_VS = "VS";
   public static final String APP_INSIGHTS_KEY = "AppInsightsKey";
