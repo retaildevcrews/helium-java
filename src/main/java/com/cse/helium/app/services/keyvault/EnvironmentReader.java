@@ -47,12 +47,12 @@ public class EnvironmentReader implements IEnvironmentReader {
       System.exit(-1);
     }
 
-    if (authType.equals(Constants.USE_MSI)) {
-      this.authType = Constants.USE_MSI;
+    if (authType.equals(Constants.USE_MI)) {
+      this.authType = Constants.USE_MI;
     } else if (authType.equals(Constants.USE_CLI)) {
       this.authType = Constants.USE_CLI;
-    } else if (authType.equals(Constants.USE_MSI_APPSVC)) {
-      this.authType = Constants.USE_MSI_APPSVC;
+    } else if (authType.equals(Constants.USE_MI_APPSVC)) {
+      this.authType = Constants.USE_MI_APPSVC;
     } else if (authType.equals(Constants.USE_VS)) {
       logger.log(Level.ERROR, "VS Credentials are not yet supported in Java");
       System.exit(-1);
@@ -65,7 +65,7 @@ public class EnvironmentReader implements IEnvironmentReader {
   /**
    * getAuthType.
    *
-   * @return returns CLI or MSI.
+   * @return returns CLI or MI.
    */
   @SuppressFBWarnings("DM_EXIT")
   public String getAuthType() {
@@ -78,17 +78,17 @@ public class EnvironmentReader implements IEnvironmentReader {
 
     authType = System.getenv(Constants.AUTH_TYPE);
 
-    // If it is not set, use the MSI
+    // If it is not set, use the MI
     if (authType == null) {
-      logger.info("Auth type is null, defaulting to MSI APP SVC");
-      return Constants.USE_MSI_APPSVC;
+      logger.info("Auth type is null, defaulting to MI APP SVC");
+      return Constants.USE_MI_APPSVC;
     }
 
-    // ONLY If it is set and values are either MSI or CLI, we will accept.
-    // otherwise, default is just the MSI
-    if (authType.equals(Constants.USE_MSI)) {
-      logger.info("Auth type is MSI");
-      return Constants.USE_MSI;
+    // ONLY If it is set and values are either MI or CLI, we will accept.
+    // otherwise, default is just the MI
+    if (authType.equals(Constants.USE_MI)) {
+      logger.info("Auth type is MI");
+      return Constants.USE_MI;
     } else if (authType.equals(Constants.USE_CLI)) {
       logger.info("Auth type is CLI");
       return Constants.USE_CLI;

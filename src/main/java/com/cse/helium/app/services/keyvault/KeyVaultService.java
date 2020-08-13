@@ -61,7 +61,7 @@ public class KeyVaultService implements IKeyVaultService {
     }
 
     //build credential based on authType flag
-    if (this.authType.equals(Constants.USE_MSI)) {
+    if (this.authType.equals(Constants.USE_MI)) {
 
       credential = new ManagedIdentityCredentialBuilder().build();
 
@@ -69,7 +69,7 @@ public class KeyVaultService implements IKeyVaultService {
       
       credential = new AzureCliCredentialBuilder().build();
       
-    } else if (this.authType.equals(Constants.USE_MSI_APPSVC)) {
+    } else if (this.authType.equals(Constants.USE_MI_APPSVC)) {
       try {
         credential = new ManagedIdentityCredentialBuilder().build();
       } catch (final Exception ex) {
@@ -77,7 +77,7 @@ public class KeyVaultService implements IKeyVaultService {
         throw new HeliumException(ex.getMessage());
       }
     } else {
-      this.authType = Constants.USE_MSI;
+      this.authType = Constants.USE_MI;
       credential = new ManagedIdentityCredentialBuilder().build();
     }
 
