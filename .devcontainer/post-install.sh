@@ -15,10 +15,5 @@ mkdir -p .vscode && cp docs/vscode-template/* .vscode
 echo "" >> ~/.bashrc
 echo ". ${PWD}/.devcontainer/.bashrc-append" >> ~/.bashrc
 
-# install WebV
-export PATH="$PATH:~/.dotnet/tools"
-export DOTNET_ROOT=~/.dotnet
-dotnet tool install -g webvalidate
-
 # set auth type
 export AUTH_TYPE=CLI
