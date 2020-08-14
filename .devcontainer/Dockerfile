@@ -28,8 +28,7 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 RUN ln -s "${JAVA_HOME}" /docker-java-home
 
 #Install WebValidate
-RUN export DOTNET_ROOT=/root/.dotnet && dotnet tool install -g webvalidate
-ENV PATH="/root/.dotnet/tools:${PATH}"
+RUN dotnet tool install -g webvalidate
+ENV PATH="~/.dotnet/tools:${PATH}"
 
 ENV DEBIAN_FRONTEND=
-
