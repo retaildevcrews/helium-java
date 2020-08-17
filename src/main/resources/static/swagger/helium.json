@@ -277,10 +277,25 @@
             "400": {
               "description": "Invalid parameter",
               "content": {
-                "text/plain": {
-                  "schema": {
-                    "type": "string",
-                    "example": "Invalid {queryString} parameter"
+                "application/json": {
+                  "example": {
+                    "error":{
+                       "code":"BadArgument",
+                       "message":"Invalid q (search) parameter",
+                       "statusCode":400,
+                       "target":"q",
+                       "innererror":{
+                          "code":"InvalidSearchParameter",
+                          "minLength":"2",
+                          "maxLength":"20",
+                          "characterTypes":[
+                             "lowerCase",
+                             "upperCase",
+                             "number",
+                             "symbol"
+                          ]
+                       }
+                    }
                   }
                 }
               }
@@ -360,10 +375,17 @@
             "400": {
               "description": "Invalid movieId",
               "content": {
-                "text/plain": {
-                  "schema": {
-                    "type": "string",
-                    "example": "Invalid movieId"
+                "application/json": {
+                  "example": {
+                    "error":{
+                       "code":"BadArgument",
+                       "message":"Invalid Movie ID parameter",
+                       "statusCode":400,
+                       "target":"movieId",
+                       "innererror":{
+                          "code":"InvalidMovieIDParameter"
+                       }
+                    }
                   }
                 }
               }
@@ -561,10 +583,25 @@
             "400": {
               "description": "Invalid parameter",
               "content": {
-                "text/plain": {
-                  "schema": {
-                    "type": "string",
-                    "example": "Invalid {queryString} parameter"
+                "application/json": {
+                  "example": {
+                    "error":{
+                       "code":"BadArgument",
+                       "message":"Invalid q (search) parameter",
+                       "statusCode":400,
+                       "target":"q",
+                       "innererror":{
+                          "code":"InvalidSearchParameter",
+                          "minLength":"2",
+                          "maxLength":"20",
+                          "characterTypes":[
+                             "lowerCase",
+                             "upperCase",
+                             "number",
+                             "symbol"
+                          ]
+                       }
+                    }
                   }
                 }
               }
@@ -664,10 +701,17 @@
             "400": {
               "description": "Invalid actorId",
               "content": {
-                "text/plain": {
-                  "schema": {
-                    "type": "string",
-                    "example": "Invalid actorId"
+                "application/json": {
+                  "example": {
+                    "error":{
+                       "code":"BadArgument",
+                       "message":"Invalid Actor ID parameter",
+                       "statusCode":400,
+                       "target":"actorId",
+                       "innererror":{
+                          "code":"InvalidActorIDParameter"
+                       }
+                    }
                   }
                 }
               }
