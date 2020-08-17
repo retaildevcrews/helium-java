@@ -5,8 +5,9 @@ on:
     branches:
       - master
 
-    paths-include:
+    paths:
     - '.devcontainer/Dockerfile'
+    - '.github/workflows/codespaces.yml'
 
 jobs:
 
@@ -45,7 +46,7 @@ jobs:
       if: ${{ env.DOCKER_SET == 'true' }}
       run: |
         # build release image
-        docker build . -t helium-java-codespaces -f /.devcontainer/Dockerfile
+        docker build . -t helium-java-codespaces -f .devcontainer/Dockerfile
 
     - name: Docker Tag and Push
       if: ${{ env.DOCKER_SET == 'true' }}
