@@ -2,7 +2,6 @@ package com.cse.helium.app.controllers;
 
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.dao.MoviesDao;
-import com.cse.helium.app.models.Movie;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import java.text.MessageFormat;
@@ -39,7 +38,7 @@ public class MoviesController extends Controller {
       produces = MediaType.APPLICATION_JSON_VALUE)
   // to suprress wrapping the logger.error() in a conditional and lambda to function
   @SuppressWarnings({"squid:S2629", "squid:S1612"})  
-  public Mono<ResponseEntity<Movie>> getMovie(
+  public Object getMovie(
       @ApiParam(value = "The ID of the movie to look for", example = "tt0000002", required = true)
           @PathVariable("id")
           String movieId) {
@@ -51,7 +50,6 @@ public class MoviesController extends Controller {
     if (Boolean.TRUE.equals(validator.isValidMovieId(movieId))) {
       return moviesDao
           .getMovieById(movieId)
-          .map(savedMovie -> ResponseEntity.ok(savedMovie))
           .switchIfEmpty(
               Mono.defer(
                   () ->
@@ -61,8 +59,7 @@ public class MoviesController extends Controller {
 
       logger.error(MessageFormat.format("Invalid Movie ID parameter {0}", movieId));
 
-      return Mono.error(
-          new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.INVALID_MOVIEID_MESSAGE));
+      return new ResponseEntity<>(Constants.INVALID_MOVIEID_MESSAGE, HttpStatus.BAD_REQUEST);
     }
   }
 

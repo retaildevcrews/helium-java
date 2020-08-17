@@ -13,9 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Flux;
 
 @Component
 public class Controller {
@@ -39,7 +38,7 @@ public class Controller {
 
     Map<String,Object> queryParams = new HashMap<>();
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.TEXT_PLAIN);
+    headers.setContentType(MediaType.APPLICATION_JSON);
 
     if (query.isPresent()) {
       if (Boolean.TRUE.equals(validator.isValidSearchQuery(query.get()))) {
@@ -47,8 +46,7 @@ public class Controller {
       } else {
         logger.error("INVALID_QUERY_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_QUERY_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_QUERY_MESSAGE, HttpStatus.BAD_REQUEST);
       }
     }
 
@@ -57,8 +55,8 @@ public class Controller {
       if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
         logger.error("INVALID_PAGENUM_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_PAGENUM_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -69,8 +67,8 @@ public class Controller {
       if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
         logger.error("INVALID_PAGESIZE_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_PAGESIZE_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -105,7 +103,7 @@ public class Controller {
     Map<String,Object> queryParams = new HashMap<>();
     String q = null;
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.TEXT_PLAIN);
+    headers.setContentType(MediaType.APPLICATION_JSON);
 
     if (logger.isInfoEnabled()) {
       logger.info(MessageFormat.format("controller::getAll (query={0}, genre={1}, year={2}, "
@@ -120,8 +118,8 @@ public class Controller {
       } else {
         logger.error("INVALID_QUERY_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_QUERY_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_QUERY_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       }
     }
 
@@ -130,8 +128,8 @@ public class Controller {
       if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
         logger.error("INVALID_PAGENUM_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_PAGENUM_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -142,8 +140,8 @@ public class Controller {
       if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
         logger.error("INVALID_PAGESIZE_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_PAGESIZE_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -154,8 +152,8 @@ public class Controller {
       if (Boolean.FALSE.equals(validator.isValidGenre(genre.get()))) {
         logger.error("INVALID_GENRE_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_GENRE_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_GENRE_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       } else {
         movieGenre = genre.get();
         queryParams.put("genre", movieGenre);
@@ -167,8 +165,8 @@ public class Controller {
       if (Boolean.FALSE.equals(validator.isValidYear(year.get()))) {
         logger.error("INVALID_YEAR_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_YEAR_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_YEAR_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       } else {
         movieYear = Integer.parseInt(year.get());
         queryParams.put("year", movieYear);
@@ -180,8 +178,8 @@ public class Controller {
       if (Boolean.FALSE.equals(validator.isValidRating(rating.get()))) {
         logger.error("INVALID_RATING_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_RATING_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_RATING_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       } else {
         movieRating = Double.parseDouble(rating.get());
         queryParams.put("ratingSelect", movieRating);
@@ -193,8 +191,8 @@ public class Controller {
       if (Boolean.FALSE.equals(validator.isValidActorId(actorId.get()))) {
         logger.error("INVALID_ACTORID_MESSAGE");
 
-        return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_ACTORID_MESSAGE));
+        return new ResponseEntity<String>(Constants.INVALID_ACTORID_MESSAGE,
+            HttpStatus.BAD_REQUEST);
       } else {
         movieActorId = actorId.get();
         queryParams.put("actorSelect", movieActorId);
