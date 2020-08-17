@@ -11,6 +11,7 @@ on:
     - 'src/**/__tests__'
     - '**.md'
     - 'TestFiles/**'
+    - '.github/workflows/codespaces.yml' 
 
   push:
     branches:
@@ -22,6 +23,7 @@ on:
     - 'src/**/__tests__'
     - '**.md'
     - 'TestFiles/**'
+    - '.github/workflows/codespaces.yml' 
 
     tags:
       - v*
@@ -86,8 +88,8 @@ jobs:
       run: |
         # Pull the latest image if needed
         # This doesn't have to be a separate step, but makes the output easier to read and debug
-        docker pull maven:3.6.1-jdk-8
-        docker pull openjdk:8-jre-alpine
+        docker pull maven:3.6.3-jdk-11
+        docker pull openjdk:11.0-jre-slim 
 
     - name: Docker Build
       if: ${{ env.DOCKER_SET == 'true' || env.ACR_SET == 'true' }}
