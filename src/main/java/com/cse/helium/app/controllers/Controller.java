@@ -45,20 +45,20 @@ public class Controller {
       if (Boolean.TRUE.equals(validator.isValidSearchQuery(query.get()))) {
         queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
-        logger.error(Constants.INVALID_Q_PARAM_MSG);
+        logger.error("INVALID_QUERY_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MSG));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_QUERY_MESSAGE));
       }
     }
 
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
-        logger.error(Constants.INVALID_PAGENUM_PARAM_MSG);
+        logger.error("INVALID_PAGENUM_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_PARAM_MSG));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_MESSAGE));
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -67,10 +67,10 @@ public class Controller {
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
     if (pageSize.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
-        logger.error(Constants.INVALID_PAGESIZE_PARAM_MSG);
+        logger.error("INVALID_PAGESIZE_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_PARAM_MSG));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_MESSAGE));
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -118,20 +118,20 @@ public class Controller {
         q = query.get().trim().toLowerCase().replace("'", "''");
         queryParams.put("q",q);
       } else {
-        logger.error(Constants.INVALID_Q_PARAM_MSG);
+        logger.error("INVALID_QUERY_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_Q_PARAM_MSG));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_QUERY_MESSAGE));
       }
     }
 
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
-        logger.error(Constants.INVALID_PAGENUM_PARAM_MSG);
+        logger.error("INVALID_PAGENUM_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_PARAM_MSG));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGENUM_MESSAGE));
       } else {
         pageNo = Integer.parseInt(pageNumber.get());
       }
@@ -140,10 +140,10 @@ public class Controller {
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
     if (pageSize.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
-        logger.error(Constants.INVALID_PAGESIZE_PARAM_MSG);
+        logger.error("INVALID_PAGESIZE_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_PARAM_MSG));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_PAGESIZE_MESSAGE));
       } else {
         pageSz = Integer.parseInt(pageSize.get());
       }
@@ -152,10 +152,10 @@ public class Controller {
     String movieGenre = "";
     if (genre.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidGenre(genre.get()))) {
-        logger.error("Invalid Genre parameter");
+        logger.error("INVALID_GENRE_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid Genre parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_GENRE_MESSAGE));
       } else {
         movieGenre = genre.get();
         queryParams.put("genre", movieGenre);
@@ -165,10 +165,10 @@ public class Controller {
     Integer movieYear = 0;
     if (year.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidYear(year.get()))) {
-        logger.error("Invalid Year parameter");
+        logger.error("INVALID_YEAR_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid Year parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_YEAR_MESSAGE));
       } else {
         movieYear = Integer.parseInt(year.get());
         queryParams.put("year", movieYear);
@@ -178,10 +178,10 @@ public class Controller {
     Double movieRating;
     if (rating.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidRating(rating.get()))) {
-        logger.error("Invalid Rating parameter");
+        logger.error("INVALID_RATING_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid Rating parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_RATING_MESSAGE));
       } else {
         movieRating = Double.parseDouble(rating.get());
         queryParams.put("ratingSelect", movieRating);
@@ -191,10 +191,10 @@ public class Controller {
     String movieActorId = "";
     if (actorId.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidActorId(actorId.get()))) {
-        logger.error("Invalid Actor ID parameter");
+        logger.error("INVALID_ACTORID_MESSAGE");
 
         return Flux.error(new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Invalid Actor ID parameter"));
+          HttpStatus.BAD_REQUEST, Constants.INVALID_ACTORID_MESSAGE));
       } else {
         movieActorId = actorId.get();
         queryParams.put("actorSelect", movieActorId);

@@ -62,7 +62,7 @@ public class MoviesController extends Controller {
       logger.error(MessageFormat.format("Invalid Movie ID parameter {0}", movieId));
 
       return Mono.error(
-          new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Movie ID parameter"));
+          new ResponseStatusException(HttpStatus.BAD_REQUEST, Constants.INVALID_MOVIEID_MESSAGE));
     }
   }
 
