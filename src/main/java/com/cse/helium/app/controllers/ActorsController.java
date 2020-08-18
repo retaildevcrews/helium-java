@@ -2,7 +2,6 @@ package com.cse.helium.app.controllers;
 
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.dao.ActorsDao;
-import com.cse.helium.app.models.Actor;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import java.text.MessageFormat;
@@ -38,7 +37,7 @@ public class ActorsController extends Controller {
       produces = MediaType.APPLICATION_JSON_VALUE)
   // to suprress wrapping the logger.error() in a conditional and lambda to function
   @SuppressWarnings({"squid:S2629", "squid:S1612"})
-  public Mono<ResponseEntity<Actor>> getActor(
+  public Object getActor(
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
       @PathVariable("id")
           String actorId) {
@@ -51,14 +50,13 @@ public class ActorsController extends Controller {
       return dao
           .getActorById(actorId)
           .doOnSuccess(value -> logger.info("!!!!! completed actorsDao call!!!!"))
-          .map(savedActor -> ResponseEntity.ok(savedActor))
           .switchIfEmpty(Mono.defer(() ->
             Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Actor Not Found"))));
     } else {
       logger.error(MessageFormat.format("Invalid Actor ID parameter {0}", actorId));
 
-      return Mono.error(new ResponseStatusException(
-        HttpStatus.BAD_REQUEST, "Invalid Actor ID parameter"));
+      return new ResponseEntity<String>(Constants.INVALID_ACTORID_MESSAGE,
+          HttpStatus.BAD_REQUEST);
     }
   }
 

@@ -57,7 +57,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?q=a")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -65,7 +65,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?q=123456789012345678901")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -73,7 +73,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageSize=0")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -81,7 +81,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageSize=-1")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -89,7 +89,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageSize=1001")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -97,7 +97,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageSize=foo")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -105,7 +105,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageSize=10.1")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -113,7 +113,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageNumber=0")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -121,7 +121,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageNumber=-1")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
 
@@ -130,7 +130,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageNumber=10001")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
 
@@ -139,7 +139,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageNumber=foo")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
     @Test
@@ -147,7 +147,7 @@ public class ActorControllerTest {
         webClient.get().uri("/api/actors?pageNumber=10.1")
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .exchange()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
                 .expectStatus().isBadRequest();
     }
 }
