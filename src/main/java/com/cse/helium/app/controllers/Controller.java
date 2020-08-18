@@ -44,7 +44,7 @@ public class Controller {
       if (Boolean.TRUE.equals(validator.isValidSearchQuery(query.get()))) {
         queryParams.put("q", query.get().trim().toLowerCase().replace("'", "''"));
       } else {
-        logger.error("INVALID_QUERY_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Actor Query parameter {0}", query.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_QUERY_MESSAGE, HttpStatus.BAD_REQUEST);
       }
@@ -53,7 +53,8 @@ public class Controller {
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
-        logger.error("INVALID_PAGENUM_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Actor PageNumber parameter {0}",
+            pageNumber.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_PAGENUM_MESSAGE,
             HttpStatus.BAD_REQUEST);
@@ -65,7 +66,7 @@ public class Controller {
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
     if (pageSize.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
-        logger.error("INVALID_PAGESIZE_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Actor PageSize parameter {0}", pageSize.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_PAGESIZE_MESSAGE,
             HttpStatus.BAD_REQUEST);
@@ -116,7 +117,7 @@ public class Controller {
         q = query.get().trim().toLowerCase().replace("'", "''");
         queryParams.put("q",q);
       } else {
-        logger.error("INVALID_QUERY_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Movie Query parameter {0}", query.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_QUERY_MESSAGE,
             HttpStatus.BAD_REQUEST);
@@ -126,7 +127,8 @@ public class Controller {
     Integer pageNo = 0;
     if (pageNumber.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidPageNumber(pageNumber.get()))) {
-        logger.error("INVALID_PAGENUM_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Movie PageNumber parameter {0}",
+            pageNumber.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_PAGENUM_MESSAGE,
             HttpStatus.BAD_REQUEST);
@@ -138,7 +140,7 @@ public class Controller {
     Integer pageSz = Constants.DEFAULT_PAGE_SIZE;
     if (pageSize.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidPageSize(pageSize.get()))) {
-        logger.error("INVALID_PAGESIZE_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Movie PageSize parameter {0}", pageSize.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_PAGESIZE_MESSAGE,
             HttpStatus.BAD_REQUEST);
@@ -150,7 +152,7 @@ public class Controller {
     String movieGenre = "";
     if (genre.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidGenre(genre.get()))) {
-        logger.error("INVALID_GENRE_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Movie Genre parameter {0}", genre.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_GENRE_MESSAGE,
             HttpStatus.BAD_REQUEST);
@@ -163,7 +165,7 @@ public class Controller {
     Integer movieYear = 0;
     if (year.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidYear(year.get()))) {
-        logger.error("INVALID_YEAR_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Movie Year parameter {0}", year.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_YEAR_MESSAGE,
             HttpStatus.BAD_REQUEST);
@@ -176,7 +178,7 @@ public class Controller {
     Double movieRating;
     if (rating.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidRating(rating.get()))) {
-        logger.error("INVALID_RATING_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Movie Rating parameter {0}", rating.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_RATING_MESSAGE,
             HttpStatus.BAD_REQUEST);
@@ -189,7 +191,7 @@ public class Controller {
     String movieActorId = "";
     if (actorId.isPresent()) {
       if (Boolean.FALSE.equals(validator.isValidActorId(actorId.get()))) {
-        logger.error("INVALID_ACTORID_MESSAGE");
+        logger.error(MessageFormat.format("Invalid Movie ActorID parameter {0}", actorId.get()));
 
         return new ResponseEntity<String>(Constants.INVALID_ACTORID_MESSAGE,
             HttpStatus.BAD_REQUEST);
