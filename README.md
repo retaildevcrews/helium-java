@@ -75,10 +75,9 @@ Visual Studio Codespaces is the easiest way to evaluate helium. Follow the setup
 ```bash
 
 # set environment variables
+# these variables are also set by running the saveenv.sh script
 export AUTH_TYPE=CLI
-
-# replace <your_key_vault_name> with the name of your key vault; keep the double quotes
-export KEYVAULT_NAME="<your_key_vault_name>"
+export KEYVAULT_NAME=$He_Name
 
 # run the application
 mvn spring-boot:run
