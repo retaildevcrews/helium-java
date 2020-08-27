@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.minidev.json.annotate.JsonIgnore;
+import org.springframework.util.StringUtils;
 
 /**
  * Actor.
@@ -49,5 +50,18 @@ public class Actor extends ActorBase {
         + ", movies=" + movies
         + ", deathYear=" + deathYear
         + "}";
+  }
+
+  /**
+   * GetPartitionKey.
+   */
+  public static String getPartitionKey(String id) {
+    // validate id
+    if (!StringUtils.isEmpty(id) && id.length() > 5
+        && StringUtils.startsWithIgnoreCase(id, "nm")) {
+      int idInt = Integer.parseInt(id.substring(2));
+      return String.valueOf(idInt % 10);
+    }
+    throw new IllegalArgumentException("Invalid Partition Key");
   }
 }
