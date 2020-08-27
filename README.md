@@ -24,7 +24,7 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
   - Will not work in Cloud Shell or WSL1
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
-- Java 8+ ([download](https://www.java.com/en/download/manual.jsp/))
+- Java 11+ ([download](https://www.java.com/en/download/manual.jsp/))
 - Maven ([download](https://maven.apache.org/download.cgi))
 - Visual Studio Code (optional) ([download](https://code.visualstudio.com/download))
 
@@ -55,6 +55,7 @@ az login
 az keyvault secret show --name CosmosDatabase --vault-name $He_Name
 
 ```
+
 ## Run the application
 
 ### Using Visual Studio Codespaces
