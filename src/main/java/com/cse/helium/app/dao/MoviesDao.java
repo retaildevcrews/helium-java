@@ -37,7 +37,7 @@ public class MoviesDao extends BaseCosmosDbDao implements IDao {
   /** getMovieByIdSingleRead. */
   public Mono<Movie> getMovieById(String movieId) {
     return getContainer()
-            .getItem(movieId, Movie.getPartitionKey(movieId))
+            .getItem(movieId, Movie.computePartitionKey(movieId))
             .read()
             .flatMap(
                 cosmosItemResponse -> 

@@ -50,9 +50,9 @@ public class Movie extends MovieBase {
   }
 
   /**
-   * GetPartitionKey.
+   * ComputePartitionKey.
    */
-  public static String getPartitionKey(String id) {
+  public static String computePartitionKey(String id) {
     // validate id
     if (!StringUtils.isEmpty(id) && id.length() > 5
         && StringUtils.startsWithIgnoreCase(id, "tt")) {
