@@ -41,7 +41,7 @@ public class ActorsDao extends BaseCosmosDbDao implements IDao {
     }
     
     return getContainer()
-            .getItem(actorId, Actor.getPartitionKey(actorId))
+            .getItem(actorId, Actor.computePartitionKey(actorId))
             .read()
             .flatMap(
                 cosmosItemResponse -> 
