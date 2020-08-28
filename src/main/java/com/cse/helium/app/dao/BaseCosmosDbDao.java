@@ -8,7 +8,6 @@ import com.azure.data.cosmos.FeedResponse;
 import com.azure.data.cosmos.SqlQuerySpec;
 import com.cse.helium.app.Constants;
 import com.cse.helium.app.services.configuration.IConfigurationService;
-import com.cse.helium.app.utils.CommonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.spring.data.cosmosdb.core.convert.ObjectMapperFactory;
@@ -23,8 +22,6 @@ public class BaseCosmosDbDao {
   private static final Logger logger = LogManager.getLogger(BaseCosmosDbDao.class);
 
   @Autowired ApplicationContext context;
-
-  @Autowired CommonUtils utils;
 
   protected IConfigurationService configurationService;
   protected String cosmosContainer = "";
