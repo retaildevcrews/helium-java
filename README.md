@@ -24,7 +24,7 @@ This is a Java Spring Boot Web API reference application designed to "fork and c
   - Will not work in Cloud Shell or WSL1
 - Azure CLI ([download](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest))
 - Docker CLI ([download](https://docs.docker.com/install/))
-- Java 11+ ([download](https://www.java.com/en/download/manual.jsp/))
+- Java 11+ ([download](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html))
 - Maven ([download](https://maven.apache.org/download.cgi))
 - Visual Studio Code (optional) ([download](https://code.visualstudio.com/download))
 
@@ -178,7 +178,7 @@ docker build . -t helium-java
 
 > Make sure to fork the repo before experimenting with CI-CD
 
-This repo uses [GitHub Actions](/.github/workflows/dockerCI.yml) for Continuous Integration.
+This repo uses [GitHub Actions](.github/workflows/dockerCI.yml) for Continuous Integration.
 
 - CI supports pushing to Azure Container Registry or DockerHub
 - The action is setup to execute on a PR or commit to ```master```
