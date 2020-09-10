@@ -44,6 +44,7 @@ public class VersionController {
           context.getBean(SwaggerConfig.class).getInfo().get("version"));
       versionResult.put("appVersion", 
           context.getBean(BuildConfig.class).getBuildVersion());
+      versionResult.put("language", "java");
 
       response.setStatusCode(HttpStatus.OK);
       return Mono.just(versionResult);
