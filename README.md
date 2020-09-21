@@ -160,13 +160,16 @@ docker run -it --rm -v ./TestFiles:/app/TestFiles -s localhost:4120 -f baseline.
 
 ```
 
-### Build the container using Docker
+### Build the release container using Docker
+
+> A release build requires MI to connect to Key Vault.
 
 - The unit tests run as part of the Docker build process
 
 ```bash
 
 # Make sure you are in the root of the repo
+# build the image
 
 docker build . -t helium-java
 
