@@ -267,6 +267,40 @@
                 </execution>
             </executions>
         </plugin>
+        <plugin>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-webapp-maven-plugin</artifactId>
+            <version>1.10.0</version>
+            <configuration>
+              <schemaVersion>V2</schemaVersion>
+              <resourceGroup>${He_App_RG}</resourceGroup>
+              <appName>${He_Name}</appName>
+              <pricingTier>S1</pricingTier>
+              <appServicePlanName>${He_Name}-plan</appServicePlanName>
+              <region>${He_Location}</region>
+              <runtime>
+                <os>linux</os>
+                <javaVersion>java11</javaVersion>
+                <webContainer>java11</webContainer>
+              </runtime>
+              <appSettings>
+                <property>
+                  <name>KEYVAULT_NAME</name>
+                  <value>${He_Name}</value>
+                </property>
+              </appSettings>
+              <deployment>
+                <resources>
+                  <resource>
+                    <directory>${project.basedir}/target</directory>
+                    <includes>
+                      <include>*.jar</include>
+                    </includes>
+                  </resource>
+                </resources>
+              </deployment>
+            </configuration>
+          </plugin>
     </plugins>
   </build>
 </project>

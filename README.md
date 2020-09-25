@@ -177,6 +177,38 @@ docker build . -t helium-java
 
 ```
 
+### Deploy Helium Java to Azure App Service
+
+Create and configure App Service on Linux using java11
+
+```bash
+
+# Use Azure Maven plugin to deploy
+mvn package azure-webapp:deploy -DHe_Name=$He_Name -DHe_Location=$He_Location -DHe_App_RG=$He_App_RG -DskipTests
+
+# stop the Web App
+az webapp stop -g $He_App_RG -n $He_Name
+
+# assign Managed Identity
+export He_MI_ID=$(az webapp identity assign -g $He_App_RG -n $He_Name --query principalId -o tsv)
+
+# grant Key Vault access to Managed Identity
+az keyvault set-policy -n $He_Name --secret-permissions get list --key-permissions get list --object-id $He_MI_ID
+
+# save environment variables
+./saveenv.sh -y
+
+# start the Web App
+# it will take about 3-5 minutes to load the helium-java code
+az webapp start -g $He_App_RG -n $He_Name
+
+# check the version endpoint
+# you may get a 403 or timeout error, if so, just retry
+
+http https://${He_Name}.azurewebsites.net/version
+
+```
+
 ## CI-CD
 
 > Make sure to fork the repo before experimenting with CI-CD
