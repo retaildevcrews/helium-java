@@ -2,8 +2,8 @@ name: Java Codespaces Image Build
 
 on:
   schedule:
-    # Run on the 1st and 15th of every month at 3:00 AM 
-    - cron: "0 3 1,15 * *"
+    # Run weekly at 3:00 AM
+    - cron: "0 3 * * 0"
   push:
     branches:
       - master
