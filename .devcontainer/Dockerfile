@@ -8,7 +8,6 @@ RUN curl https://packages.microsoft.com/config/debian/10/packages-microsoft-prod
     #
     #Install Common Tools
     apt-get update && \
-    apt-get dist-upgrade -y && \
     apt-get -y install --no-install-recommends \
             apt-transport-https \
             apt-utils \
