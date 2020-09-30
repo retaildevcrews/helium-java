@@ -26,7 +26,8 @@ import reactor.core.publisher.Mono;
 
 /** MovieController. */
 @RestController
-@RequestMapping(path = "/api/movies", produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+@RequestMapping(path = "/api/movies",
+    produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
 @Api(tags = "Movies")
 public class MoviesController extends Controller {
 
@@ -35,15 +36,14 @@ public class MoviesController extends Controller {
   private static final Logger logger = LogManager.getLogger(MoviesController.class);
 
   /** getMovie. */
-  @GetMapping(
-      value = "/{id}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/{id}")
   // to suprress wrapping the logger.error() in a conditional and lambda to function
   @SuppressWarnings({"squid:S2629", "squid:S1612"})  
   public Object getMovie(
       @ApiParam(value = "The ID of the movie to look for", example = "tt0000002", required = true)
           @PathVariable("id")
-          String movieId) {
+          String movieId,
+      ServerHttpRequest request) {
 
     if (logger.isInfoEnabled()) {
       logger.info(MessageFormat.format("getMovie (movieId={0})", movieId));
@@ -61,14 +61,15 @@ public class MoviesController extends Controller {
 
       logger.error(MessageFormat.format("Invalid Movie ID parameter {0}", movieId));
 
-      return new ResponseEntity<>("Constants.INVALID_MOVIEID_MESSAGE", HttpStatus.BAD_REQUEST);
+      String invalidResponse = super.invalidParameterResponses
+          .invalidMovieDirectReadResponse(request.getURI().getPath());
+
+      return new ResponseEntity<String>(invalidResponse, HttpStatus.BAD_REQUEST);
     }
   }
 
   /** getAllMovies. */
-  @GetMapping(
-      value = "",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "")
   public Object getAllMovies(
       @ApiParam(value = "(query) (optional) The term used to search Movie name") @RequestParam("q")
           final Optional<String> query,

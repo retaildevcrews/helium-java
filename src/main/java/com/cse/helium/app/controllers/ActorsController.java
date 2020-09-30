@@ -25,7 +25,8 @@ import reactor.core.publisher.Mono;
 
 /** ActorController. */
 @RestController
-@RequestMapping(path = "/api/actors", produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+@RequestMapping(path = "/api/actors",
+    produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
 @Api(tags = "Actors")
 public class ActorsController extends Controller {
 
@@ -34,15 +35,14 @@ public class ActorsController extends Controller {
   @Autowired ActorsDao dao;
 
   /** getActor. */
-  @GetMapping(
-      value = "/{id}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/{id}")
   // to suprress wrapping the logger.error() in a conditional and lambda to function
   @SuppressWarnings({"squid:S2629", "squid:S1612"})
   public Object getActor(
       @ApiParam(value = "The ID of the actor to look for", example = "nm0000002", required = true)
       @PathVariable("id")
-          String actorId) {
+          String actorId,
+      ServerHttpRequest request) {
 
     if (logger.isInfoEnabled()) {
       logger.info(MessageFormat.format("getActor (actorId={0})",actorId));
@@ -57,15 +57,15 @@ public class ActorsController extends Controller {
     } else {
       logger.error(MessageFormat.format("Invalid Actor ID parameter {0}", actorId));
 
-      return new ResponseEntity<String>("Constants.INVALID_ACTORID_MESSAGE",
-          HttpStatus.BAD_REQUEST);
+      String invalidResponse = super.invalidParameterResponses
+          .invalidActorDirectReadResponse(request.getURI().getPath());
+
+      return new ResponseEntity<String>(invalidResponse, HttpStatus.BAD_REQUEST);
     }
   }
 
   /** getAllActors. */
-  @GetMapping(
-      value = "",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "")
   public Object getAllActors(
       @ApiParam(value = "(query) (optional) The term used to search Actor name") @RequestParam("q")
       final Optional<String> query,
