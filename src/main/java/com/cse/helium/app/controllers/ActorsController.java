@@ -4,6 +4,7 @@ import com.cse.helium.app.Constants;
 import com.cse.helium.app.dao.ActorsDao;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +25,7 @@ import reactor.core.publisher.Mono;
 
 /** ActorController. */
 @RestController
-@RequestMapping(path = "/api/actors", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/actors", produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
 @Api(tags = "Actors")
 public class ActorsController extends Controller {
 
@@ -55,7 +57,7 @@ public class ActorsController extends Controller {
     } else {
       logger.error(MessageFormat.format("Invalid Actor ID parameter {0}", actorId));
 
-      return new ResponseEntity<String>(Constants.INVALID_ACTORID_MESSAGE,
+      return new ResponseEntity<String>("Constants.INVALID_ACTORID_MESSAGE",
           HttpStatus.BAD_REQUEST);
     }
   }
@@ -70,15 +72,17 @@ public class ActorsController extends Controller {
       @ApiParam(value = "1 based page index", defaultValue = "1") @RequestParam
           Optional<String> pageNumber,
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam
-          Optional<String> pageSize) {
+          Optional<String> pageSize,
+      ServerHttpRequest request) {
 
     try {
       if (logger.isInfoEnabled()) {
         logger.info(MessageFormat.format("getAllActors (query={0}, pageNumber={1}, pageSize={2})",
             query, pageNumber, pageSize));
       }
-
-      return super.getAll(query,pageNumber, pageSize, dao);
+      URI uri = request.getURI();
+      String instance = uri.getPath() + "?" + uri.getQuery();
+      return super.getAll(query,pageNumber, pageSize, dao, instance);
     } catch (Exception ex) {
       logger.error(MessageFormat.format("ActorControllerException {0}", ex.getMessage()));
       return Flux.error(new ResponseStatusException(
