@@ -89,8 +89,8 @@ public class InvalidParameterResponses {
     }
   }
 
-  private String parametersToValidationErrors(List<SearchParameter> paramters) {
-    List<String> validationErrors = paramters.stream().map(this::parameterToValidationError)
+  private String parametersToValidationErrors(List<SearchParameter> parameters) {
+    List<String> validationErrors = parameters.stream().map(this::parameterToValidationError)
         .collect(Collectors.toList());
     return String.join(",\n", validationErrors);
   }
