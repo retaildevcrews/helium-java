@@ -37,12 +37,6 @@ public final class Constants {
       + "character, may contain alphanumeric or hyphen, no repeating hyphens, and end with "
       + "alphanumeric.  Check ${KEYVAULT_NAME} in your environment variables.";
 
-  public static final String VALIDATION_ERROR_TEMPLATE = "{\n"
-      + "  \"code\": \"InvalidValue\",\n"
-      + "  \"target\": \"{0}\",\n"
-      + "  \"message\": \"{1}\",\n"
-      + "}";
-
   private Constants() {
     // private constructor to hide pulbic constructor
   }
