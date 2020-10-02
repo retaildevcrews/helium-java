@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -78,9 +78,10 @@ public class Controller {
       pageNo = pageNo > 1 ? pageNo - 1 : 0;
       return dataObject.getAll(queryParams, pageNo * pageSz, pageSz);
     } else {
-      return new ResponseEntity<String>(
-        invalidParameterResponses.invalidActorSearchResponse(contextPath, invalidParameters),
-        HttpStatus.BAD_REQUEST);
+      return ResponseEntity.badRequest()
+          .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+          .body(invalidParameterResponses
+              .invalidActorSearchResponse(contextPath, invalidParameters));
     }
 
   }
@@ -197,9 +198,10 @@ public class Controller {
       pageNo = pageNo > 1 ? pageNo - 1 : 0;
       return dataObject.getAll(queryParams, pageNo * pageSz, pageSz);
     } else {
-      return new ResponseEntity<String>(
-        invalidParameterResponses.invalidMovieSearchResponse(contextPath, invalidParameters),
-        HttpStatus.BAD_REQUEST);
+      return ResponseEntity.badRequest()
+          .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+          .body(invalidParameterResponses
+              .invalidMovieSearchResponse(contextPath, invalidParameters));
     }
 
   }

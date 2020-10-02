@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
 /** ActorController. */
 @RestController
 @RequestMapping(path = "/api/actors",
-    produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Actors")
 public class ActorsController extends Controller {
 
@@ -60,7 +60,9 @@ public class ActorsController extends Controller {
       String invalidResponse = super.invalidParameterResponses
           .invalidActorDirectReadResponse(request.getURI().getPath());
 
-      return new ResponseEntity<String>(invalidResponse, HttpStatus.BAD_REQUEST);
+      return ResponseEntity.badRequest()
+          .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+          .body(invalidResponse);
     }
   }
 

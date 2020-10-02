@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono;
 /** MovieController. */
 @RestController
 @RequestMapping(path = "/api/movies",
-    produces = MediaType.APPLICATION_PROBLEM_JSON_VALUE)
+    produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Movies")
 public class MoviesController extends Controller {
 
@@ -64,7 +64,9 @@ public class MoviesController extends Controller {
       String invalidResponse = super.invalidParameterResponses
           .invalidMovieDirectReadResponse(request.getURI().getPath());
 
-      return new ResponseEntity<String>(invalidResponse, HttpStatus.BAD_REQUEST);
+      return ResponseEntity.badRequest()
+          .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+          .body(invalidResponse);
     }
   }
 
