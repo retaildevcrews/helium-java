@@ -49,7 +49,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?q=a")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -57,7 +57,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?q=123456789012345678901")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -65,7 +65,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageSize=0")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -73,7 +73,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageSize=-1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -81,7 +81,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageSize=1001")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -89,7 +89,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageSize=foo")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -97,7 +97,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageSize=10.1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -105,7 +105,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageNumber=0")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -113,7 +113,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageNumber=-1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -122,7 +122,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageNumber=10001")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -131,7 +131,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageNumber=foo")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
   @Test
@@ -139,7 +139,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?pageNumber=10.1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -186,7 +186,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=foo")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -195,7 +195,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=-1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -204,7 +204,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=0")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -213,7 +213,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -222,7 +222,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=1873")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -231,7 +231,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=2026")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -240,7 +240,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?year=2020.1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -259,7 +259,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?rating=foo")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -268,7 +268,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?rating=-1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -277,7 +277,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?rating=10.1")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -296,7 +296,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=nm123")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -305,7 +305,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=ab12345")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -314,7 +314,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=tt12345")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -323,7 +323,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=NM12345")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -332,7 +332,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?actorId=nm12345")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON);
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON);
        // .expectBodyList(Movie.class).hasSize(0);
   }
 
@@ -373,7 +373,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?genre=ab")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
@@ -383,7 +383,7 @@ public class MovieControllerTest {
     webClient.get().uri("/api/movies?genre=123456789012345678901")
         .header(HttpHeaders.ACCEPT, "application/json")
         .exchange()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
         .expectStatus().isBadRequest();
   }
 
