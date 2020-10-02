@@ -4,20 +4,20 @@
   "image": "retaildevcrew/helium-java-codespaces",
   
   // Build based on local Dockerfile
-  // "build": {
-  //   "dockerfile": "Dockerfile",
-  //   "context": "..",
-  //   "args": {
-  //     "VARIANT": "11",
-  //     "INSTALL_MAVEN": "true",
-  //     "INSTALL_GRADLE": "false",
-  //     "INSTALL_NODE": "false",
-  //     "MAVEN_VERSION": "3.6.3",
-  //     "NODE_VERSION": "lts/*",
-  //     "INSTALL_AZURE_CLI": "true",
-  //     "INSTALL_DOCKER": "true"
-  //   }
-  // },
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "args": {
+      "VARIANT": "11",
+      "INSTALL_MAVEN": "true",
+      "INSTALL_GRADLE": "false",
+      "INSTALL_NODE": "false",
+      "MAVEN_VERSION": "3.6.3",
+      "NODE_VERSION": "lts/*",
+      "INSTALL_AZURE_CLI": "true",
+      "INSTALL_DOCKER": "true"
+    }
+  },
 
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
