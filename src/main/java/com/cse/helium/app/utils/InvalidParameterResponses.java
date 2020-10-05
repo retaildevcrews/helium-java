@@ -15,42 +15,42 @@ public class InvalidParameterResponses {
 
   private static final String Q_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE, 
-      "Q",
+      "q",
       "The parameter 'q' should be between 2 and 20 characters.");
 
   private static final String PAGESIZE_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
-      "PageSize",
+      "pageSize",
       "The parameter 'PageSize' should be between 1 and 1000.");
 
   private static final String PAGENUM_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
-      "PageNumber",
+      "pageNumber",
       "The parameter 'PageNumber' should be between 1 and 10000.");
 
   private static final String GENRE_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
-      "Genre",
+      "genre",
       "The parameter 'Genre' should be between 3 and 20 characters.");
 
   private static final String YEAR_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
-      "Year",
+      "year",
       "The parameter 'Year' should be between 1874 and 2025.");
 
   private static final String RATING_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
-      "Rating",
+      "rating",
       "The parameter 'Rating' should be between 0 and 10.");
 
   private static final String ACTORID_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
-      "ActorId",
+      "actorId",
       "The parameter 'ActorId' should start with 'nm' and be between 7 and 11 characters in total");
   
   private static final String MOVIEID_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
-      "MovieId",
+      "movieId",
       "The parameter 'MovieId' should start with 'tt' and be between 7 and 11 characters in total");
 
   public enum SearchParameter {
