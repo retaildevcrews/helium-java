@@ -111,15 +111,15 @@ public class HealthzController {
     /*  build discrete API calls   */
     Mono<Map<String,Object>> genreMono = genresDao.getGenres()
         .map(genre -> buildResultsDictionary("getGenres", 
-            getElapsedAndUpdateStart(), 400L));
+            getElapsedAndUpdateStart(), 200L));
 
     Mono<Map<String,Object>> actorByIdMono = actorsDao.getActorById("nm0000173")
         .map(actor -> buildResultsDictionary("getActorById", 
-            getElapsedAndUpdateStart(), 250L));
+            getElapsedAndUpdateStart(), 100L));
 
     Mono<Map<String, Object>> movieByIdMono = moviesDao.getMovieById("tt0133093")
         .map(movie -> buildResultsDictionary("getMovieById", 
-            getElapsedAndUpdateStart(), 250L));
+            getElapsedAndUpdateStart(), 100L));
 
     Map<String, Object> moviesQueryParams = new HashMap<>();
     moviesQueryParams.put("q", "ring");
@@ -127,7 +127,7 @@ public class HealthzController {
         moviesDao.getAll(moviesQueryParams, 1, 100)
         .collectList()
         .map(results -> buildResultsDictionary("searchMovies", 
-            getElapsedAndUpdateStart(), 400L));
+            getElapsedAndUpdateStart(), 200L));
 
     Map<String, Object> actorsQueryParams = new HashMap<>();
     actorsQueryParams.put("q", "nicole");
@@ -135,7 +135,7 @@ public class HealthzController {
         actorsDao.getAll(actorsQueryParams, 1, 100)
         .collectList()
         .map(results -> buildResultsDictionary("searchActors", 
-            getElapsedAndUpdateStart(), 400L));
+            getElapsedAndUpdateStart(), 200L));
     /*   chain the discrete calls together   */
     return  genreMono.concatWith(actorByIdMono)
         .concatWith(movieByIdMono)

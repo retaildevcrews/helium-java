@@ -4,6 +4,7 @@ import com.cse.helium.app.Constants;
 import com.cse.helium.app.dao.MoviesDao;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,8 @@ import reactor.core.publisher.Mono;
 
 /** MovieController. */
 @RestController
-@RequestMapping(path = "/api/movies", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/movies",
+    produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Movies")
 public class MoviesController extends Controller {
 
@@ -33,15 +36,14 @@ public class MoviesController extends Controller {
   private static final Logger logger = LogManager.getLogger(MoviesController.class);
 
   /** getMovie. */
-  @GetMapping(
-      value = "/{id}",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/{id}")
   // to suprress wrapping the logger.error() in a conditional and lambda to function
   @SuppressWarnings({"squid:S2629", "squid:S1612"})  
   public Object getMovie(
       @ApiParam(value = "The ID of the movie to look for", example = "tt0000002", required = true)
           @PathVariable("id")
-          String movieId) {
+          String movieId,
+      ServerHttpRequest request) {
 
     if (logger.isInfoEnabled()) {
       logger.info(MessageFormat.format("getMovie (movieId={0})", movieId));
@@ -59,14 +61,17 @@ public class MoviesController extends Controller {
 
       logger.error(MessageFormat.format("Invalid Movie ID parameter {0}", movieId));
 
-      return new ResponseEntity<>(Constants.INVALID_MOVIEID_MESSAGE, HttpStatus.BAD_REQUEST);
+      String invalidResponse = super.invalidParameterResponses
+          .invalidMovieDirectReadResponse(request.getURI().getPath());
+
+      return ResponseEntity.badRequest()
+          .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+          .body(invalidResponse);
     }
   }
 
   /** getAllMovies. */
-  @GetMapping(
-      value = "",
-      produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "")
   public Object getAllMovies(
       @ApiParam(value = "(query) (optional) The term used to search Movie name") @RequestParam("q")
           final Optional<String> query,
@@ -83,7 +88,8 @@ public class MoviesController extends Controller {
       @ApiParam(value = "(optional) Get movies by Actor Id (nm0000704)") @RequestParam
           Optional<String> pageNumber,
       @ApiParam(value = "page size (1000 max)", defaultValue = "100") @RequestParam
-          Optional<String> pageSize) {
+          Optional<String> pageSize,
+      ServerHttpRequest request) {
 
     try {
       if (logger.isInfoEnabled()) {
@@ -93,8 +99,9 @@ public class MoviesController extends Controller {
                     + " actorId={4}, pageNumber={5}, pageSize={6})",
                 query, genre, year, rating, actorId, pageNumber, pageSize));
       }
-
-      return getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao);
+      URI uri = request.getURI();
+      String instance = uri.getPath() + "?" + uri.getQuery();
+      return getAll(query, genre, year, rating, actorId, pageNumber, pageSize, moviesDao, instance);
     } catch (Exception ex) {
       logger.error(MessageFormat.format("MovieControllerException {0}", ex.getMessage()));
       return Flux.error(
