@@ -41,17 +41,19 @@ public class InvalidParameterResponses {
   private static final String RATING_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "rating",
-      "The parameter 'rating' should be between 0 and 10.");
+      "The parameter 'rating' should be between 0.0 and 10.0.");
 
   private static final String ACTORID_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "actorId",
-      "The parameter 'actorId' should start with 'nm' and be between 7 and 11 characters in total.");
+      "The parameter 'actorId' should start with 'nm' and be between 7 and 11 characters in total."
+      );
   
   private static final String MOVIEID_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "movieId",
-      "The parameter 'movieId' should start with 'tt' and be between 7 and 11 characters in total.");
+      "The parameter 'movieId' should start with 'tt' and be between 7 and 11 characters in total."
+      );
 
   public enum SearchParameter {
     Q,
