@@ -10,7 +10,7 @@ public class InvalidParameterResponses {
   private static final String VALIDATION_ERROR_TEMPLATE = "    {\n"
       + "      \"code\": \"InvalidValue\",\n"
       + "      \"target\": \"%s\",\n"
-      + "      \"message\": \"%s\",\n"
+      + "      \"message\": \"%s\"\n"
       + "    }";
 
   private static final String Q_ERROR = String.format(
@@ -21,37 +21,39 @@ public class InvalidParameterResponses {
   private static final String PAGESIZE_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "pageSize",
-      "The parameter 'PageSize' should be between 1 and 1000.");
+      "The parameter 'pageSize' should be between 1 and 1000.");
 
   private static final String PAGENUM_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "pageNumber",
-      "The parameter 'PageNumber' should be between 1 and 10000.");
+      "The parameter 'pageNumber' should be between 1 and 10000.");
 
   private static final String GENRE_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "genre",
-      "The parameter 'Genre' should be between 3 and 20 characters.");
+      "The parameter 'genre' should be between 3 and 20 characters.");
 
   private static final String YEAR_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "year",
-      "The parameter 'Year' should be between 1874 and 2025.");
+      "The parameter 'year' should be between 1874 and 2025.");
 
   private static final String RATING_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "rating",
-      "The parameter 'Rating' should be between 0 and 10.");
+      "The parameter 'rating' should be between 0.0 and 10.0.");
 
   private static final String ACTORID_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "actorId",
-      "The parameter 'ActorId' should start with 'nm' and be between 7 and 11 characters in total");
+      "The parameter 'actorId' should start with 'nm' and be between 7 and 11 characters in total."
+      );
   
   private static final String MOVIEID_ERROR = String.format(
       VALIDATION_ERROR_TEMPLATE,
       "movieId",
-      "The parameter 'MovieId' should start with 'tt' and be between 7 and 11 characters in total");
+      "The parameter 'movieId' should start with 'tt' and be between 7 and 11 characters in total."
+      );
 
   public enum SearchParameter {
     Q,
