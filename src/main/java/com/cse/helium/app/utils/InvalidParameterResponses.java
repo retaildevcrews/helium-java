@@ -111,19 +111,19 @@ public class InvalidParameterResponses {
   }
 
   public String invalidActorSearchResponse(String instance, List<SearchParameter> parameters) {
-    return response(DOC_URL + "#actors", instance, parametersToValidationErrors(parameters));
+    return response(DOC_URL + "#actors-api", instance, parametersToValidationErrors(parameters));
   }
 
   public String invalidMovieSearchResponse(String instance, List<SearchParameter> parameters) {
-    return response(DOC_URL + "#movies", instance, parametersToValidationErrors(parameters));
+    return response(DOC_URL + "#movies-api", instance, parametersToValidationErrors(parameters));
   }
 
   public String invalidActorDirectReadResponse(String instance) {
-    return response(DOC_URL + "#direct-read-1", instance, ACTORID_ERROR);
+    return response(DOC_URL + "#actors-direct-read", instance, ACTORID_ERROR);
   }
 
   public String invalidMovieDirectReadResponse(String instance) {
-    return response(DOC_URL + "#direct-read", instance, MOVIEID_ERROR);
+    return response(DOC_URL + "#movies-direct-read", instance, MOVIEID_ERROR);
   }
   
 }
