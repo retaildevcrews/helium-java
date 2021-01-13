@@ -1,6 +1,5 @@
 package com.cse.helium.app.utils;
 
-import java.time.OffsetDateTime;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -115,7 +114,7 @@ public class ParameterValidator {
     if (!StringUtils.isEmpty(year)) {
       try {
         Integer movieYear = Integer.parseInt(year);
-        if (movieYear < 1874 || movieYear > OffsetDateTime.now().getYear() + 5) {
+        if (movieYear < 1874 || movieYear > 2025) {
           return false;
         }
       } catch (Exception ex) {
